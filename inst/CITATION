@@ -1,7 +1,7 @@
 citHeader("To cite package 'RIA' in publications use:")
 
 citEntry(entry="article",
-	title = paste("Cardiac Computed Tomography Radiomics A Comprehensive Review on Radiomic Techniques"),
+	title = paste("Cardiac Computed Tomography Radiomics: A Comprehensive Review on Radiomic Techniques."),
 
   author= c(
     person("M\U00E1rton", "Kolossv\U00E1ry"),
@@ -18,7 +18,7 @@ citEntry(entry="article",
 
 	textVersion = paste("M\U00E1rton Kolossv\U00E1ry,", "Mikl\U00F3s Kellermayer,",
 		  "B\U00E9la Merkely,", "P\U00E1l Maurovich-Horvat",
-		  "(2017). Cardiac Computed Tomography Radiomics A Comprehensive Review on Radiomic Techniques.
+		  "(2017). Cardiac Computed Tomography Radiomics: A Comprehensive Review on Radiomic Techniques.
 		   Journal of Thoracic Imaging,",
 		  "[epub ahead of print] DOI:10.1097/RTI.0000000000000268")
 )

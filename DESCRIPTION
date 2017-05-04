@@ -1,8 +1,8 @@
 Package: RIA
 Type: Package
 Title: Radiomics Image Analysis Toolbox for Grayscale Images
-Version: 1.0.0
-Date: 2017-03-17
+Version: 1.0.1
+Date: 2017-05-01
 Authors@R: person("Marton", "Kolossvary", role = c("aut", "cre"), email = "marton.kolossvary@cirg.hu")
 Maintainer: Marton Kolossvary <marton.kolossvary@cirg.hu>
 Description: Radiomics image analysis toolbox for grayscale 2D and 3D images. RIA calculates first-order,
@@ -15,7 +15,7 @@ Imports: oro.dicom (>= 0.5.0)
 LazyData: TRUE
 RoxygenNote: 5.0.1
 NeedsCompilation: no
-Packaged: 2017-03-18 23:22:57 UTC; Marci
+Packaged: 2017-05-04 10:41:04 UTC; Marci
 Author: Marton Kolossvary [aut, cre]
 Repository: CRAN
-Date/Publication: 2017-03-19 11:41:05 UTC
+Date/Publication: 2017-05-04 15:41:16 UTC

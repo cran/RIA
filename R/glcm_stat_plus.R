@@ -7,7 +7,7 @@ contrast <- function(data, type_in = "single", base = 2) {
   ind_m <- (abs(row(ind_m)-col(ind_m)))^2
 
   if (type_in == "squared") {data <- data^2}
-  if (type_in == "entropy") {ifelse(data > 0, -1*data*logb(data, base), 0)}
+  if (type_in == "entropy") {data <- ifelse(data > 0, -1*data*logb(data, base), 0)}
 
   return(sum((ind_m)*data))
 }
@@ -19,7 +19,7 @@ homogeneity2 <- function(data, type_in = "single", base = 2, diag = TRUE) {
   ind_m <- 1/(((abs(row(ind_m)-col(ind_m)))^2)+1)
 
   if (type_in == "squared") {data <- data^2}
-  if (type_in == "entropy") {ifelse(data > 0, -1*data*logb(data, base), 0)}
+  if (type_in == "entropy") {data <- ifelse(data > 0, -1*data*logb(data, base), 0)}
   if (diag == FALSE) {diag(ind_m) <- 0}
 
   return(sum((ind_m)*data))
@@ -32,7 +32,7 @@ dissimilarity <- function(data, type_in = "single", base = 2) {
   ind_m <- (abs(row(ind_m)-col(ind_m)))
 
   if (type_in == "squared") {data <- data^2}
-  if (type_in == "entropy") {ifelse(data > 0, -1*data*logb(data, base), 0)}
+  if (type_in == "entropy") {data <- ifelse(data > 0, -1*data*logb(data, base), 0)}
 
 
   return(sum((ind_m)*data))
@@ -46,7 +46,7 @@ homogeneity1 <- function(data, type_in = "single", base = 2, diag = TRUE) {
   ind_m <- 1/((abs(row(ind_m)-col(ind_m)))+1)
 
   if (type_in == "squared") {data <- data^2}
-  if (type_in == "entropy") {ifelse(data > 0, -1*data*logb(data, base), 0)}
+  if (type_in == "entropy") {data <- ifelse(data > 0, -1*data*logb(data, base), 0)}
   if (diag == FALSE) {diag(ind_m) <- 0}
 
   return(sum((ind_m)*data))
@@ -59,7 +59,7 @@ dmn <- function(data, type_in = "single", base = 2) {
   ind_m <- ((abs(row(ind_m)-col(ind_m)))^2)/dim_m^2
 
   if (type_in == "squared") {data <- data^2}
-  if (type_in == "entropy") {ifelse(data > 0, -1*data*logb(data, base), 0)}
+  if (type_in == "entropy") {data <- ifelse(data > 0, -1*data*logb(data, base), 0)}
 
   return(sum((ind_m)*data))
 }
@@ -71,7 +71,7 @@ dn <- function(data, type_in = "single", base = 2) {
   ind_m <- (abs(row(ind_m)-col(ind_m)))/dim_m
 
   if (type_in == "squared") {data <- data^2}
-  if (type_in == "entropy") {ifelse(data > 0, -1*data*logb(data, base), 0)}
+  if (type_in == "entropy") {data <- ifelse(data > 0, -1*data*logb(data, base), 0)}
 
   return(sum((ind_m)*data))
 }
@@ -83,7 +83,7 @@ idmn <- function(data, type_in = "single", base = 2, diag = TRUE) {
   ind_m <- 1/((((abs(row(ind_m)-col(ind_m)))^2)/dim_m^2)+1)
 
   if (type_in == "squared") {data <- data^2}
-  if (type_in == "entropy") {ifelse(data > 0, -1*data*logb(data, base), 0)}
+  if (type_in == "entropy") {data <- ifelse(data > 0, -1*data*logb(data, base), 0)}
   if (diag == FALSE) {diag(ind_m) <- 0}
 
   return(sum((ind_m)*data))
@@ -97,7 +97,7 @@ idn <- function(data, type_in = "single", base = 2, diag = TRUE) {
   ind_m <- ifelse(((((abs(row(ind_m)-col(ind_m))))/dim_m)+1) != 0, 1/((((abs(row(ind_m)-col(ind_m))))/dim_m)+1), 0)
 
   if (type_in == "squared") {data <- data^2}
-  if (type_in == "entropy") {ifelse(data > 0, -1*data*logb(data, base), 0)}
+  if (type_in == "entropy") {data <- ifelse(data > 0, -1*data*logb(data, base), 0)}
   if (diag == FALSE) {diag(ind_m) <- 0}
 
   return(sum((ind_m)*data))
@@ -109,7 +109,7 @@ autocorrelation <- function(data, type_in = "single", base = 2, diag = TRUE) {
   ind_m <- row(ind_m)*col(ind_m)
 
   if (type_in == "squared") {data <- data^2}
-  if (type_in == "entropy") {ifelse(data > 0, -1*data*logb(data, base), 0)}
+  if (type_in == "entropy") {data <- ifelse(data > 0, -1*data*logb(data, base), 0)}
   if (diag == FALSE) {diag(ind_m) <- 0}
 
   return(sum((ind_m)*data))
@@ -122,16 +122,30 @@ inv_autocorrelation <- function(data, type_in = "single", base = 2, diag = TRUE)
   ind_m <- ifelse((row(ind_m)*col(ind_m)) != 0, 1/(row(ind_m)*col(ind_m)), 0)
 
   if (type_in == "squared") {data <- data^2}
-  if (type_in == "entropy") {ifelse(data > 0, -1*data*logb(data, base), 0)}
+  if (type_in == "entropy") {data <- ifelse(data > 0, -1*data*logb(data, base), 0)}
   if (diag == FALSE) {diag(ind_m) <- 0}
 
   return(sum((ind_m)*data))
 }
 
-gauss <- function(data, inverse = FALSE, type_in = "single", base = 2, diag = TRUE) {
+gauss <- function(data, inverse = FALSE, type_in = "single", base = 2, diag = TRUE, loc = 3) {
   dim_m <- dim(data)[1]
   ind_m <- matrix(NA, dim_m, dim_m)
-  mu  <- base::mean(row(data)[,1], na.rm = TRUE)
+
+  if(loc == 1) {
+    mu <- 1 #left polar
+  } else if(loc == 2) {
+    til  <- ceiling(dim_m/2)
+    mu  <- mean(1:til, na.rm = TRUE) #left focus
+  } else if(loc == 4) {
+    from <- floor(dim_m/2)+1
+    mu  <- mean(from:length(row(data)[,1]), na.rm = TRUE) #right focus
+  } else if(loc == 5) {
+    mu  <- dim_m #right polar
+  } else {
+    mu  <- mean(row(data)[,1], na.rm = TRUE) #center
+  }
+
   sig <- stats::sd(row(data)[,1], na.rm = TRUE)
 
   if(is.na(sig) | sig == 0) {return(0)}
@@ -147,7 +161,7 @@ gauss <- function(data, inverse = FALSE, type_in = "single", base = 2, diag = TR
   ind_m <- x*y
 
   if (type_in == "squared") {data <- data^2}
-  if (type_in == "entropy") {ifelse(data > 0, -1*data*logb(data, base), 0)}
+  if (type_in == "entropy") {data <- ifelse(data > 0, -1*data*logb(data, base), 0)}
   if (diag == FALSE) {diag(ind_m) <- 0}
 
   return(sum((ind_m)*data))
@@ -182,7 +196,7 @@ gauss2f <- function(data, inverse = FALSE, type_in = "single", base = 2, diag = 
   ind_m <- x1*y1 + x2*y2
 
   if (type_in == "squared") {data <- data^2}
-  if (type_in == "entropy") {ifelse(data > 0, -1*data*logb(data, base), 0)}
+  if (type_in == "entropy") {data <- ifelse(data > 0, -1*data*logb(data, base), 0)}
   if (diag == FALSE) {diag(ind_m) <- 0}
 
   return(sum((ind_m)*data))
@@ -212,7 +226,7 @@ gauss2p <- function(data, inverse = FALSE, type_in = "single", base = 2, diag = 
   ind_m <- x1*y1 + x2*y2
 
   if (type_in == "squared") {data <- data^2}
-  if (type_in == "entropy") {ifelse(data > 0, -1*data*logb(data, base), 0)}
+  if (type_in == "entropy") {data <- ifelse(data > 0, -1*data*logb(data, base), 0)}
   if (diag == FALSE) {diag(ind_m) <- 0}
 
   return(sum((ind_m)*data))
@@ -240,7 +254,7 @@ cluster <- function(data, pow = 4, base = 2, inverse = FALSE, type_in = "single"
   if(inverse) w <- ifelse(w != 0, 1/w, 0)
 
   if (type_in == "squared") {data <- data^2}
-  if (type_in == "entropy") {ifelse(data > 0, -1*data*logb(data, base), 0)}
+  if (type_in == "entropy") {data <- ifelse(data > 0, -1*data*logb(data, base), 0)}
   if (diag == FALSE) {diag(w) <- 0}
 
 
@@ -255,7 +269,7 @@ avg <- function(data, base = 2, type_in = "single") {
   ind_m <- row(ind_m)
 
   if (type_in == "squared") {data <- data^2}
-  if (type_in == "entropy") {ifelse(data > 0, -1*data*logb(data, base), 0)}
+  if (type_in == "entropy") {data <- ifelse(data > 0, -1*data*logb(data, base), 0)}
 
   return(sum(ind_m * data))
 }
@@ -269,7 +283,7 @@ variance <- function(data, base = 2, type_in = "single") {
   ind_m <- row(ind_m)
 
   if (type_in == "squared") {data <- data^2}
-  if (type_in == "entropy") {ifelse(data > 0, -1*data*logb(data, base), 0)}
+  if (type_in == "entropy") {data <- ifelse(data > 0, -1*data*logb(data, base), 0)}
 
   mu <- sum(ind_m * data)
 
@@ -285,7 +299,7 @@ correlation <- function(data, base = 2, type_in = "single") {
   ind_mc <- col(ind_m)
 
   if (type_in == "squared") {data <- data^2}
-  if (type_in == "entropy") {ifelse(data > 0, -1*data*logb(data, base), 0)}
+  if (type_in == "entropy") {data <- ifelse(data > 0, -1*data*logb(data, base), 0)}
 
   mu <- sum(ind_mr * data)
   func <- (ind_mr - mu)^2

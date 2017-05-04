@@ -126,6 +126,38 @@ glcm_stat <- function(RIA_data_in, use_type = "single", use_orig = FALSE, use_sl
   Gauss_s_nd             <- gauss(data_in, type_in = "squared", diag = FALSE)
   Gauss_e_nd             <- gauss(data_in, type_in = "entropy", diag = FALSE)
 
+  Gauss_lp               <- gauss(data_in, loc = 1)
+  Gauss_lp_s             <- gauss(data_in, type_in = "squared", loc = 1)
+  Gauss_lp_e             <- gauss(data_in, type_in = "entropy", loc = 1)
+
+  Gauss_lp_nd               <- gauss(data_in, diag = FALSE, loc = 1)
+  Gauss_lp_s_nd             <- gauss(data_in, type_in = "squared", diag = FALSE, loc = 1)
+  Gauss_lp_e_nd             <- gauss(data_in, type_in = "entropy", diag = FALSE, loc = 1)
+
+  Gauss_lf               <- gauss(data_in, loc = 2)
+  Gauss_lf_s             <- gauss(data_in, type_in = "squared", loc = 2)
+  Gauss_lf_e             <- gauss(data_in, type_in = "entropy", loc = 2)
+
+  Gauss_lf_nd               <- gauss(data_in, diag = FALSE, loc = 2)
+  Gauss_lf_s_nd             <- gauss(data_in, type_in = "squared", diag = FALSE, loc = 2)
+  Gauss_lf_e_nd             <- gauss(data_in, type_in = "entropy", diag = FALSE, loc = 2)
+
+  Gauss_rf               <- gauss(data_in, loc = 4)
+  Gauss_rf_s             <- gauss(data_in, type_in = "squared", loc = 4)
+  Gauss_rf_e             <- gauss(data_in, type_in = "entropy", loc = 4)
+
+  Gauss_rf_nd               <- gauss(data_in, diag = FALSE, loc = 4)
+  Gauss_rf_s_nd             <- gauss(data_in, type_in = "squared", diag = FALSE, loc = 4)
+  Gauss_rf_e_nd             <- gauss(data_in, type_in = "entropy", diag = FALSE, loc = 4)
+
+  Gauss_rp               <- gauss(data_in, loc = 5)
+  Gauss_rp_s             <- gauss(data_in, type_in = "squared", loc = 5)
+  Gauss_rp_e             <- gauss(data_in, type_in = "entropy", loc = 5)
+
+  Gauss_rp_nd               <- gauss(data_in, diag = FALSE, loc = 5)
+  Gauss_rp_s_nd             <- gauss(data_in, type_in = "squared", diag = FALSE, loc = 5)
+  Gauss_rp_e_nd             <- gauss(data_in, type_in = "entropy", diag = FALSE, loc = 5)
+
   Inv_Gauss           <- gauss(data_in, inverse = TRUE)
   Inv_Gauss_s         <- gauss(data_in, inverse = TRUE, type_in = "squared")
   Inv_Gauss_e         <- gauss(data_in, inverse = TRUE, type_in = "entropy")
@@ -133,6 +165,38 @@ glcm_stat <- function(RIA_data_in, use_type = "single", use_orig = FALSE, use_sl
   Inv_Gauss_nd           <- gauss(data_in, inverse = TRUE, diag = FALSE)
   Inv_Gauss_s_nd         <- gauss(data_in, inverse = TRUE, type_in = "squared", diag = FALSE)
   Inv_Gauss_e_nd         <- gauss(data_in, inverse = TRUE, type_in = "entropy", diag = FALSE)
+
+  Inv_Gauss_lp           <- gauss(data_in, inverse = TRUE, loc = 1)
+  Inv_Gauss_lp_s         <- gauss(data_in, inverse = TRUE, type_in = "squared", loc = 1)
+  Inv_Gauss_lp_e         <- gauss(data_in, inverse = TRUE, type_in = "entropy", loc = 1)
+
+  Inv_Gauss_lp_nd           <- gauss(data_in, inverse = TRUE, diag = FALSE, loc = 1)
+  Inv_Gauss_lp_s_nd         <- gauss(data_in, inverse = TRUE, type_in = "squared", diag = FALSE, loc = 1)
+  Inv_Gauss_lp_e_nd         <- gauss(data_in, inverse = TRUE, type_in = "entropy", diag = FALSE, loc = 1)
+
+  Inv_Gauss_lf           <- gauss(data_in, inverse = TRUE, loc = 2)
+  Inv_Gauss_lf_s         <- gauss(data_in, inverse = TRUE, type_in = "squared", loc = 2)
+  Inv_Gauss_lf_e         <- gauss(data_in, inverse = TRUE, type_in = "entropy", loc = 2)
+
+  Inv_Gauss_lf_nd           <- gauss(data_in, inverse = TRUE, diag = FALSE, loc = 2)
+  Inv_Gauss_lf_s_nd         <- gauss(data_in, inverse = TRUE, type_in = "squared", diag = FALSE, loc = 2)
+  Inv_Gauss_lf_e_nd         <- gauss(data_in, inverse = TRUE, type_in = "entropy", diag = FALSE, loc = 2)
+
+  Inv_Gauss_rf           <- gauss(data_in, inverse = TRUE, loc = 4)
+  Inv_Gauss_rf_s         <- gauss(data_in, inverse = TRUE, type_in = "squared", loc = 4)
+  Inv_Gauss_rf_e         <- gauss(data_in, inverse = TRUE, type_in = "entropy", loc = 4)
+
+  Inv_Gauss_rf_nd           <- gauss(data_in, inverse = TRUE, diag = FALSE, loc = 4)
+  Inv_Gauss_rf_s_nd         <- gauss(data_in, inverse = TRUE, type_in = "squared", diag = FALSE, loc = 4)
+  Inv_Gauss_rf_e_nd         <- gauss(data_in, inverse = TRUE, type_in = "entropy", diag = FALSE, loc = 4)
+
+  Inv_Gauss_rp           <- gauss(data_in, inverse = TRUE, loc = 5)
+  Inv_Gauss_rp_s         <- gauss(data_in, inverse = TRUE, type_in = "squared", loc = 5)
+  Inv_Gauss_rp_e         <- gauss(data_in, inverse = TRUE, type_in = "entropy", loc = 5)
+
+  Inv_Gauss_rp_nd           <- gauss(data_in, inverse = TRUE, diag = FALSE, loc = 5)
+  Inv_Gauss_rp_s_nd         <- gauss(data_in, inverse = TRUE, type_in = "squared", diag = FALSE, loc = 5)
+  Inv_Gauss_rp_e_nd         <- gauss(data_in, inverse = TRUE, type_in = "entropy", diag = FALSE, loc = 5)
 
   Gauss_2f            <- gauss2f(data_in)
   Gauss_2f_s          <- gauss2f(data_in, type_in = "squared")
@@ -365,12 +429,60 @@ glcm_stat <- function(RIA_data_in, use_type = "single", use_orig = FALSE, use_sl
     Gauss_nd               <- Gauss_nd,
     Gauss_s_nd             <- Gauss_s_nd,
     Gauss_e_nd             <- Gauss_e_nd,
+    Gauss_lp               <- Gauss_lp,
+    Gauss_lp_s             <- Gauss_lp_s,
+    Gauss_lp_e             <- Gauss_lp_e,
+    Gauss_lp_nd               <- Gauss_lp_nd,
+    Gauss_lp_s_nd             <- Gauss_lp_s_nd,
+    Gauss_lp_e_nd             <- Gauss_lp_e_nd,
+    Gauss_lf               <- Gauss_lf,
+    Gauss_lf_s             <- Gauss_lf_s,
+    Gauss_lf_e             <- Gauss_lf_e,
+    Gauss_lf_nd               <- Gauss_lf_nd,
+    Gauss_lf_s_nd             <- Gauss_lf_s_nd,
+    Gauss_lf_e_nd             <- Gauss_lf_e_nd,
+    Gauss_rf               <- Gauss_rf,
+    Gauss_rf_s             <- Gauss_rf_s,
+    Gauss_rf_e             <- Gauss_rf_e,
+    Gauss_rf_nd               <- Gauss_rf_nd,
+    Gauss_rf_s_nd             <- Gauss_rf_s_nd,
+    Gauss_rf_e_nd             <- Gauss_rf_e_nd,
+    Gauss_rp               <- Gauss_rp,
+    Gauss_rp_s             <- Gauss_rp_s,
+    Gauss_rp_e             <- Gauss_rp_e,
+    Gauss_rp_nd               <- Gauss_rp_nd,
+    Gauss_rp_s_nd             <- Gauss_rp_s_nd,
+    Gauss_rp_e_nd             <- Gauss_rp_e_nd,
     Inv_Gauss           <- Inv_Gauss,
     Inv_Gauss_s         <- Inv_Gauss_s,
     Inv_Gauss_e         <- Inv_Gauss_e,
     Inv_Gauss_nd           <- Inv_Gauss_nd,
     Inv_Gauss_s_nd         <- Inv_Gauss_s_nd,
     Inv_Gauss_e_nd         <- Inv_Gauss_e_nd,
+    Inv_Gauss_lp           <- Inv_Gauss_lp,
+    Inv_Gauss_lp_s         <- Inv_Gauss_lp_s,
+    Inv_Gauss_lp_e         <- Inv_Gauss_lp_e,
+    Inv_Gauss_lp_nd           <- Inv_Gauss_lp_nd,
+    Inv_Gauss_lp_s_nd         <- Inv_Gauss_lp_s_nd,
+    Inv_Gauss_lp_e_nd         <- Inv_Gauss_lp_e_nd,
+    Inv_Gauss_lf           <- Inv_Gauss_lf,
+    Inv_Gauss_lf_s         <- Inv_Gauss_lf_s,
+    Inv_Gauss_lf_e         <- Inv_Gauss_lf_e,
+    Inv_Gauss_lf_nd           <- Inv_Gauss_lf_nd,
+    Inv_Gauss_lf_s_nd         <- Inv_Gauss_lf_s_nd,
+    Inv_Gauss_lf_e_nd         <- Inv_Gauss_lf_e_nd,
+    Inv_Gauss_rf           <- Inv_Gauss_rf,
+    Inv_Gauss_rf_s         <- Inv_Gauss_rf_s,
+    Inv_Gauss_rf_e         <- Inv_Gauss_rf_e,
+    Inv_Gauss_rf_nd           <- Inv_Gauss_rf_nd,
+    Inv_Gauss_rf_s_nd         <- Inv_Gauss_rf_s_nd,
+    Inv_Gauss_rf_e_nd         <- Inv_Gauss_rf_e_nd,
+    Inv_Gauss_rp           <- Inv_Gauss_rp,
+    Inv_Gauss_rp_s         <- Inv_Gauss_rp_s,
+    Inv_Gauss_rp_e         <- Inv_Gauss_rp_e,
+    Inv_Gauss_rp_nd           <- Inv_Gauss_rp_nd,
+    Inv_Gauss_rp_s_nd         <- Inv_Gauss_rp_s_nd,
+    Inv_Gauss_rp_e_nd         <- Inv_Gauss_rp_e_nd,
     Gauss_2f            <- Gauss_2f,
     Gauss_2f_s          <- Gauss_2f_s,
     Gauss_2f_e          <- Gauss_2f_e,
@@ -561,12 +673,60 @@ glcm_stat <- function(RIA_data_in, use_type = "single", use_orig = FALSE, use_sl
                       "Gauss_nd",
                       "Gauss_s_nd",
                       "Gauss_e_nd",
+                      "Gauss_lp",
+                      "Gauss_lp_s",
+                      "Gauss_lp_e",
+                      "Gauss_lp_nd",
+                      "Gauss_lp_s_nd",
+                      "Gauss_lp_e_nd",
+                      "Gauss_lf",
+                      "Gauss_lf_s",
+                      "Gauss_lf_e",
+                      "Gauss_lf_nd",
+                      "Gauss_lf_s_nd",
+                      "Gauss_lf_e_nd",
+                      "Gauss_rf",
+                      "Gauss_rf_s",
+                      "Gauss_rf_e",
+                      "Gauss_rf_nd",
+                      "Gauss_rf_s_nd",
+                      "Gauss_rf_e_nd",
+                      "Gauss_rp",
+                      "Gauss_rp_s",
+                      "Gauss_rp_e",
+                      "Gauss_rp_nd",
+                      "Gauss_rp_s_nd",
+                      "Gauss_rp_e_nd",
                       "Inv_Gauss",
                       "Inv_Gauss_s",
                       "Inv_Gauss_e",
                       "Inv_Gauss_nd",
                       "Inv_Gauss_s_nd",
                       "Inv_Gauss_e_nd",
+                      "Inv_Gauss_lp",
+                      "Inv_Gauss_lp_s",
+                      "Inv_Gauss_lp_e",
+                      "Inv_Gauss_lp_nd",
+                      "Inv_Gauss_lp_s_nd",
+                      "Inv_Gauss_lp_e_nd",
+                      "Inv_Gauss_lf",
+                      "Inv_Gauss_lf_s",
+                      "Inv_Gauss_lf_e",
+                      "Inv_Gauss_lf_nd",
+                      "Inv_Gauss_lf_s_nd",
+                      "Inv_Gauss_lf_e_nd",
+                      "Inv_Gauss_rf",
+                      "Inv_Gauss_rf_s",
+                      "Inv_Gauss_rf_e",
+                      "Inv_Gauss_rf_nd",
+                      "Inv_Gauss_rf_s_nd",
+                      "Inv_Gauss_rf_e_nd",
+                      "Inv_Gauss_rp",
+                      "Inv_Gauss_rp_s",
+                      "Inv_Gauss_rp_e",
+                      "Inv_Gauss_rp_nd",
+                      "Inv_Gauss_rp_s_nd",
+                      "Inv_Gauss_rp_e_nd",
                       "Gauss_2f",
                       "Gauss_2f_s",
                       "Gauss_2f_e",
