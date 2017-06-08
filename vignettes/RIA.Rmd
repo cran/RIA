@@ -1,0 +1,357 @@
+---
+title: "RIA package manual"
+author: "Márton Kolossváry"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{RIA package manual}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, echo = FALSE}
+knitr::opts_chunk$set(collapse = TRUE, comment = "#>")
+```
+
+Radiomics Image Analysis (RIA) package was developed to facilitate radiomic analysis of grayscale images. RIA can calculate hundreds of different statistics on both 2D and 3D images. Almost all calculations are vectorized and therefore are super-efficient. The package is developed by Márton Kolossváry a medical doctor not an engineer, therefore all functionalities of the software package are developed in a way that can be learnt non-professionals. RIA is constantly updated with new functionalities and wrap-around functions to make the calculation of radiomic metrics even simpler.
+
+First, lest simply load RIA
+```{r, results = "hide"}
+library(RIA)
+```
+
+#Converting DICOM images to RIA_image
+DICOM images can be converted to RIA_image class using the *load_dicom* function. All you have to do is give the location of the *.dcm* or *.dicom* files as a string.
+
+```{r, eval=FALSE}
+DICOM = load_dicom(filename = "C:\\DICOM\\")
+```
+*load_dicom* does several things:
+
+1. Converts DICOM files to RIA_image class using the *readDICOM* function of the *oro.dicom* package
+
+1. The 2D or 3D image is croped to the smallest bounding box still containing the whole image. It is useful to minimize the size of the image to save memory. The **zero_value** supplied to the *load_dicom* function is used to identify voxels not containing any data. If it is not supplied, then the smallest value present in the dataset is considered as indicating voxels without any data. If for some reason it is important that the RIA_image be the same size (same x,y,z dimensions) as the original supplied image, then this functionality can be turn off by:
+
+    ```{r, eval=FALSE}
+    DICOM = load_dicom(filename = "C:\\DICOM\\", crop_in = FALSE)
+    ```
+
+1. Then the smallest values which indicate no data, are changed to *NA* for further calculations. If wished to be turned of, then use:
+    ```{r, eval=FALSE}
+    DICOM = load_dicom(filename = "C:\\DICOM\\", replace_in = FALSE)
+    ```
+
+1. Since some DICOM images do not store negative values, rather store all values as non-negative integers, shifting of the values is needed. The desired smallest value is set by the **min_to** input. If not specified then by default it is set to *-1024*. Please check for all data whether shifting is needed! If shifting of the values is not needed then use:
+    ```{r, eval=FALSE}
+    DICOM = load_dicom(filename = "C:\\DICOM\\", center_in = FALSE)
+    ```
+
+1. Finally, *load_dicom* adds basic information regarding the original image and ran processes into the *header*  and *log* slot of *RIA_image*
+
+All above mentioned settings can be combined as wished to achieve proper conversion of the DICOM image. Furthermore, all parameters of the *readDICOM* function of the *oro.dicom* package can also be set in the *load_dicom* function.
+
+As a result the *DICOM* object will have three slots:
+
+1. `DICOM$data` which contains the original image as a 2D or 3D numerical array in  `DICOM$data$orig`, and a modified image in `DICOM$data$modif` that has been created using one of the functions. Only one original and one modified image are stored in the `DICOM$data` slot. However, several modified images can be saved to new slots as we will see later.
+
+1. `DICOM$header` which contains basic information regarding the loaded image. These entries are populated from the DICOM header of the image. Elements can be added or removed from the predefined set of DICOM_codes:
+    ```{r}
+    DICOM_codes
+    ```
+    Elements can be added by specifying the desired DICOM codes. For example the Manufacturer can be add by:
+    ```{r, eval=FALSE}
+    add <- as.data.frame(array(c("Manufacturer", "0008", "0070"), dim = c(1,3)))
+    colnames(add) <- c("Name", "Group", "Element")
+    DICOM = load_dicom(filename = "C:\\DICOM\\", header_add = add)
+    ```
+    Or elements can be removed. For example if you wish to anonymize your data:
+    ```{r, eval=FALSE}
+    exclude <- as.data.frame(DICOM_codes[3:6,])
+    DICOM = load_dicom(filename = "C:\\DICOM\\", header_exclude = exclude)
+    ```
+
+1. `DICOM$log` which contains information regarding the original image and ran processes on the *RIA_image*. The log is constantly updated by the functions, and some functions use it for inputs. *load_dicom* adds the following to the log:
+    * `DICOM$log$events` is a vector containing the ran processes.
+    * `DICOM$log$orig_dim` is a vector containing the original dimensions of the DICOM image.
+    * `DICOM$log$directory` is a string containing the location of the DICOM images.
+    * `DICOM$log$logic_x` is a vector with a length of the original x dimension. Ones indicate slices which contained data and zeros which did not in the x dimension. Same is true for `DICOM$log$logic_y` and `DICOM$log$logic_z`.
+    * `DICOM$log$zero_value` is a number indicating the value that was considered to indicate no data
+    * `DICOM$log$changed_to` is the value to which voxel considered not to have any data were transferred to.
+    * `DICOM$log$shift` the value that was added to all voxel values to achieve proper values.
+    * `DICOM$log$orig_vol_mm` the volume of the original image. The volume is calculated by calculating how many voxels contain data and multiplying it by x,y and z length of the voxels.
+    * `DICOM$log$orig_surf_mm` the surface of the original image. The surface is calculated by assessing which sides of the voxels do not have any neighbors and then summing all of these surfaces which are calculated from the lengths of the sides of the voxels.
+    * `DICOM$log$surface_volume_r` the value of the surface to volume ratio of the original image.
+    * `DICOM$log$orig_xy_dim` the length of each voxel in the x and the y planes. This is also called the in-plane resolution
+    * `DICOM$log$orig_z_dim` the length of each voxel in the z plane. This is also called the cross-plane resolution.
+
+As we will see, functions can add new elements to the log and also add new slots to the *RIA_image*. If the loading was successful, we will be notified by RIA in the console. All messages may be suppressed by setting the **verbose_in** parameter to *FALSE*.
+
+With the package two preloaded datasets are given:
+
+- NRS: the DICOM images of a segmented plaque showing the napkin-ring sign
+- Non_NRS: the DICOM images of a segmented plaque without the napkin-ring sign
+
+We will be using the NRS dataset for all following examples. Load the data using:
+```{r}
+DICOM <- NRS
+```
+
+#Dichotomization of voxel values
+Dichotomization of voxel values is crucial for radiomic analysis. Since many metrics rely on the spatial relationship of different voxel values, we need to decrease the number of possible values. This is needed since we do not want to consider for example a voxel value of 456 any different from 457, since the difference is probably attributable to noise and does not hold any information regarding spatial heterogeneity.
+Dichotomization is done using the *dichotomize* function. It receives a *RIA_image* and outputs a RIA_image with a new slot `DICOM$dichotomized` containing the images with dichotomized values.
+
+Dichotomization is effected by two variables:
+
+- the number of bins to which the values will be transformed to
+- the length of each bin
+
+##Specifing the number of bins
+The number of bins can be easily specified using the **bins_in** parameter.
+```{r}
+DICOM = dichotomize(RIA_data_in = DICOM, bins_in = 2)
+```
+
+##Specifing the length of each bin
+There are two main types of dichotomizations. We either have equally sized or equally probable bins. Equally sized bins mean that the range between the minimum and the maximum value is divided into a predefined number of bins of which all have the same lengths. For example is our smallest value is 0 and the largest is 100 and we wish to dichotomize into 4 equally sized bins then the cut points will be at 25, 50 and 75, result in 4 bins each with a length of 25 units.
+However if the dichotomization is done using equally probable bins then the length of each bin might be different, but the number of elements in it are the same. This might result is cut points such as: 10, 35 and 55 for example in case of a rightly skewed dataset.
+The type of dichotomization is defined by the **equal_prob** parameter. The default is *FALSE*, therefore by default images are dichtomized using equal sized bins. Setting it to *TRUE* will result in equally probable bins:
+```{r}
+DICOM = dichotomize(RIA_data_in = DICOM, bins_in = 2, equal_prob = TRUE)
+```
+
+The dichotomize function updates the log of the *RIA_image* by adding the dichotomization to the events:
+```{r}
+DICOM$log$events
+```
+It also adds the cut points that were used for the dichotomization:
+```{r}
+DICOM$log$cuts_es_2
+DICOM$log$cuts_ep_2
+```
+
+The names of the created images and corresponding elements in the *log* can be changed as we will see later. But for convenience `RIA` automatically names the new images. If not crucial for some reason, I would suggest to stick with the automatically predefined names.
+
+
+##Additional input parameters of dichotomize function
+
+-*use_orig* whether to use the original image (which might be croped etc.) stored in `RIA_image$data$orig` or to use the modified image stored in `RIA_image$data$modif`. By default it is set to *TRUE*. Only in very special cases might one want to dichotomize an image that has already been dichotomized or modified by an other function.
+
+-*write_orig* whether to overwrite the original image stored in `RIA_image$data$orig`. Usually it is not advised to overwrite the master image since then only modified images can be further processed. Therefore, by default it is set to *FALSE*
+
+-*verbose_in* whether write information regarding the running processes in the console.
+
+
+##Batch dichotomization
+Since the number of bins and the type of dichotomization can significantly effect our later results, usually several dichotomizations are performed on a image to receive many different images. Using `RIA` it is very easy perform several different dichotomizations with just one line of code. For example if you wish to dichotomize your image to 4, 8, 16 and 32 equally sized bins, all you have to do is:
+```{r}
+DICOM = dichotomize(RIA_data_in = DICOM, bins_in = c(4,8,16,32))
+```
+or more easily if you want 4, 8, 16 and 32 equally probable bins:
+```{r}
+DICOM = dichotomize(RIA_data_in = DICOM, bins_in = 2^(2:5), equal_prob = TRUE)
+```
+These resulted in our image dichotomized in 2,4,8,16,32 equally probable and equally sized bins, which are stored in the `$dichotomized` slot of the *RIA_image*:
+```{r}
+DICOM$log$events
+names(DICOM$dichotomized)
+```
+
+#First-order statistics
+First-order statistics are derived from the distribution of values and therefore discard all spatial information. Many of these metrics are commonly known (mean, median), however several metrics describing the heterogeneity of the values might be less known (energy, entropy). `RIA` can calculate 35 different first-order statistics (some containing not only one value) using the *first_order* function. As with all statistical measures, it is saved in a separate slot of the *RIA_image*, and the name of the slot starts with *stat_* and since first-order, end with *fo*, resulting in the slot name of *stat_fo*.
+By default, *first_order* calculates statistics on the image present in `DICOM$data$orig`.
+```{r}
+DICOM = first_order(RIA_data_in = DICOM)
+RIA:::list_to_df(DICOM$stat_fo$orig)
+```
+
+If you wish to calculate statistics on a modified image, then by setting the **use_orig** to *FALSE*, the image present in the `DICOM$data$modif` will be used. This is usually the last image that was created using some kind of image manipulation.
+```{r}
+DICOM = first_order(RIA_data_in = DICOM, use_orig = FALSE)
+RIA:::list_to_df(DICOM$stat_fo$ep_32)
+```
+
+If the desired image is not present in the modif slot, since it was created earlier, then instead of switching the `DICOM$data$modif` image to the desired one, you may give a specific image you wish to use using the **use_slot** parameter. If the image you wish to use is in `DICOM$dichotomized$es_2`, then you can calculate first-order statistics on it by:
+```{r}
+DICOM = first_order(RIA_data_in = DICOM, use_orig = FALSE, use_slot = "dichotomized$es_2")
+RIA:::list_to_df(DICOM$stat_fo$es_2)
+```
+
+##Additional input parameters of first_order function
+Calculation of first-order statistics can be further specified using the following inputs.
+
+- *save_name* can be used to modify the name of the output. If provided, then the automatic name generated is overwritten by the provided string.
+```{r}
+DICOM = first_order(RIA_data_in = DICOM, use_orig = FALSE, use_slot = "dichotomized$es_2", save_name = c("equaly_sized_2bins"))
+RIA:::list_to_df(DICOM$stat_fo$equaly_sized_2bins)
+```
+
+##Batch calculation of first-order statistics
+RIA supports batch calculation of first-order statistics. In many cases one wants to calculate the statistics on all modified images. Using one line of code you can calculate first-order statistics for all dichotomized images:
+```{r}
+DICOM = first_order(RIA_data_in = DICOM, use_type = "dichotomized")
+names(DICOM$stat_fo)
+```
+
+The **use_type** input can be used to specify how the function behaves. By default, it is set to *"single"*, indicating single image processing. As seen above, there are multiple ways first-order statistics can be calculated on single images. However, if **use_type** is set to *"dichotomized"*, then the function will calculate the statistical metrics for all instances present in the given slot.
+
+The **save_name** parameter can still be used to rename the name of the statistics is needed.
+```{r}
+DICOM = first_order(RIA_data_in = DICOM, use_type = "dichotomized",
+                    save_name = c("Name_1", "Name_2", "Name_3", "Name_4",
+                                  "Name_5", "Name_6", "Name_7", "Name_8",
+                                  "Name_9", "Name_10"))
+names(DICOM$stat_fo)
+```
+Please provide the same number of names as the number of dichotomizations. If there is a discrepancy between the number of provided names and images, then the process will be stopped giving an error.
+```{r, error = TRUE}
+DICOM = first_order(RIA_data_in = DICOM, use_type = "dichotomized",
+                    save_name = c("Name_1", "Name_2", "Name_3", "Name_4"))
+```
+
+
+#Gray level co-occurrence matrix (GLCM) calculations and statistics
+The function *glcm* calculates GLCM matrices of 2D and 3D images. GLCMs are second-order statistics, meaning that statistics are calculated from the spatial relationship of two voxel values and not from the values themselves. GLCM are square matrices, where there are as many rows and columns as there are different voxel values. The values in the i^th^ row and j^th^ column represents the probability of finding a  *j* value voxel next to a *i* value voxel in a given direction and distance. Therefore, for a given image several different GLCM matrices may be calculated, depending on the *direction* and the *distance*. In `RIA` *direction* and *distance* is determined by three integer parameters specifying where the examined voxel is compared to the index voxel.
+
+- off_right: how many voxels to look to the right (x coordinate)
+- off_down: how many voxels to look downwards (y coordinate)
+- off_z: how many voxels to look to in the cross-plane direction (z coordinate). This parameter is only used if the image is 3D
+
+For example: to calculate the GLCM matrix of the last modified image stored in `DICOM$data$modif`, in the direction of right: 1; down: 2; z-plane: 2; you just have to write:
+```{r}
+DICOM = glcm(RIA_data_in = DICOM, off_right = 1, off_down = 2, off_z = 2)
+dim(DICOM$glcm$ep_32)
+```
+As discussed in the first-order case, the image wished to be analyzed may be set using the **use_orig**, **use_slot** and **save_name** parameters.
+`RIA` looks at the name of the provided image, if numbers are present in it, the it will set the dimensions and the resulting name of the GLCM based-on these values. If no numbers are present, then it will the automatic name generator of `RIA` to figure out the name of the last image manipulation. If it does not succeed, then it will calculate how many different gray levels there are in the image to set the dimensions of GLCM matrix and the name of the statistic. However, it might occur for example that the data was dichotomized to 32 equally sized bins, and then one of the bins does not contain any data. In these cases the GLCM will only be 31 x 31!
+
+##Additional input parameters of glcm function
+Tow further parameters may be set to change the output of the function:
+
+- symmetric: If TRUE, then the transpose of the initial GLCM matrix will be added to itself, which is the same as calculating the GLCM in the opposite direction. Doing so creates a symmetric GLCM matrix, which holds information regarding not only one direction, but also of the opposite direction as well, since asking how many times a *j* value voxel occurs next to a *i* value voxel in a given direction is the same as asking how many times a *i* value voxel occurs next to a *j* value one in the opposite direction. With this strategy, if you wish to calculate the GLCMs in all directions of space, then you only have to actually calculate half of them.
+```{r}
+DICOM = glcm(RIA_data_in = DICOM, use_slot = "dichotomized$ep_2", off_right = 1, off_down = 2, off_z = 2, symmetric = FALSE, normalize = FALSE)
+DICOM$glcm$ep_2
+DICOM = glcm(RIA_data_in = DICOM, use_slot = "dichotomized$ep_2", off_right = 1, off_down = 2, off_z = 2, symmetric = TRUE, normalize = FALSE)
+DICOM$glcm$ep_2
+```
+
+- normalize: If TRUE, then instead of the absolute values of the occurrences are reported, but their relative frequencies.
+```{r}
+DICOM = glcm(RIA_data_in = DICOM, use_slot = "dichotomized$ep_2", off_right = 1, off_down = 2, off_z = 2, symmetric = TRUE, normalize = FALSE)
+DICOM$glcm$ep_2
+DICOM = glcm(RIA_data_in = DICOM, use_slot = "dichotomized$ep_2", off_right = 1, off_down = 2, off_z = 2, symmetric = TRUE, normalize = TRUE)
+DICOM$glcm$ep_2
+```
+
+As  GLCM statistics require probability values and in most cases GLCMs are calculated in all directions, both parameters are TRUE by default.
+
+##Batch calculation of GLCM
+The *glcm* function also support batch calculations. Therefore, if you wish to calculate a given GLCM for all dichotomizations all you have to do is:
+```{r}
+DICOM = glcm(RIA_data_in = DICOM, use_type = "dichotomized",
+             off_right = 1, off_down = 2, off_z = 2)
+names(DICOM$glcm)
+```
+
+In the near future, I'm planning to add a new batch function that can calculate GLCMs in all directions using one line of code. 
+
+
+##Statistics on GLCM matrices
+The main purpose of calculating GLCMs, is to derive statistics from them. GLCM statistics can be calculated using the *glcm_stat* function. Overall, `RIA` can calculate 240 different GLCM statistics of which some contain more than one value. As previous functions, *glcm_stat* can process single or multiple GLCMs
+For single data processing, one can use the **use_slot** parameter to calculate GLCM statistics on a specific GLCM
+```{r}
+DICOM = glcm_stat(DICOM, use_type = "single", use_slot = "glcm$ep_2_122")
+```
+The results as all statistical calculations, are saved to a "stat_" slot of the `RIA_image`, specifically to the `RIA_image$stat_glcm` slot. The name is automatically generated based on the supplied GLCM name. However it may be changed by the **save_name** input if desired.
+
+###Batch calculation of GLCM statistics
+The *glcm_stat* function also support batch calculations. Therefore, if you wish to calculate statistics for all calculated GLCMs the you can achieve this by one line of code:
+```{r}
+DICOM = glcm_stat(DICOM, use_type = "glcm")
+names(DICOM$stat_glcm)
+```
+The names of the outputs can also be specified. Be aware of providing the same amount of names as there are GLCMs being processed. Failing to do so will throw an error.
+
+In the near future, I'm planning to add a new batch function that can combine GLCM statistics of all the different directions at a given distance to receive directionally invariant average results of the GLCMs. 
+
+
+
+
+
+
+#Gray level run length matrix  (GLRLM) calculations and statistics
+The function *glrlm* calculates GLRLM matrices of 2D and 3D images. GLRLM are higher-order statistics, meaning that statistics are calculated from the spatial relationship of more than two voxel values. GLRLM are matrices, where the number of rows equals the number of gray levels, while the number of columns equals the length of the longest run. *Run length* is defined as the number of voxels occurring next to each other with same values in a given direction. The i^th^ row and j^th^ column of the GLRLM represents how many times it occurs in the image, that *i* value voxels are next to each other *j* times. Therefore, for a given image several different GLRLM matrices may be calculated, depending on the *direction*. In `RIA` *direction* is determined by three integer parameters specifying the direction as a vector in co-ordinate space. There is no distance parameter, since we want to calculate how many same value voxels occur next to each other in that direction. Therefore the three inputs are logicals not integers.
+
+- right: direction in the x plane
+- down: direction in the y plane
+- forward: direction in the z plane
+
+For example: to calculate the GLRLM matrix of the last modified image stored in `DICOM$data$modif`, in the direction of right: 1; down: 0; z-plane: 1; you just have to write:
+```{r}
+DICOM = glrlm(RIA_data_in = DICOM, right = 1, down = 0, forward = 1)
+dim(DICOM$glrlm$ep_32)
+```
+As discussed in the first-order case, the image wished to be analyzed may be set using the **use_orig**, **use_slot** and **save_name** parameters.
+`RIA` looks at the name of the provided image, if numbers are present in it, the it will set the dimensions and the resulting name of the GLRLM based-on these values. If no numbers are present, then it will the automatic name generator of `RIA` to figure out the name of the last image manipulation. If it does not succeed, then it will calculate how many different gray levels there are in the image to set the dimensions of GLRLM matrix and the name of the statistic. However, it might occur for example that the data was dichotomized to 32 equally sized bins, and then one of the bins does not contain any data. In these cases the GLRLM will only be 31 x max(run length)!
+
+##Batch calculation of GLRLM
+The *glrlm* function also support batch calculations on dichotomized images. Therefore, if you wish to calculate a given GLRLM for all dichotomizations all you have to do is:
+```{r}
+DICOM = glrlm(RIA_data_in = DICOM, use_type = "dichotomized",
+             right = 1, down = 0, forward = 1)
+names(DICOM$glrlm)
+```
+
+In the near future, I'm planning to add a new batch function that can calculate GLRLMs in all directions using one line of code. 
+
+##Statistics on GLRLM matrices
+The main purpose of calculating GLRLMs, is to derive statistics from them. GLRLM statistics can be calculated using the *glrlm_stat* function. Overall, `RIA` can calculate 11 different GLRLM statistics. As previous functions, *glrlm_stat* can process single and multiple GLRLMs at once.
+For single data processing, one can use the **use_slot** parameter to calculate GLRLM statistics on a specific GLRLM
+```{r}
+DICOM = glrlm_stat(DICOM, use_type = "single", use_slot = "glrlm$ep_2_101")
+```
+The results as all statistical calculations, are saved to a "stat_" slot of the `RIA_image`, specifically to the `RIA_image$stat_glrlm` slot. The name is automatically generated based on the supplied GLRLM name. However it may be changed by the **save_name** input if desired.
+
+###Batch calculation of GLRLM statistics
+The *glrlm_stat* function also support batch calculations. Therefore, if you wish to calculate statistics for all calculated GLRLMs the you can achieve this by one line of code:
+```{r}
+DICOM = glrlm_stat(DICOM, use_type = "glrlm")
+names(DICOM$stat_glrlm)
+```
+The names of the outputs can also be specified. Be aware of providing the same number of names as there are GLRLMs being processed. Failing to do so will throw an error.
+
+In the near future, I'm planning to add a new batch function that can combine GLRLM statistics of all the different directions to receive directionally invariant average results of the GLRLMs. 
+
+
+#Geometry-based statistics
+Several statistics have been derived to evaluate different geometrical properties of objects. `RIA` calculates 9 conventional geometrical parameters and 3 fractal dimensions. Geometrical statistics can be calculated both on the original image:
+```{r}
+DICOM = geometry(RIA_data_in = DICOM, use_orig = TRUE, calc_sub = FALSE)
+RIA:::list_to_df(DICOM$stat_geometry$orig)
+```
+and also on dichotomized images. Similarly as previous functions, if the desired image is stored in `RIA_image$data$modif`, then by setting the **use_orig** parameter to **FALSE** the function will run on the modified image. Using the **use_slot** parameter a specific image can also be set. The output is automatically named, but can be changed using the **save_name** parameter.
+The main reason to run geometry-based statistics on dichotomized images is to evaluate the geometrical features of the different sub-components. To calculate statistics on all sub-components of an image the **calc_sub** parameter has to be set to **TRUE**, which is the default:
+```{r}
+DICOM = geometry(RIA_data_in = DICOM, use_slot = "dichotomized$es_2")
+RIA:::list_to_df(DICOM$stat_geometry$es_2)
+```
+
+##Additional input parameters of geometry function
+Further inputs can be specified:
+
+- xy_dim: a numeric value of the length of a voxel in the x or y plane, if it is not provided, then `RIA` uses the values present in the `RIA_image$log$orig_xy_dim`.
+- z_dim: a numeric value of the length of a voxel in the z plane, if it is not provided, then `RIA` uses the values present in the `RIA_image$log$orig_z_dim`.
+- all_vol: overall volume of the image, if it is not provided, then `RIA` uses the values present in the `RIA_image$log$orig_vol_mm`.
+- all_surf: overall volume of the image, if it is not provided, then `RIA` uses the values present in the `RIA_image$log$orig_surf_mm`.
+- calc_dist: logical indicating whether to calculate the maximum distance between the voxels. Calculations may take significant time.
+
+
+###Batch calculation of geometry-based statistics
+The *geometry* function also support batch calculations. Therefore, if you wish to calculate statistics for all dichotomizations, then all you have to do is:
+```{r}
+DICOM = geometry(DICOM, use_type = "dichotomized")
+names(DICOM$stat_geometry)
+```
+
+#Conclsions
+`RIA` package for R is a fast, versatile and user-friendly way to calculate radiomic statistics using only a few lines of code. One can calculate several hundreds of different statistics on various versions of an image. RIA is regularly updated with new features that further help radiomic analyses.

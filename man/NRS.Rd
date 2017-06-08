@@ -15,4 +15,3 @@ RIA_image object
 rda containing an example \emph{RIA_image} object of a patients plaque
 which shows the napkin-ring sign.
 }
-

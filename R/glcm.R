@@ -24,7 +24,9 @@
 #'
 #' @param normalize logical, indicating whether to change glcm elements to relaive frequencies.
 #'
-#' @param use_type string, currently only "single" data processing is supported.
+#' @param use_type string, can be \emph{"single"} which runs the function on a single image,
+#' which is determined using \emph{"use_orig"} or \emph{"use_slot"}. \emph{"dichotomized"}
+#' takes all datasets in the \emph{RIA_image$dichotomized} slot and runs the analysis on them.
 #'
 #' @param use_orig logical, indicating to use image present in \emph{RIA_data$orig}.
 #' If FALSE, the modified image will be used stored in \emph{RIA_data$modif}.
@@ -52,6 +54,10 @@
 #' #Use use_slot parameter to set which image to use
 #' RIA_image <- glcm(RIA_image, use_orig = FALSE, use_slot = "dichotomized$ep_4",
 #' off_right = 2, off_down = -1, off_z = 0)
+#' 
+#' #Batch calculation of GLCM matrices on all dichotomized images
+#' RIA_image <- glcm(RIA_image, use_type = "dichotomized",
+#' off_right = 1, off_down = -1, off_z = 0)
 #' }
 
 glcm <- function(RIA_data_in, off_right = 1, off_down = 0, off_z = 0, symmetric = TRUE, normalize = TRUE, use_type = "single", use_orig = FALSE, use_slot = NULL, save_name = NULL, verbose_in = TRUE)
@@ -60,6 +66,11 @@ glcm <- function(RIA_data_in, off_right = 1, off_down = 0, off_z = 0, symmetric 
 
   if(any(class(data_in_orig) != "list")) data_in_orig <- list(data_in_orig)
   list_names <- names(data_in_orig)
+  if(!is.null(save_name) & (length(data_in_orig) != length(save_name))) {stop(paste0("PLEASE PROVIDE THE SAME NUMBER OF NAMES AS THERE ARE IMAGES!\n",
+                                                                                "NUMBER OF NAMES: ", length(save_name), "\n",
+                                                                                "NUMBER OF IMAGES: ", length(data_in), "\n"))
+  }
+  
 
   for (k in 1: length(data_in_orig))
   {
@@ -86,10 +97,20 @@ glcm <- function(RIA_data_in, off_right = 1, off_down = 0, off_z = 0, symmetric 
 
   adj_m <- base_m - diff_m ##matrix containing adjacency elements at given offset
 
-  data_v <- as.vector(data_in)
-  data_v <- data_v[!is.na(data_v)]
-  gray_levels <- length(unique(data_v))
-
+    #create gray level number, first by the name of the file, then the event log, then by the number of gray levels
+    num_ind <- unlist(gregexpr('[1-9]', list_names[k]))
+    num_txt <- substr(list_names[k], num_ind[1], num_ind[length(num_ind)])
+    gray_levels <- as.numeric(num_txt)
+    if(length(gray_levels) == 0) {
+        txt <- automatic_name(RIA_data_in, use_orig, use_slot)
+        num_ind <- unlist(gregexpr('[1-9]', txt))
+        num_txt <- substr(txt, num_ind[1], num_ind[length(num_ind)])
+        gray_levels <- as.numeric(num_txt)
+    } else {data_v <- as.vector(data_in); data_v <- data_v[!is.na(data_v)]; gray_levels <- length(unique(data_v))
+    }
+  
+  
+  
   glcm <- matrix(NA, nrow = gray_levels, ncol = gray_levels)
 
   for (i in 1:gray_levels)
@@ -122,12 +143,26 @@ glcm <- function(RIA_data_in, off_right = 1, off_down = 0, off_z = 0, symmetric 
       }
     }
   }
+  
+  if(use_type == "dichotomized") {
+      if(any(class(RIA_data_in) == "RIA_image"))
+      {
+          if(is.null(save_name[k])) {
+              txt <- list_names[k]
+              txt <- paste0(txt, "_", off_right, off_down, off_z)
+              
+              RIA_data_in$glcm[[txt]] <- glcm
+          }
+          if(!is.null(save_name[k])) {RIA_data_in$glcm[[save_name[k]]] <- glcm
+          }
+      }
+  }
 
 
 
   if(is.null(save_name)) {txt_name <- txt
   } else {txt_name <- save_name}
-  if(verbose_in) {message(" "); message(paste0("GLCM WAS SUCCESSFULLY ADDED TO '", txt_name, "' SLOT OF RIA_image$glcm")); message(" ") }
+  if(verbose_in) {message(paste0("GLCM WAS SUCCESSFULLY ADDED TO '", txt_name, "' SLOT OF RIA_image$glcm\n"))}
 
   }
 

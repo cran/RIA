@@ -51,8 +51,9 @@ RIA_image <- dichotomize(RIA_image, bins_in = 6, equal_prob = FALSE,
  use_orig = TRUE, write_orig = FALSE)
 
 #Dichotomize into 2,4,8,16,32 bins, each containing equal number of elements
-RIA_image <- dichotomize(RIA_image, bins_in = c(2,4,8,16,32), equal_prob = FALSE,
+RIA_image <- dichotomize(RIA_image, bins_in = 2^(1:5), equal_prob = FALSE,
  use_orig = TRUE, write_orig = FALSE)
+ 
+#D
 }
 }
-

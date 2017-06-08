@@ -41,8 +41,10 @@
 #'  use_orig = TRUE, write_orig = FALSE)
 #'
 #' #Dichotomize into 2,4,8,16,32 bins, each containing equal number of elements
-#' RIA_image <- dichotomize(RIA_image, bins_in = c(2,4,8,16,32), equal_prob = FALSE,
+#' RIA_image <- dichotomize(RIA_image, bins_in = 2^(1:5), equal_prob = FALSE,
 #'  use_orig = TRUE, write_orig = FALSE)
+#'  
+#' #D
 #' }
 
 
@@ -52,7 +54,6 @@ dichotomize <- function(RIA_data_in, bins_in=8, equal_prob = FALSE, use_orig = T
 
   if(equal_prob) {equal_txt <- "EQUAL PROBABILITY"
   } else {equal_txt <- "EQUALLY SIZED"}
-  if(verbose_in) {message(" "); message(paste0("DICHOTOMIZING DATA INTO ", bins_in, " NUMBER OF ", equal_txt, " BINS ")); message(" ") }
 
   data_NA <- as.vector(data_in)
   data_NA <- data_NA[!is.na(data_NA)]
@@ -90,8 +91,8 @@ dichotomize <- function(RIA_data_in, bins_in=8, equal_prob = FALSE, use_orig = T
       } else {data_in_mod[(data_in_mod >= lower & data_in_mod < upper)] <- shift + i}
     }
 
-    if (i == 1) log <- upper
-    if(i < bins_in[j] & i != 1) log <- c(log, upper)
+    if (i == 1) log <- as.numeric(upper)
+    if(i < bins_in[j] & i != 1) log <- c(log, as.numeric(upper))
 
   }
 
@@ -124,7 +125,7 @@ dichotomize <- function(RIA_data_in, bins_in=8, equal_prob = FALSE, use_orig = T
 
   }
 
-  if(verbose_in) {message(" "); message(paste0("SUCCESSFULLY DICHOTOMIZED DATA INTO ", bins_in, " NUMBER OF ", equal_txt, " BINS ")); message(" ") }
+  if(verbose_in) {message(paste0("SUCCESSFULLY DICHOTOMIZED DATA INTO ", bins_in, " NUMBER OF ", equal_txt, " BINS\n"))}
 
   if(any(class(RIA_data_in) == "RIA_image")) return(RIA_data_in)
     else return(data_out)

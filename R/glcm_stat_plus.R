@@ -174,7 +174,7 @@ gauss2f <- function(data, inverse = FALSE, type_in = "single", base = 2, diag = 
   ind_m <- matrix(NA, dim_m, dim_m)
   til  <- ceiling(dim_m/2)
   from <- floor(dim_m/2)+1
-  mu1  <- base:mean(1:til, na.rm = TRUE)
+  mu1  <- base::mean(1:til, na.rm = TRUE)
   mu2  <- base::mean(from:length(row(data)[,1]), na.rm = TRUE)
   sig <- stats::sd(row(data)[,1], na.rm = TRUE)
 

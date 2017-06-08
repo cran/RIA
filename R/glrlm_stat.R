@@ -5,7 +5,9 @@
 #'
 #' @param RIA_data_in \emph{RIA_image}, created by \code{\link[RIA]{load_dicom}}.
 #'
-#' @param use_type string, currently only "single" data processing is supported.
+#' @param use_type string, can be \emph{"single"} which runs the function on a single image,
+#' which is determined using \emph{"use_orig"} or \emph{"use_slot"}. \emph{"glrlm"}
+#' takes all datasets in the \emph{RIA_image$glrlm} slot and runs the analysis on them.
 #'
 #' @param use_orig logical, indicating to use image present in \emph{RIA_data$orig}.
 #' If FALSE, the modified image will be used stored in \emph{RIA_data$modif}. However, GLRLM matrices
@@ -31,6 +33,9 @@
 #' RIA_image <- glrlm(RIA_image, use_orig = FALSE, use_slot = "dichotomized$ep_8",
 #' right = TRUE, down = TRUE, forward = FALSE)
 #' RIA_image <- glrlm_stat(RIA_image, use_orig = FALSE, use_slot = "glrlm$ep_8_110")
+#' 
+#' #Batch calculation of GLRLM-based statistics on all calculated GLRLMs
+#' RIA_image <- glrlm_stat(RIA_image, use_type = "dichotomized")
 #' }
 
 
@@ -42,7 +47,11 @@ glrlm_stat <- function(RIA_data_in, use_type = "single", use_orig = FALSE, use_s
   if(any(class(data_in_orig) != "list")) data_in_orig <- list(data_in_orig)
 
   list_names <- names(data_in_orig)
-
+  if(!is.null(save_name) & (length(data_in_orig) != length(save_name))) {stop(paste0("PLEASE PROVIDE THE SAME NUMBER OF NAMES AS THERE ARE IMAGES!\n",
+                                                                                     "NUMBER OF NAMES: ", length(save_name), "\n",
+                                                                                     "NUMBER OF IMAGES: ", length(data_in), "\n"))
+  }
+  
   for (i in 1: length(data_in_orig))
   {
     data_in <- data_in_orig[[i]]
@@ -103,10 +112,22 @@ glrlm_stat <- function(RIA_data_in, use_type = "single", use_orig = FALSE, use_s
       }
     }
   }
+  
+  if(use_type == "glrlm") {
+      if(any(class(RIA_data_in) == "RIA_image"))
+      {
+          if(is.null(save_name[i])) {
+              txt <- list_names[i]
+              RIA_data_in$stat_glrlm[[txt]] <- metrics
+          }
+          if(!is.null(save_name[i])) {RIA_data_in$stat_glrlm[[save_name[i]]] <- metrics
+          }
+      }
+  }
 
   if(is.null(save_name)) {txt_name <- txt
   } else {txt_name <- save_name}
-  if(verbose_in) {message(" "); message(paste0("GLRLM STATISTICS WAS SUCCESSFULLY ADDED TO '", txt_name, "' SLOT OF RIA_image$stat_glrlm"))}
+  if(verbose_in) {message(paste0("GLRLM STATISTICS WAS SUCCESSFULLY ADDED TO '", txt_name, "' SLOT OF RIA_image$stat_glrlm\n"))}
 
   }
 

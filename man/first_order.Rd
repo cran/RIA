@@ -4,13 +4,15 @@
 \alias{first_order}
 \title{Calculates first-order statistical metrics for RIA_image}
 \usage{
-first_order(RIA_data_in, use_type = "single", use_orig = FALSE,
+first_order(RIA_data_in, use_type = "single", use_orig = TRUE,
   use_slot = NULL, save_name = NULL, verbose_in = TRUE)
 }
 \arguments{
 \item{RIA_data_in}{\emph{RIA_image}, created by \code{\link[RIA]{load_dicom}}.}
 
-\item{use_type}{string, currently only "single" data processing is supported.}
+\item{use_type}{string, can be \emph{"single"} which runs the function on a single image,
+which is determined using \emph{"use_orig"} or \emph{"use_slot"}. \emph{"dichotomized"}
+takes all datasets in the \emph{RIA_image$dichotomized} slot and runs the analysis on them.}
 
 \item{use_orig}{logical, indicating whether to use image present in \emph{RIA_data$orig}.
 If FALSE, the modified image will be used stored in \emph{RIA_data$modif}.}
@@ -51,6 +53,8 @@ RIA_image <- first_order(RIA_image, use_orig = FALSE, verbose_in = TRUE)
 
 #Use use_slot parameter to set which image to use
 RIA_image <- first_order(RIA_image, use_orig = FALSE, use_slot = "dichotomized$ep_4")
-}
-}
 
+#Batch calculation of first-order statistics on all dichotomized images
+RIA_image <- first_order(RIA_image, use_type = "dichotomized")
+}
+}

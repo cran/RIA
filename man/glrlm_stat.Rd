@@ -10,7 +10,9 @@ glrlm_stat(RIA_data_in, use_type = "single", use_orig = FALSE,
 \arguments{
 \item{RIA_data_in}{\emph{RIA_image}, created by \code{\link[RIA]{load_dicom}}.}
 
-\item{use_type}{string, currently only "single" data processing is supported.}
+\item{use_type}{string, can be \emph{"single"} which runs the function on a single image,
+which is determined using \emph{"use_orig"} or \emph{"use_slot"}. \emph{"glrlm"}
+takes all datasets in the \emph{RIA_image$glrlm} slot and runs the analysis on them.}
 
 \item{use_orig}{logical, indicating to use image present in \emph{RIA_data$orig}.
 If FALSE, the modified image will be used stored in \emph{RIA_data$modif}. However, GLRLM matrices
@@ -41,6 +43,8 @@ RIA_image <- dichotomize(RIA_image, bins_in = 8, equal_prob = TRUE)
 RIA_image <- glrlm(RIA_image, use_orig = FALSE, use_slot = "dichotomized$ep_8",
 right = TRUE, down = TRUE, forward = FALSE)
 RIA_image <- glrlm_stat(RIA_image, use_orig = FALSE, use_slot = "glrlm$ep_8_110")
-}
-}
 
+#Batch calculation of GLRLM-based statistics on all calculated GLRLMs
+RIA_image <- glrlm_stat(RIA_image, use_type = "dichotomized")
+}
+}

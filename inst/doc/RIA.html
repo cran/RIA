@@ -1,0 +1,731 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+
+<meta charset="utf-8" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="pandoc" />
+
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<meta name="author" content="Márton Kolossváry" />
+
+<meta name="date" content="2017-06-08" />
+
+<title>RIA package manual</title>
+
+
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css">
+div.sourceCode { overflow-x: auto; }
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+  margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; line-height: 100%; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
+td.sourceCode { padding-left: 5px; }
+code > span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code > span.dt { color: #902000; } /* DataType */
+code > span.dv { color: #40a070; } /* DecVal */
+code > span.bn { color: #40a070; } /* BaseN */
+code > span.fl { color: #40a070; } /* Float */
+code > span.ch { color: #4070a0; } /* Char */
+code > span.st { color: #4070a0; } /* String */
+code > span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code > span.ot { color: #007020; } /* Other */
+code > span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code > span.fu { color: #06287e; } /* Function */
+code > span.er { color: #ff0000; font-weight: bold; } /* Error */
+code > span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+code > span.cn { color: #880000; } /* Constant */
+code > span.sc { color: #4070a0; } /* SpecialChar */
+code > span.vs { color: #4070a0; } /* VerbatimString */
+code > span.ss { color: #bb6688; } /* SpecialString */
+code > span.im { } /* Import */
+code > span.va { color: #19177c; } /* Variable */
+code > span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code > span.op { color: #666666; } /* Operator */
+code > span.bu { } /* BuiltIn */
+code > span.ex { } /* Extension */
+code > span.pp { color: #bc7a00; } /* Preprocessor */
+code > span.at { color: #7d9029; } /* Attribute */
+code > span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code > span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code > span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+</style>
+
+
+
+<link href="data:text/css;charset=utf-8,body%20%7B%0Abackground%2Dcolor%3A%20%23fff%3B%0Amargin%3A%201em%20auto%3B%0Amax%2Dwidth%3A%20700px%3B%0Aoverflow%3A%20visible%3B%0Apadding%2Dleft%3A%202em%3B%0Apadding%2Dright%3A%202em%3B%0Afont%2Dfamily%3A%20%22Open%20Sans%22%2C%20%22Helvetica%20Neue%22%2C%20Helvetica%2C%20Arial%2C%20sans%2Dserif%3B%0Afont%2Dsize%3A%2014px%3B%0Aline%2Dheight%3A%201%2E35%3B%0A%7D%0A%23header%20%7B%0Atext%2Dalign%3A%20center%3B%0A%7D%0A%23TOC%20%7B%0Aclear%3A%20both%3B%0Amargin%3A%200%200%2010px%2010px%3B%0Apadding%3A%204px%3B%0Awidth%3A%20400px%3B%0Aborder%3A%201px%20solid%20%23CCCCCC%3B%0Aborder%2Dradius%3A%205px%3B%0Abackground%2Dcolor%3A%20%23f6f6f6%3B%0Afont%2Dsize%3A%2013px%3B%0Aline%2Dheight%3A%201%2E3%3B%0A%7D%0A%23TOC%20%2Etoctitle%20%7B%0Afont%2Dweight%3A%20bold%3B%0Afont%2Dsize%3A%2015px%3B%0Amargin%2Dleft%3A%205px%3B%0A%7D%0A%23TOC%20ul%20%7B%0Apadding%2Dleft%3A%2040px%3B%0Amargin%2Dleft%3A%20%2D1%2E5em%3B%0Amargin%2Dtop%3A%205px%3B%0Amargin%2Dbottom%3A%205px%3B%0A%7D%0A%23TOC%20ul%20ul%20%7B%0Amargin%2Dleft%3A%20%2D2em%3B%0A%7D%0A%23TOC%20li%20%7B%0Aline%2Dheight%3A%2016px%3B%0A%7D%0Atable%20%7B%0Amargin%3A%201em%20auto%3B%0Aborder%2Dwidth%3A%201px%3B%0Aborder%2Dcolor%3A%20%23DDDDDD%3B%0Aborder%2Dstyle%3A%20outset%3B%0Aborder%2Dcollapse%3A%20collapse%3B%0A%7D%0Atable%20th%20%7B%0Aborder%2Dwidth%3A%202px%3B%0Apadding%3A%205px%3B%0Aborder%2Dstyle%3A%20inset%3B%0A%7D%0Atable%20td%20%7B%0Aborder%2Dwidth%3A%201px%3B%0Aborder%2Dstyle%3A%20inset%3B%0Aline%2Dheight%3A%2018px%3B%0Apadding%3A%205px%205px%3B%0A%7D%0Atable%2C%20table%20th%2C%20table%20td%20%7B%0Aborder%2Dleft%2Dstyle%3A%20none%3B%0Aborder%2Dright%2Dstyle%3A%20none%3B%0A%7D%0Atable%20thead%2C%20table%20tr%2Eeven%20%7B%0Abackground%2Dcolor%3A%20%23f7f7f7%3B%0A%7D%0Ap%20%7B%0Amargin%3A%200%2E5em%200%3B%0A%7D%0Ablockquote%20%7B%0Abackground%2Dcolor%3A%20%23f6f6f6%3B%0Apadding%3A%200%2E25em%200%2E75em%3B%0A%7D%0Ahr%20%7B%0Aborder%2Dstyle%3A%20solid%3B%0Aborder%3A%20none%3B%0Aborder%2Dtop%3A%201px%20solid%20%23777%3B%0Amargin%3A%2028px%200%3B%0A%7D%0Adl%20%7B%0Amargin%2Dleft%3A%200%3B%0A%7D%0Adl%20dd%20%7B%0Amargin%2Dbottom%3A%2013px%3B%0Amargin%2Dleft%3A%2013px%3B%0A%7D%0Adl%20dt%20%7B%0Afont%2Dweight%3A%20bold%3B%0A%7D%0Aul%20%7B%0Amargin%2Dtop%3A%200%3B%0A%7D%0Aul%20li%20%7B%0Alist%2Dstyle%3A%20circle%20outside%3B%0A%7D%0Aul%20ul%20%7B%0Amargin%2Dbottom%3A%200%3B%0A%7D%0Apre%2C%20code%20%7B%0Abackground%2Dcolor%3A%20%23f7f7f7%3B%0Aborder%2Dradius%3A%203px%3B%0Acolor%3A%20%23333%3B%0Awhite%2Dspace%3A%20pre%2Dwrap%3B%20%0A%7D%0Apre%20%7B%0Aborder%2Dradius%3A%203px%3B%0Amargin%3A%205px%200px%2010px%200px%3B%0Apadding%3A%2010px%3B%0A%7D%0Apre%3Anot%28%5Bclass%5D%29%20%7B%0Abackground%2Dcolor%3A%20%23f7f7f7%3B%0A%7D%0Acode%20%7B%0Afont%2Dfamily%3A%20Consolas%2C%20Monaco%2C%20%27Courier%20New%27%2C%20monospace%3B%0Afont%2Dsize%3A%2085%25%3B%0A%7D%0Ap%20%3E%20code%2C%20li%20%3E%20code%20%7B%0Apadding%3A%202px%200px%3B%0A%7D%0Adiv%2Efigure%20%7B%0Atext%2Dalign%3A%20center%3B%0A%7D%0Aimg%20%7B%0Abackground%2Dcolor%3A%20%23FFFFFF%3B%0Apadding%3A%202px%3B%0Aborder%3A%201px%20solid%20%23DDDDDD%3B%0Aborder%2Dradius%3A%203px%3B%0Aborder%3A%201px%20solid%20%23CCCCCC%3B%0Amargin%3A%200%205px%3B%0A%7D%0Ah1%20%7B%0Amargin%2Dtop%3A%200%3B%0Afont%2Dsize%3A%2035px%3B%0Aline%2Dheight%3A%2040px%3B%0A%7D%0Ah2%20%7B%0Aborder%2Dbottom%3A%204px%20solid%20%23f7f7f7%3B%0Apadding%2Dtop%3A%2010px%3B%0Apadding%2Dbottom%3A%202px%3B%0Afont%2Dsize%3A%20145%25%3B%0A%7D%0Ah3%20%7B%0Aborder%2Dbottom%3A%202px%20solid%20%23f7f7f7%3B%0Apadding%2Dtop%3A%2010px%3B%0Afont%2Dsize%3A%20120%25%3B%0A%7D%0Ah4%20%7B%0Aborder%2Dbottom%3A%201px%20solid%20%23f7f7f7%3B%0Amargin%2Dleft%3A%208px%3B%0Afont%2Dsize%3A%20105%25%3B%0A%7D%0Ah5%2C%20h6%20%7B%0Aborder%2Dbottom%3A%201px%20solid%20%23ccc%3B%0Afont%2Dsize%3A%20105%25%3B%0A%7D%0Aa%20%7B%0Acolor%3A%20%230033dd%3B%0Atext%2Ddecoration%3A%20none%3B%0A%7D%0Aa%3Ahover%20%7B%0Acolor%3A%20%236666ff%3B%20%7D%0Aa%3Avisited%20%7B%0Acolor%3A%20%23800080%3B%20%7D%0Aa%3Avisited%3Ahover%20%7B%0Acolor%3A%20%23BB00BB%3B%20%7D%0Aa%5Bhref%5E%3D%22http%3A%22%5D%20%7B%0Atext%2Ddecoration%3A%20underline%3B%20%7D%0Aa%5Bhref%5E%3D%22https%3A%22%5D%20%7B%0Atext%2Ddecoration%3A%20underline%3B%20%7D%0A%0Acode%20%3E%20span%2Ekw%20%7B%20color%3A%20%23555%3B%20font%2Dweight%3A%20bold%3B%20%7D%20%0Acode%20%3E%20span%2Edt%20%7B%20color%3A%20%23902000%3B%20%7D%20%0Acode%20%3E%20span%2Edv%20%7B%20color%3A%20%2340a070%3B%20%7D%20%0Acode%20%3E%20span%2Ebn%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Efl%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Ech%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Est%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Eco%20%7B%20color%3A%20%23888888%3B%20font%2Dstyle%3A%20italic%3B%20%7D%20%0Acode%20%3E%20span%2Eot%20%7B%20color%3A%20%23007020%3B%20%7D%20%0Acode%20%3E%20span%2Eal%20%7B%20color%3A%20%23ff0000%3B%20font%2Dweight%3A%20bold%3B%20%7D%20%0Acode%20%3E%20span%2Efu%20%7B%20color%3A%20%23900%3B%20font%2Dweight%3A%20bold%3B%20%7D%20%20code%20%3E%20span%2Eer%20%7B%20color%3A%20%23a61717%3B%20background%2Dcolor%3A%20%23e3d2d2%3B%20%7D%20%0A" rel="stylesheet" type="text/css" />
+
+</head>
+
+<body>
+
+
+
+
+<h1 class="title toc-ignore">RIA package manual</h1>
+<h4 class="author"><em>Márton Kolossváry</em></h4>
+<h4 class="date"><em>2017-06-08</em></h4>
+
+
+
+<p>Radiomics Image Analysis (RIA) package was developed to facilitate radiomic analysis of grayscale images. RIA can calculate hundreds of different statistics on both 2D and 3D images. Almost all calculations are vectorized and therefore are super-efficient. The package is developed by Márton Kolossváry a medical doctor not an engineer, therefore all functionalities of the software package are developed in a way that can be learnt non-professionals. RIA is constantly updated with new functionalities and wrap-around functions to make the calculation of radiomic metrics even simpler.</p>
+<p>First, lest simply load RIA</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(RIA)
+<span class="co">#&gt; </span>
+<span class="co">#&gt; ##############################</span>
+<span class="co">#&gt; ##         WELCOME TO       ##</span>
+<span class="co">#&gt; ##         __________       ##</span>
+<span class="co">#&gt; ##        / _  / / _ |      ##</span>
+<span class="co">#&gt; ##       / , _/ / __ |      ##</span>
+<span class="co">#&gt; ##      /_/|_/_/_/ |_|      ##</span>
+<span class="co">#&gt; ## RADIOMICS IMAGE ANALYSIS ##</span>
+<span class="co">#&gt; ##    Márton Kolossváry     ##</span>
+<span class="co">#&gt; ##############################</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; Please cite: KOLOSSVÁRY, Márton, et al.</span>
+<span class="co">#&gt; Cardiac Computed Tomography Radiomics: A Comprehensive Review on Radiomic Techniques.</span>
+<span class="co">#&gt; Journal of Thoracic Imaging (2017).</span>
+<span class="co">#&gt; DOI: 10.1097/RTI.0000000000000268</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; Please check for updates regularly for bug fixes and new functionalities!</span>
+<span class="co">#&gt; </span></code></pre></div>
+<div id="converting-dicom-images-to-ria_image" class="section level1">
+<h1>Converting DICOM images to RIA_image</h1>
+<p>DICOM images can be converted to RIA_image class using the <em>load_dicom</em> function. All you have to do is give the location of the <em>.dcm</em> or <em>.dicom</em> files as a string.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">DICOM =<span class="st"> </span><span class="kw">load_dicom</span>(<span class="dt">filename =</span> <span class="st">&quot;C:</span><span class="ch">\\</span><span class="st">DICOM</span><span class="ch">\\</span><span class="st">&quot;</span>)</code></pre></div>
+<p><em>load_dicom</em> does several things:</p>
+<ol style="list-style-type: decimal">
+<li><p>Converts DICOM files to RIA_image class using the <em>readDICOM</em> function of the <em>oro.dicom</em> package</p></li>
+<li><p>The 2D or 3D image is croped to the smallest bounding box still containing the whole image. It is useful to minimize the size of the image to save memory. The <strong>zero_value</strong> supplied to the <em>load_dicom</em> function is used to identify voxels not containing any data. If it is not supplied, then the smallest value present in the dataset is considered as indicating voxels without any data. If for some reason it is important that the RIA_image be the same size (same x,y,z dimensions) as the original supplied image, then this functionality can be turn off by:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">DICOM =<span class="st"> </span><span class="kw">load_dicom</span>(<span class="dt">filename =</span> <span class="st">&quot;C:</span><span class="ch">\\</span><span class="st">DICOM</span><span class="ch">\\</span><span class="st">&quot;</span>, <span class="dt">crop_in =</span> <span class="ot">FALSE</span>)</code></pre></div></li>
+<li><p>Then the smallest values which indicate no data, are changed to <em>NA</em> for further calculations. If wished to be turned of, then use:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">DICOM =<span class="st"> </span><span class="kw">load_dicom</span>(<span class="dt">filename =</span> <span class="st">&quot;C:</span><span class="ch">\\</span><span class="st">DICOM</span><span class="ch">\\</span><span class="st">&quot;</span>, <span class="dt">replace_in =</span> <span class="ot">FALSE</span>)</code></pre></div></li>
+<li><p>Since some DICOM images do not store negative values, rather store all values as non-negative integers, shifting of the values is needed. The desired smallest value is set by the <strong>min_to</strong> input. If not specified then by default it is set to <em>-1024</em>. Please check for all data whether shifting is needed! If shifting of the values is not needed then use:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">DICOM =<span class="st"> </span><span class="kw">load_dicom</span>(<span class="dt">filename =</span> <span class="st">&quot;C:</span><span class="ch">\\</span><span class="st">DICOM</span><span class="ch">\\</span><span class="st">&quot;</span>, <span class="dt">center_in =</span> <span class="ot">FALSE</span>)</code></pre></div></li>
+<li><p>Finally, <em>load_dicom</em> adds basic information regarding the original image and ran processes into the <em>header</em> and <em>log</em> slot of <em>RIA_image</em></p></li>
+</ol>
+<p>All above mentioned settings can be combined as wished to achieve proper conversion of the DICOM image. Furthermore, all parameters of the <em>readDICOM</em> function of the <em>oro.dicom</em> package can also be set in the <em>load_dicom</em> function.</p>
+<p>As a result the <em>DICOM</em> object will have three slots:</p>
+<ol style="list-style-type: decimal">
+<li><p><code>DICOM$data</code> which contains the original image as a 2D or 3D numerical array in <code>DICOM$data$orig</code>, and a modified image in <code>DICOM$data$modif</code> that has been created using one of the functions. Only one original and one modified image are stored in the <code>DICOM$data</code> slot. However, several modified images can be saved to new slots as we will see later.</p></li>
+<li><p><code>DICOM$header</code> which contains basic information regarding the loaded image. These entries are populated from the DICOM header of the image. Elements can be added or removed from the predefined set of DICOM_codes:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">DICOM_codes
+<span class="co">#&gt;                    Name Group Element</span>
+<span class="co">#&gt; 1             StudyDate     8      22</span>
+<span class="co">#&gt; 2             StudyTime     8      30</span>
+<span class="co">#&gt; 3          PatientsName    10      10</span>
+<span class="co">#&gt; 4     PatientsBirthDate    10      30</span>
+<span class="co">#&gt; 5           PatientsSex    10      40</span>
+<span class="co">#&gt; 6             PatientID    10      20</span>
+<span class="co">#&gt; 7          PatientsSize    10    1020</span>
+<span class="co">#&gt; 8        PatientsWeight    10    1030</span>
+<span class="co">#&gt; 9                   kVp    18      60</span>
+<span class="co">#&gt; 10                  mAs    18    1152</span>
+<span class="co">#&gt; 11       SliceThickness    18      50</span>
+<span class="co">#&gt; 12 SpacingBetweenSlices    18      88</span>
+<span class="co">#&gt; 13                 Rows    28      10</span>
+<span class="co">#&gt; 14              Columns    28      11</span>
+<span class="co">#&gt; 15         PixelSpacing    28      30</span></code></pre></div>
+<p>Elements can be added by specifying the desired DICOM codes. For example the Manufacturer can be add by:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">add &lt;-<span class="st"> </span><span class="kw">as.data.frame</span>(<span class="kw">array</span>(<span class="kw">c</span>(<span class="st">&quot;Manufacturer&quot;</span>, <span class="st">&quot;0008&quot;</span>, <span class="st">&quot;0070&quot;</span>), <span class="dt">dim =</span> <span class="kw">c</span>(<span class="dv">1</span>,<span class="dv">3</span>)))
+<span class="kw">colnames</span>(add) &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="st">&quot;Name&quot;</span>, <span class="st">&quot;Group&quot;</span>, <span class="st">&quot;Element&quot;</span>)
+DICOM =<span class="st"> </span><span class="kw">load_dicom</span>(<span class="dt">filename =</span> <span class="st">&quot;C:</span><span class="ch">\\</span><span class="st">DICOM</span><span class="ch">\\</span><span class="st">&quot;</span>, <span class="dt">header_add =</span> add)</code></pre></div>
+<p>Or elements can be removed. For example if you wish to anonymize your data:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">exclude &lt;-<span class="st"> </span><span class="kw">as.data.frame</span>(DICOM_codes[<span class="dv">3</span>:<span class="dv">6</span>,])
+DICOM =<span class="st"> </span><span class="kw">load_dicom</span>(<span class="dt">filename =</span> <span class="st">&quot;C:</span><span class="ch">\\</span><span class="st">DICOM</span><span class="ch">\\</span><span class="st">&quot;</span>, <span class="dt">header_exclude =</span> exclude)</code></pre></div></li>
+<li><code>DICOM$log</code> which contains information regarding the original image and ran processes on the <em>RIA_image</em>. The log is constantly updated by the functions, and some functions use it for inputs. <em>load_dicom</em> adds the following to the log:
+<ul>
+<li><code>DICOM$log$events</code> is a vector containing the ran processes.</li>
+<li><code>DICOM$log$orig_dim</code> is a vector containing the original dimensions of the DICOM image.</li>
+<li><code>DICOM$log$directory</code> is a string containing the location of the DICOM images.</li>
+<li><code>DICOM$log$logic_x</code> is a vector with a length of the original x dimension. Ones indicate slices which contained data and zeros which did not in the x dimension. Same is true for <code>DICOM$log$logic_y</code> and <code>DICOM$log$logic_z</code>.</li>
+<li><code>DICOM$log$zero_value</code> is a number indicating the value that was considered to indicate no data</li>
+<li><code>DICOM$log$changed_to</code> is the value to which voxel considered not to have any data were transferred to.</li>
+<li><code>DICOM$log$shift</code> the value that was added to all voxel values to achieve proper values.</li>
+<li><code>DICOM$log$orig_vol_mm</code> the volume of the original image. The volume is calculated by calculating how many voxels contain data and multiplying it by x,y and z length of the voxels.</li>
+<li><code>DICOM$log$orig_surf_mm</code> the surface of the original image. The surface is calculated by assessing which sides of the voxels do not have any neighbors and then summing all of these surfaces which are calculated from the lengths of the sides of the voxels.</li>
+<li><code>DICOM$log$surface_volume_r</code> the value of the surface to volume ratio of the original image.</li>
+<li><code>DICOM$log$orig_xy_dim</code> the length of each voxel in the x and the y planes. This is also called the in-plane resolution</li>
+<li><code>DICOM$log$orig_z_dim</code> the length of each voxel in the z plane. This is also called the cross-plane resolution.</li>
+</ul></li>
+</ol>
+<p>As we will see, functions can add new elements to the log and also add new slots to the <em>RIA_image</em>. If the loading was successful, we will be notified by RIA in the console. All messages may be suppressed by setting the <strong>verbose_in</strong> parameter to <em>FALSE</em>.</p>
+<p>With the package two preloaded datasets are given:</p>
+<ul>
+<li>NRS: the DICOM images of a segmented plaque showing the napkin-ring sign</li>
+<li>Non_NRS: the DICOM images of a segmented plaque without the napkin-ring sign</li>
+</ul>
+<p>We will be using the NRS dataset for all following examples. Load the data using:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">DICOM &lt;-<span class="st"> </span>NRS</code></pre></div>
+</div>
+<div id="dichotomization-of-voxel-values" class="section level1">
+<h1>Dichotomization of voxel values</h1>
+<p>Dichotomization of voxel values is crucial for radiomic analysis. Since many metrics rely on the spatial relationship of different voxel values, we need to decrease the number of possible values. This is needed since we do not want to consider for example a voxel value of 456 any different from 457, since the difference is probably attributable to noise and does not hold any information regarding spatial heterogeneity. Dichotomization is done using the <em>dichotomize</em> function. It receives a <em>RIA_image</em> and outputs a RIA_image with a new slot <code>DICOM$dichotomized</code> containing the images with dichotomized values.</p>
+<p>Dichotomization is effected by two variables:</p>
+<ul>
+<li>the number of bins to which the values will be transformed to</li>
+<li>the length of each bin</li>
+</ul>
+<div id="specifing-the-number-of-bins" class="section level2">
+<h2>Specifing the number of bins</h2>
+<p>The number of bins can be easily specified using the <strong>bins_in</strong> parameter.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">DICOM =<span class="st"> </span><span class="kw">dichotomize</span>(<span class="dt">RIA_data_in =</span> DICOM, <span class="dt">bins_in =</span> <span class="dv">2</span>)
+<span class="co">#&gt; SUCCESSFULLY DICHOTOMIZED DATA INTO 2 NUMBER OF EQUALLY SIZED BINS</span></code></pre></div>
+</div>
+<div id="specifing-the-length-of-each-bin" class="section level2">
+<h2>Specifing the length of each bin</h2>
+<p>There are two main types of dichotomizations. We either have equally sized or equally probable bins. Equally sized bins mean that the range between the minimum and the maximum value is divided into a predefined number of bins of which all have the same lengths. For example is our smallest value is 0 and the largest is 100 and we wish to dichotomize into 4 equally sized bins then the cut points will be at 25, 50 and 75, result in 4 bins each with a length of 25 units. However if the dichotomization is done using equally probable bins then the length of each bin might be different, but the number of elements in it are the same. This might result is cut points such as: 10, 35 and 55 for example in case of a rightly skewed dataset. The type of dichotomization is defined by the <strong>equal_prob</strong> parameter. The default is <em>FALSE</em>, therefore by default images are dichtomized using equal sized bins. Setting it to <em>TRUE</em> will result in equally probable bins:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">DICOM =<span class="st"> </span><span class="kw">dichotomize</span>(<span class="dt">RIA_data_in =</span> DICOM, <span class="dt">bins_in =</span> <span class="dv">2</span>, <span class="dt">equal_prob =</span> <span class="ot">TRUE</span>)
+<span class="co">#&gt; SUCCESSFULLY DICHOTOMIZED DATA INTO 2 NUMBER OF EQUAL PROBABILITY BINS</span></code></pre></div>
+<p>The dichotomize function updates the log of the <em>RIA_image</em> by adding the dichotomization to the events:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">DICOM$log$events
+<span class="co">#&gt; [1] &quot;Created&quot;                    &quot;Cropped&quot;                   </span>
+<span class="co">#&gt; [3] &quot;Changed_to_NA&quot;              &quot;Shifted_by_-1024&quot;          </span>
+<span class="co">#&gt; [5] &quot;Dichotomized_equal_sized_2&quot; &quot;Dichotomized_equal_prob_2&quot;</span></code></pre></div>
+<p>It also adds the cut points that were used for the dichotomization:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">DICOM$log$cuts_es_2
+<span class="co">#&gt; [1] 195</span>
+DICOM$log$cuts_ep_2
+<span class="co">#&gt; [1] 65</span></code></pre></div>
+<p>The names of the created images and corresponding elements in the <em>log</em> can be changed as we will see later. But for convenience <code>RIA</code> automatically names the new images. If not crucial for some reason, I would suggest to stick with the automatically predefined names.</p>
+</div>
+<div id="additional-input-parameters-of-dichotomize-function" class="section level2">
+<h2>Additional input parameters of dichotomize function</h2>
+<p>-<em>use_orig</em> whether to use the original image (which might be croped etc.) stored in <code>RIA_image$data$orig</code> or to use the modified image stored in <code>RIA_image$data$modif</code>. By default it is set to <em>TRUE</em>. Only in very special cases might one want to dichotomize an image that has already been dichotomized or modified by an other function.</p>
+<p>-<em>write_orig</em> whether to overwrite the original image stored in <code>RIA_image$data$orig</code>. Usually it is not advised to overwrite the master image since then only modified images can be further processed. Therefore, by default it is set to <em>FALSE</em></p>
+<p>-<em>verbose_in</em> whether write information regarding the running processes in the console.</p>
+</div>
+<div id="batch-dichotomization" class="section level2">
+<h2>Batch dichotomization</h2>
+<p>Since the number of bins and the type of dichotomization can significantly effect our later results, usually several dichotomizations are performed on a image to receive many different images. Using <code>RIA</code> it is very easy perform several different dichotomizations with just one line of code. For example if you wish to dichotomize your image to 4, 8, 16 and 32 equally sized bins, all you have to do is:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">DICOM =<span class="st"> </span><span class="kw">dichotomize</span>(<span class="dt">RIA_data_in =</span> DICOM, <span class="dt">bins_in =</span> <span class="kw">c</span>(<span class="dv">4</span>,<span class="dv">8</span>,<span class="dv">16</span>,<span class="dv">32</span>))
+<span class="co">#&gt; SUCCESSFULLY DICHOTOMIZED DATA INTO 4 NUMBER OF EQUALLY SIZED BINS</span>
+<span class="co">#&gt; SUCCESSFULLY DICHOTOMIZED DATA INTO 8 NUMBER OF EQUALLY SIZED BINS</span>
+<span class="co">#&gt; SUCCESSFULLY DICHOTOMIZED DATA INTO 16 NUMBER OF EQUALLY SIZED BINS</span>
+<span class="co">#&gt; SUCCESSFULLY DICHOTOMIZED DATA INTO 32 NUMBER OF EQUALLY SIZED BINS</span></code></pre></div>
+<p>or more easily if you want 4, 8, 16 and 32 equally probable bins:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">DICOM =<span class="st"> </span><span class="kw">dichotomize</span>(<span class="dt">RIA_data_in =</span> DICOM, <span class="dt">bins_in =</span> <span class="dv">2</span>^(<span class="dv">2</span>:<span class="dv">5</span>), <span class="dt">equal_prob =</span> <span class="ot">TRUE</span>)
+<span class="co">#&gt; SUCCESSFULLY DICHOTOMIZED DATA INTO 4 NUMBER OF EQUAL PROBABILITY BINS</span>
+<span class="co">#&gt; SUCCESSFULLY DICHOTOMIZED DATA INTO 8 NUMBER OF EQUAL PROBABILITY BINS</span>
+<span class="co">#&gt; SUCCESSFULLY DICHOTOMIZED DATA INTO 16 NUMBER OF EQUAL PROBABILITY BINS</span>
+<span class="co">#&gt; SUCCESSFULLY DICHOTOMIZED DATA INTO 32 NUMBER OF EQUAL PROBABILITY BINS</span></code></pre></div>
+<p>These resulted in our image dichotomized in 2,4,8,16,32 equally probable and equally sized bins, which are stored in the <code>$dichotomized</code> slot of the <em>RIA_image</em>:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">DICOM$log$events
+<span class="co">#&gt;  [1] &quot;Created&quot;                     &quot;Cropped&quot;                    </span>
+<span class="co">#&gt;  [3] &quot;Changed_to_NA&quot;               &quot;Shifted_by_-1024&quot;           </span>
+<span class="co">#&gt;  [5] &quot;Dichotomized_equal_sized_2&quot;  &quot;Dichotomized_equal_prob_2&quot;  </span>
+<span class="co">#&gt;  [7] &quot;Dichotomized_equal_sized_4&quot;  &quot;Dichotomized_equal_sized_8&quot; </span>
+<span class="co">#&gt;  [9] &quot;Dichotomized_equal_sized_16&quot; &quot;Dichotomized_equal_sized_32&quot;</span>
+<span class="co">#&gt; [11] &quot;Dichotomized_equal_prob_4&quot;   &quot;Dichotomized_equal_prob_8&quot;  </span>
+<span class="co">#&gt; [13] &quot;Dichotomized_equal_prob_16&quot;  &quot;Dichotomized_equal_prob_32&quot;</span>
+<span class="kw">names</span>(DICOM$dichotomized)
+<span class="co">#&gt;  [1] &quot;es_2&quot;  &quot;ep_2&quot;  &quot;es_4&quot;  &quot;es_8&quot;  &quot;es_16&quot; &quot;es_32&quot; &quot;ep_4&quot;  &quot;ep_8&quot; </span>
+<span class="co">#&gt;  [9] &quot;ep_16&quot; &quot;ep_32&quot;</span></code></pre></div>
+</div>
+</div>
+<div id="first-order-statistics" class="section level1">
+<h1>First-order statistics</h1>
+<p>First-order statistics are derived from the distribution of values and therefore discard all spatial information. Many of these metrics are commonly known (mean, median), however several metrics describing the heterogeneity of the values might be less known (energy, entropy). <code>RIA</code> can calculate 35 different first-order statistics (some containing not only one value) using the <em>first_order</em> function. As with all statistical measures, it is saved in a separate slot of the <em>RIA_image</em>, and the name of the slot starts with <em>stat_</em> and since first-order, end with <em>fo</em>, resulting in the slot name of <em>stat_fo</em>. By default, <em>first_order</em> calculates statistics on the image present in <code>DICOM$data$orig</code>.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">DICOM =<span class="st"> </span><span class="kw">first_order</span>(<span class="dt">RIA_data_in =</span> DICOM)
+<span class="co">#&gt; FIRST-ORDER STATISTICS WAS SUCCESSFULLY ADDED TO 'orig' SLOT OF RIA_image$stat_fo</span>
+RIA:::<span class="kw">list_to_df</span>(DICOM$stat_fo$orig)
+<span class="co">#&gt;                           Values</span>
+<span class="co">#&gt; Mean                85.755226925</span>
+<span class="co">#&gt; Median              65.000000000</span>
+<span class="co">#&gt; Mode                41.000000000</span>
+<span class="co">#&gt; Geo_mean           299.098051887</span>
+<span class="co">#&gt; Geo_mean2          101.341240936</span>
+<span class="co">#&gt; Geo_mean3          156.637495051</span>
+<span class="co">#&gt; Har_mean            63.405742203</span>
+<span class="co">#&gt; Trim_mean_5         82.659151906</span>
+<span class="co">#&gt; Trim_mean_10        80.674220963</span>
+<span class="co">#&gt; Trim_mean_20        77.515615041</span>
+<span class="co">#&gt; IQ_mean             70.741080530</span>
+<span class="co">#&gt; Tri_mean            42.500000000</span>
+<span class="co">#&gt; Mn_AD_mn            71.352286465</span>
+<span class="co">#&gt; Mn_AD_md            69.616012239</span>
+<span class="co">#&gt; Md_AD_mn            63.755226925</span>
+<span class="co">#&gt; Md_AD_md            58.000000000</span>
+<span class="co">#&gt; MAD                 85.990800000</span>
+<span class="co">#&gt; Max_AD_mn          395.244773075</span>
+<span class="co">#&gt; Max_AD_md          416.000000000</span>
+<span class="co">#&gt; RMS                122.623352125</span>
+<span class="co">#&gt; Min                -91.000000000</span>
+<span class="co">#&gt; Max                481.000000000</span>
+<span class="co">#&gt; Quartiles.25%       20.000000000</span>
+<span class="co">#&gt; Quartiles.75%      143.000000000</span>
+<span class="co">#&gt; IQR                123.000000000</span>
+<span class="co">#&gt; Low_notch         -164.500000000</span>
+<span class="co">#&gt; High_notch         204.500000000</span>
+<span class="co">#&gt; Range              572.000000000</span>
+<span class="co">#&gt; Deciles.10%         -9.000000000</span>
+<span class="co">#&gt; Deciles.20%          9.000000000</span>
+<span class="co">#&gt; Deciles.30%         28.000000000</span>
+<span class="co">#&gt; Deciles.40%         44.000000000</span>
+<span class="co">#&gt; Deciles.50%         65.000000000</span>
+<span class="co">#&gt; Deciles.60%         92.000000000</span>
+<span class="co">#&gt; Deciles.70%        125.000000000</span>
+<span class="co">#&gt; Deciles.80%        160.000000000</span>
+<span class="co">#&gt; Deciles.90%        208.000000000</span>
+<span class="co">#&gt; Variance          7686.447198431</span>
+<span class="co">#&gt; SD                  87.672385609</span>
+<span class="co">#&gt; Skew                 0.884511444</span>
+<span class="co">#&gt; Kurtosis             0.602173278</span>
+<span class="co">#&gt; Energy        29486550.000000000</span>
+<span class="co">#&gt; Uniformity           0.004236877</span>
+<span class="co">#&gt; Entropy              0.005577447</span></code></pre></div>
+<p>If you wish to calculate statistics on a modified image, then by setting the <strong>use_orig</strong> to <em>FALSE</em>, the image present in the <code>DICOM$data$modif</code> will be used. This is usually the last image that was created using some kind of image manipulation.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">DICOM =<span class="st"> </span><span class="kw">first_order</span>(<span class="dt">RIA_data_in =</span> DICOM, <span class="dt">use_orig =</span> <span class="ot">FALSE</span>)
+<span class="co">#&gt; FIRST-ORDER STATISTICS WAS SUCCESSFULLY ADDED TO 'ep_32' SLOT OF RIA_image$stat_fo</span>
+RIA:::<span class="kw">list_to_df</span>(DICOM$stat_fo$ep_32)
+<span class="co">#&gt;                         Values</span>
+<span class="co">#&gt; Mean              16.551759306</span>
+<span class="co">#&gt; Median            17.000000000</span>
+<span class="co">#&gt; Mode              11.000000000</span>
+<span class="co">#&gt; Geo_mean          39.880592472</span>
+<span class="co">#&gt; Geo_mean2         39.880592472</span>
+<span class="co">#&gt; Geo_mean3         12.869550871</span>
+<span class="co">#&gt; Har_mean           7.991311367</span>
+<span class="co">#&gt; Trim_mean_5       16.554482018</span>
+<span class="co">#&gt; Trim_mean_10      16.555240793</span>
+<span class="co">#&gt; Trim_mean_20      16.557680051</span>
+<span class="co">#&gt; IQ_mean           16.569826707</span>
+<span class="co">#&gt; Tri_mean          13.000000000</span>
+<span class="co">#&gt; Mn_AD_mn           7.990434066</span>
+<span class="co">#&gt; Mn_AD_md           7.989291178</span>
+<span class="co">#&gt; Md_AD_mn           8.448240694</span>
+<span class="co">#&gt; Md_AD_md           8.000000000</span>
+<span class="co">#&gt; MAD               11.860800000</span>
+<span class="co">#&gt; Max_AD_mn         15.551759306</span>
+<span class="co">#&gt; Max_AD_md         16.000000000</span>
+<span class="co">#&gt; RMS               18.947147295</span>
+<span class="co">#&gt; Min                1.000000000</span>
+<span class="co">#&gt; Max               32.000000000</span>
+<span class="co">#&gt; Quartiles.25%      9.000000000</span>
+<span class="co">#&gt; Quartiles.75%     25.000000000</span>
+<span class="co">#&gt; IQR               16.000000000</span>
+<span class="co">#&gt; Low_notch        -15.000000000</span>
+<span class="co">#&gt; High_notch        33.000000000</span>
+<span class="co">#&gt; Range             31.000000000</span>
+<span class="co">#&gt; Deciles.10%        4.000000000</span>
+<span class="co">#&gt; Deciles.20%        7.000000000</span>
+<span class="co">#&gt; Deciles.30%       10.000000000</span>
+<span class="co">#&gt; Deciles.40%       13.000000000</span>
+<span class="co">#&gt; Deciles.50%       17.000000000</span>
+<span class="co">#&gt; Deciles.60%       20.000000000</span>
+<span class="co">#&gt; Deciles.70%       23.000000000</span>
+<span class="co">#&gt; Deciles.80%       26.000000000</span>
+<span class="co">#&gt; Deciles.90%       29.000000000</span>
+<span class="co">#&gt; Variance          85.077038995</span>
+<span class="co">#&gt; SD                 9.223721537</span>
+<span class="co">#&gt; Skew              -0.004299735</span>
+<span class="co">#&gt; Kurtosis          -1.204332093</span>
+<span class="co">#&gt; Energy        703988.000000000</span>
+<span class="co">#&gt; Uniformity         0.031417069</span>
+<span class="co">#&gt; Entropy            0.150231914</span></code></pre></div>
+<p>If the desired image is not present in the modif slot, since it was created earlier, then instead of switching the <code>DICOM$data$modif</code> image to the desired one, you may give a specific image you wish to use using the <strong>use_slot</strong> parameter. If the image you wish to use is in <code>DICOM$dichotomized$es_2</code>, then you can calculate first-order statistics on it by:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">DICOM =<span class="st"> </span><span class="kw">first_order</span>(<span class="dt">RIA_data_in =</span> DICOM, <span class="dt">use_orig =</span> <span class="ot">FALSE</span>, <span class="dt">use_slot =</span> <span class="st">&quot;dichotomized$es_2&quot;</span>)
+<span class="co">#&gt; FIRST-ORDER STATISTICS WAS SUCCESSFULLY ADDED TO 'es_2' SLOT OF RIA_image$stat_fo</span>
+RIA:::<span class="kw">list_to_df</span>(DICOM$stat_fo$es_2)
+<span class="co">#&gt;                     Values</span>
+<span class="co">#&gt; Mean             1.1259561</span>
+<span class="co">#&gt; Median           1.0000000</span>
+<span class="co">#&gt; Mode             1.0000000</span>
+<span class="co">#&gt; Geo_mean         1.1342324</span>
+<span class="co">#&gt; Geo_mean2        1.1342324</span>
+<span class="co">#&gt; Geo_mean3        1.0912307</span>
+<span class="co">#&gt; Har_mean         1.0672109</span>
+<span class="co">#&gt; Trim_mean_5      1.1062802</span>
+<span class="co">#&gt; Trim_mean_10     1.0844193</span>
+<span class="co">#&gt; Trim_mean_20     1.0325048</span>
+<span class="co">#&gt; IQ_mean          1.0000000</span>
+<span class="co">#&gt; Tri_mean         1.0000000</span>
+<span class="co">#&gt; Mn_AD_mn         0.2201824</span>
+<span class="co">#&gt; Mn_AD_md         0.1259561</span>
+<span class="co">#&gt; Md_AD_mn         0.1259561</span>
+<span class="co">#&gt; Md_AD_md         0.0000000</span>
+<span class="co">#&gt; MAD              0.0000000</span>
+<span class="co">#&gt; Max_AD_mn        0.8740439</span>
+<span class="co">#&gt; Max_AD_md        1.0000000</span>
+<span class="co">#&gt; RMS              1.1738264</span>
+<span class="co">#&gt; Min              1.0000000</span>
+<span class="co">#&gt; Max              2.0000000</span>
+<span class="co">#&gt; Quartiles.25%    1.0000000</span>
+<span class="co">#&gt; Quartiles.75%    1.0000000</span>
+<span class="co">#&gt; IQR              0.0000000</span>
+<span class="co">#&gt; Low_notch        1.0000000</span>
+<span class="co">#&gt; High_notch       1.0000000</span>
+<span class="co">#&gt; Range            1.0000000</span>
+<span class="co">#&gt; Deciles.10%      1.0000000</span>
+<span class="co">#&gt; Deciles.20%      1.0000000</span>
+<span class="co">#&gt; Deciles.30%      1.0000000</span>
+<span class="co">#&gt; Deciles.40%      1.0000000</span>
+<span class="co">#&gt; Deciles.50%      1.0000000</span>
+<span class="co">#&gt; Deciles.60%      1.0000000</span>
+<span class="co">#&gt; Deciles.70%      1.0000000</span>
+<span class="co">#&gt; Deciles.80%      1.0000000</span>
+<span class="co">#&gt; Deciles.90%      2.0000000</span>
+<span class="co">#&gt; Variance         0.1101474</span>
+<span class="co">#&gt; SD               0.3318846</span>
+<span class="co">#&gt; Skew             2.2529105</span>
+<span class="co">#&gt; Kurtosis         3.0771758</span>
+<span class="co">#&gt; Energy        2702.0000000</span>
+<span class="co">#&gt; Uniformity       0.7798176</span>
+<span class="co">#&gt; Entropy          0.1697589</span></code></pre></div>
+<div id="additional-input-parameters-of-first_order-function" class="section level2">
+<h2>Additional input parameters of first_order function</h2>
+<p>Calculation of first-order statistics can be further specified using the following inputs.</p>
+<ul>
+<li><em>save_name</em> can be used to modify the name of the output. If provided, then the automatic name generated is overwritten by the provided string.</li>
+</ul>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">DICOM =<span class="st"> </span><span class="kw">first_order</span>(<span class="dt">RIA_data_in =</span> DICOM, <span class="dt">use_orig =</span> <span class="ot">FALSE</span>, <span class="dt">use_slot =</span> <span class="st">&quot;dichotomized$es_2&quot;</span>, <span class="dt">save_name =</span> <span class="kw">c</span>(<span class="st">&quot;equaly_sized_2bins&quot;</span>))
+<span class="co">#&gt; FIRST-ORDER STATISTICS WAS SUCCESSFULLY ADDED TO 'equaly_sized_2bins' SLOT OF RIA_image$stat_fo</span>
+RIA:::<span class="kw">list_to_df</span>(DICOM$stat_fo$equaly_sized_2bins)
+<span class="co">#&gt;                     Values</span>
+<span class="co">#&gt; Mean             1.1259561</span>
+<span class="co">#&gt; Median           1.0000000</span>
+<span class="co">#&gt; Mode             1.0000000</span>
+<span class="co">#&gt; Geo_mean         1.1342324</span>
+<span class="co">#&gt; Geo_mean2        1.1342324</span>
+<span class="co">#&gt; Geo_mean3        1.0912307</span>
+<span class="co">#&gt; Har_mean         1.0672109</span>
+<span class="co">#&gt; Trim_mean_5      1.1062802</span>
+<span class="co">#&gt; Trim_mean_10     1.0844193</span>
+<span class="co">#&gt; Trim_mean_20     1.0325048</span>
+<span class="co">#&gt; IQ_mean          1.0000000</span>
+<span class="co">#&gt; Tri_mean         1.0000000</span>
+<span class="co">#&gt; Mn_AD_mn         0.2201824</span>
+<span class="co">#&gt; Mn_AD_md         0.1259561</span>
+<span class="co">#&gt; Md_AD_mn         0.1259561</span>
+<span class="co">#&gt; Md_AD_md         0.0000000</span>
+<span class="co">#&gt; MAD              0.0000000</span>
+<span class="co">#&gt; Max_AD_mn        0.8740439</span>
+<span class="co">#&gt; Max_AD_md        1.0000000</span>
+<span class="co">#&gt; RMS              1.1738264</span>
+<span class="co">#&gt; Min              1.0000000</span>
+<span class="co">#&gt; Max              2.0000000</span>
+<span class="co">#&gt; Quartiles.25%    1.0000000</span>
+<span class="co">#&gt; Quartiles.75%    1.0000000</span>
+<span class="co">#&gt; IQR              0.0000000</span>
+<span class="co">#&gt; Low_notch        1.0000000</span>
+<span class="co">#&gt; High_notch       1.0000000</span>
+<span class="co">#&gt; Range            1.0000000</span>
+<span class="co">#&gt; Deciles.10%      1.0000000</span>
+<span class="co">#&gt; Deciles.20%      1.0000000</span>
+<span class="co">#&gt; Deciles.30%      1.0000000</span>
+<span class="co">#&gt; Deciles.40%      1.0000000</span>
+<span class="co">#&gt; Deciles.50%      1.0000000</span>
+<span class="co">#&gt; Deciles.60%      1.0000000</span>
+<span class="co">#&gt; Deciles.70%      1.0000000</span>
+<span class="co">#&gt; Deciles.80%      1.0000000</span>
+<span class="co">#&gt; Deciles.90%      2.0000000</span>
+<span class="co">#&gt; Variance         0.1101474</span>
+<span class="co">#&gt; SD               0.3318846</span>
+<span class="co">#&gt; Skew             2.2529105</span>
+<span class="co">#&gt; Kurtosis         3.0771758</span>
+<span class="co">#&gt; Energy        2702.0000000</span>
+<span class="co">#&gt; Uniformity       0.7798176</span>
+<span class="co">#&gt; Entropy          0.1697589</span></code></pre></div>
+</div>
+<div id="batch-calculation-of-first-order-statistics" class="section level2">
+<h2>Batch calculation of first-order statistics</h2>
+<p>RIA supports batch calculation of first-order statistics. In many cases one wants to calculate the statistics on all modified images. Using one line of code you can calculate first-order statistics for all dichotomized images:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">DICOM =<span class="st"> </span><span class="kw">first_order</span>(<span class="dt">RIA_data_in =</span> DICOM, <span class="dt">use_type =</span> <span class="st">&quot;dichotomized&quot;</span>)
+<span class="co">#&gt; FIRST-ORDER STATISTICS WAS SUCCESSFULLY ADDED TO 'es_2' SLOT OF RIA_image$stat_fo</span>
+<span class="co">#&gt; FIRST-ORDER STATISTICS WAS SUCCESSFULLY ADDED TO 'ep_2' SLOT OF RIA_image$stat_fo</span>
+<span class="co">#&gt; FIRST-ORDER STATISTICS WAS SUCCESSFULLY ADDED TO 'es_4' SLOT OF RIA_image$stat_fo</span>
+<span class="co">#&gt; FIRST-ORDER STATISTICS WAS SUCCESSFULLY ADDED TO 'es_8' SLOT OF RIA_image$stat_fo</span>
+<span class="co">#&gt; FIRST-ORDER STATISTICS WAS SUCCESSFULLY ADDED TO 'es_16' SLOT OF RIA_image$stat_fo</span>
+<span class="co">#&gt; FIRST-ORDER STATISTICS WAS SUCCESSFULLY ADDED TO 'es_32' SLOT OF RIA_image$stat_fo</span>
+<span class="co">#&gt; FIRST-ORDER STATISTICS WAS SUCCESSFULLY ADDED TO 'ep_4' SLOT OF RIA_image$stat_fo</span>
+<span class="co">#&gt; FIRST-ORDER STATISTICS WAS SUCCESSFULLY ADDED TO 'ep_8' SLOT OF RIA_image$stat_fo</span>
+<span class="co">#&gt; FIRST-ORDER STATISTICS WAS SUCCESSFULLY ADDED TO 'ep_16' SLOT OF RIA_image$stat_fo</span>
+<span class="co">#&gt; FIRST-ORDER STATISTICS WAS SUCCESSFULLY ADDED TO 'ep_32' SLOT OF RIA_image$stat_fo</span>
+<span class="kw">names</span>(DICOM$stat_fo)
+<span class="co">#&gt;  [1] &quot;orig&quot;               &quot;ep_32&quot;              &quot;es_2&quot;              </span>
+<span class="co">#&gt;  [4] &quot;equaly_sized_2bins&quot; &quot;ep_2&quot;               &quot;es_4&quot;              </span>
+<span class="co">#&gt;  [7] &quot;es_8&quot;               &quot;es_16&quot;              &quot;es_32&quot;             </span>
+<span class="co">#&gt; [10] &quot;ep_4&quot;               &quot;ep_8&quot;               &quot;ep_16&quot;</span></code></pre></div>
+<p>The <strong>use_type</strong> input can be used to specify how the function behaves. By default, it is set to <em>“single”</em>, indicating single image processing. As seen above, there are multiple ways first-order statistics can be calculated on single images. However, if <strong>use_type</strong> is set to <em>“dichotomized”</em>, then the function will calculate the statistical metrics for all instances present in the given slot.</p>
+<p>The <strong>save_name</strong> parameter can still be used to rename the name of the statistics is needed.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">DICOM =<span class="st"> </span><span class="kw">first_order</span>(<span class="dt">RIA_data_in =</span> DICOM, <span class="dt">use_type =</span> <span class="st">&quot;dichotomized&quot;</span>,
+                    <span class="dt">save_name =</span> <span class="kw">c</span>(<span class="st">&quot;Name_1&quot;</span>, <span class="st">&quot;Name_2&quot;</span>, <span class="st">&quot;Name_3&quot;</span>, <span class="st">&quot;Name_4&quot;</span>,
+                                  <span class="st">&quot;Name_5&quot;</span>, <span class="st">&quot;Name_6&quot;</span>, <span class="st">&quot;Name_7&quot;</span>, <span class="st">&quot;Name_8&quot;</span>,
+                                  <span class="st">&quot;Name_9&quot;</span>, <span class="st">&quot;Name_10&quot;</span>))
+<span class="co">#&gt; FIRST-ORDER STATISTICS WAS SUCCESSFULLY ADDED TO 'Name_1' SLOT OF RIA_image$stat_fo</span>
+<span class="co">#&gt; FIRST-ORDER STATISTICS WAS SUCCESSFULLY ADDED TO 'Name_2' SLOT OF RIA_image$stat_fo</span>
+<span class="co">#&gt; FIRST-ORDER STATISTICS WAS SUCCESSFULLY ADDED TO 'Name_3' SLOT OF RIA_image$stat_fo</span>
+<span class="co">#&gt; FIRST-ORDER STATISTICS WAS SUCCESSFULLY ADDED TO 'Name_4' SLOT OF RIA_image$stat_fo</span>
+<span class="co">#&gt; FIRST-ORDER STATISTICS WAS SUCCESSFULLY ADDED TO 'Name_5' SLOT OF RIA_image$stat_fo</span>
+<span class="co">#&gt; FIRST-ORDER STATISTICS WAS SUCCESSFULLY ADDED TO 'Name_6' SLOT OF RIA_image$stat_fo</span>
+<span class="co">#&gt; FIRST-ORDER STATISTICS WAS SUCCESSFULLY ADDED TO 'Name_7' SLOT OF RIA_image$stat_fo</span>
+<span class="co">#&gt; FIRST-ORDER STATISTICS WAS SUCCESSFULLY ADDED TO 'Name_8' SLOT OF RIA_image$stat_fo</span>
+<span class="co">#&gt; FIRST-ORDER STATISTICS WAS SUCCESSFULLY ADDED TO 'Name_9' SLOT OF RIA_image$stat_fo</span>
+<span class="co">#&gt; FIRST-ORDER STATISTICS WAS SUCCESSFULLY ADDED TO 'Name_10' SLOT OF RIA_image$stat_fo</span>
+<span class="kw">names</span>(DICOM$stat_fo)
+<span class="co">#&gt;  [1] &quot;orig&quot;               &quot;ep_32&quot;              &quot;es_2&quot;              </span>
+<span class="co">#&gt;  [4] &quot;equaly_sized_2bins&quot; &quot;ep_2&quot;               &quot;es_4&quot;              </span>
+<span class="co">#&gt;  [7] &quot;es_8&quot;               &quot;es_16&quot;              &quot;es_32&quot;             </span>
+<span class="co">#&gt; [10] &quot;ep_4&quot;               &quot;ep_8&quot;               &quot;ep_16&quot;             </span>
+<span class="co">#&gt; [13] &quot;Name_1&quot;             &quot;Name_2&quot;             &quot;Name_3&quot;            </span>
+<span class="co">#&gt; [16] &quot;Name_4&quot;             &quot;Name_5&quot;             &quot;Name_6&quot;            </span>
+<span class="co">#&gt; [19] &quot;Name_7&quot;             &quot;Name_8&quot;             &quot;Name_9&quot;            </span>
+<span class="co">#&gt; [22] &quot;Name_10&quot;</span></code></pre></div>
+<p>Please provide the same number of names as the number of dichotomizations. If there is a discrepancy between the number of provided names and images, then the process will be stopped giving an error.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">DICOM =<span class="st"> </span><span class="kw">first_order</span>(<span class="dt">RIA_data_in =</span> DICOM, <span class="dt">use_type =</span> <span class="st">&quot;dichotomized&quot;</span>,
+                    <span class="dt">save_name =</span> <span class="kw">c</span>(<span class="st">&quot;Name_1&quot;</span>, <span class="st">&quot;Name_2&quot;</span>, <span class="st">&quot;Name_3&quot;</span>, <span class="st">&quot;Name_4&quot;</span>))
+<span class="co">#&gt; Error in first_order(RIA_data_in = DICOM, use_type = &quot;dichotomized&quot;, save_name = c(&quot;Name_1&quot;, : PLEASE PROVIDE THE SAME NUMBER OF NAMES AS THERE ARE IMAGES!</span>
+<span class="co">#&gt; NUMBER OF NAMES: 4</span>
+<span class="co">#&gt; NUMBER OF IMAGES: 10</span></code></pre></div>
+</div>
+</div>
+<div id="gray-level-co-occurrence-matrix-glcm-calculations-and-statistics" class="section level1">
+<h1>Gray level co-occurrence matrix (GLCM) calculations and statistics</h1>
+<p>The function <em>glcm</em> calculates GLCM matrices of 2D and 3D images. GLCMs are second-order statistics, meaning that statistics are calculated from the spatial relationship of two voxel values and not from the values themselves. GLCM are square matrices, where there are as many rows and columns as there are different voxel values. The values in the i<sup>th</sup> row and j<sup>th</sup> column represents the probability of finding a <em>j</em> value voxel next to a <em>i</em> value voxel in a given direction and distance. Therefore, for a given image several different GLCM matrices may be calculated, depending on the <em>direction</em> and the <em>distance</em>. In <code>RIA</code> <em>direction</em> and <em>distance</em> is determined by three integer parameters specifying where the examined voxel is compared to the index voxel.</p>
+<ul>
+<li>off_right: how many voxels to look to the right (x coordinate)</li>
+<li>off_down: how many voxels to look downwards (y coordinate)</li>
+<li>off_z: how many voxels to look to in the cross-plane direction (z coordinate). This parameter is only used if the image is 3D</li>
+</ul>
+<p>For example: to calculate the GLCM matrix of the last modified image stored in <code>DICOM$data$modif</code>, in the direction of right: 1; down: 2; z-plane: 2; you just have to write:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">DICOM =<span class="st"> </span><span class="kw">glcm</span>(<span class="dt">RIA_data_in =</span> DICOM, <span class="dt">off_right =</span> <span class="dv">1</span>, <span class="dt">off_down =</span> <span class="dv">2</span>, <span class="dt">off_z =</span> <span class="dv">2</span>)
+<span class="co">#&gt; GLCM WAS SUCCESSFULLY ADDED TO 'ep_32_122' SLOT OF RIA_image$glcm</span>
+<span class="kw">dim</span>(DICOM$glcm$ep_32)
+<span class="co">#&gt; [1] 32 32</span></code></pre></div>
+<p>As discussed in the first-order case, the image wished to be analyzed may be set using the <strong>use_orig</strong>, <strong>use_slot</strong> and <strong>save_name</strong> parameters. <code>RIA</code> looks at the name of the provided image, if numbers are present in it, the it will set the dimensions and the resulting name of the GLCM based-on these values. If no numbers are present, then it will the automatic name generator of <code>RIA</code> to figure out the name of the last image manipulation. If it does not succeed, then it will calculate how many different gray levels there are in the image to set the dimensions of GLCM matrix and the name of the statistic. However, it might occur for example that the data was dichotomized to 32 equally sized bins, and then one of the bins does not contain any data. In these cases the GLCM will only be 31 x 31!</p>
+<div id="additional-input-parameters-of-glcm-function" class="section level2">
+<h2>Additional input parameters of glcm function</h2>
+<p>Tow further parameters may be set to change the output of the function:</p>
+<ul>
+<li>symmetric: If TRUE, then the transpose of the initial GLCM matrix will be added to itself, which is the same as calculating the GLCM in the opposite direction. Doing so creates a symmetric GLCM matrix, which holds information regarding not only one direction, but also of the opposite direction as well, since asking how many times a <em>j</em> value voxel occurs next to a <em>i</em> value voxel in a given direction is the same as asking how many times a <em>i</em> value voxel occurs next to a <em>j</em> value one in the opposite direction. With this strategy, if you wish to calculate the GLCMs in all directions of space, then you only have to actually calculate half of them.</li>
+</ul>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">DICOM =<span class="st"> </span><span class="kw">glcm</span>(<span class="dt">RIA_data_in =</span> DICOM, <span class="dt">use_slot =</span> <span class="st">&quot;dichotomized$ep_2&quot;</span>, <span class="dt">off_right =</span> <span class="dv">1</span>, <span class="dt">off_down =</span> <span class="dv">2</span>, <span class="dt">off_z =</span> <span class="dv">2</span>, <span class="dt">symmetric =</span> <span class="ot">FALSE</span>, <span class="dt">normalize =</span> <span class="ot">FALSE</span>)
+<span class="co">#&gt; GLCM WAS SUCCESSFULLY ADDED TO 'ep_2_122' SLOT OF RIA_image$glcm</span>
+DICOM$glcm$ep_2
+<span class="co">#&gt;      [,1] [,2]</span>
+<span class="co">#&gt; [1,]    0    2</span>
+<span class="co">#&gt; [2,]    0    3</span>
+DICOM =<span class="st"> </span><span class="kw">glcm</span>(<span class="dt">RIA_data_in =</span> DICOM, <span class="dt">use_slot =</span> <span class="st">&quot;dichotomized$ep_2&quot;</span>, <span class="dt">off_right =</span> <span class="dv">1</span>, <span class="dt">off_down =</span> <span class="dv">2</span>, <span class="dt">off_z =</span> <span class="dv">2</span>, <span class="dt">symmetric =</span> <span class="ot">TRUE</span>, <span class="dt">normalize =</span> <span class="ot">FALSE</span>)
+<span class="co">#&gt; GLCM WAS SUCCESSFULLY ADDED TO 'ep_2_122' SLOT OF RIA_image$glcm</span>
+DICOM$glcm$ep_2
+<span class="co">#&gt;      [,1] [,2]</span>
+<span class="co">#&gt; [1,]    0    2</span>
+<span class="co">#&gt; [2,]    2    6</span></code></pre></div>
+<ul>
+<li>normalize: If TRUE, then instead of the absolute values of the occurrences are reported, but their relative frequencies.</li>
+</ul>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">DICOM =<span class="st"> </span><span class="kw">glcm</span>(<span class="dt">RIA_data_in =</span> DICOM, <span class="dt">use_slot =</span> <span class="st">&quot;dichotomized$ep_2&quot;</span>, <span class="dt">off_right =</span> <span class="dv">1</span>, <span class="dt">off_down =</span> <span class="dv">2</span>, <span class="dt">off_z =</span> <span class="dv">2</span>, <span class="dt">symmetric =</span> <span class="ot">TRUE</span>, <span class="dt">normalize =</span> <span class="ot">FALSE</span>)
+<span class="co">#&gt; GLCM WAS SUCCESSFULLY ADDED TO 'ep_2_122' SLOT OF RIA_image$glcm</span>
+DICOM$glcm$ep_2
+<span class="co">#&gt;      [,1] [,2]</span>
+<span class="co">#&gt; [1,]    0    2</span>
+<span class="co">#&gt; [2,]    2    6</span>
+DICOM =<span class="st"> </span><span class="kw">glcm</span>(<span class="dt">RIA_data_in =</span> DICOM, <span class="dt">use_slot =</span> <span class="st">&quot;dichotomized$ep_2&quot;</span>, <span class="dt">off_right =</span> <span class="dv">1</span>, <span class="dt">off_down =</span> <span class="dv">2</span>, <span class="dt">off_z =</span> <span class="dv">2</span>, <span class="dt">symmetric =</span> <span class="ot">TRUE</span>, <span class="dt">normalize =</span> <span class="ot">TRUE</span>)
+<span class="co">#&gt; GLCM WAS SUCCESSFULLY ADDED TO 'ep_2_122' SLOT OF RIA_image$glcm</span>
+DICOM$glcm$ep_2
+<span class="co">#&gt;      [,1] [,2]</span>
+<span class="co">#&gt; [1,]  0.0  0.2</span>
+<span class="co">#&gt; [2,]  0.2  0.6</span></code></pre></div>
+<p>As GLCM statistics require probability values and in most cases GLCMs are calculated in all directions, both parameters are TRUE by default.</p>
+</div>
+<div id="batch-calculation-of-glcm" class="section level2">
+<h2>Batch calculation of GLCM</h2>
+<p>The <em>glcm</em> function also support batch calculations. Therefore, if you wish to calculate a given GLCM for all dichotomizations all you have to do is:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">DICOM =<span class="st"> </span><span class="kw">glcm</span>(<span class="dt">RIA_data_in =</span> DICOM, <span class="dt">use_type =</span> <span class="st">&quot;dichotomized&quot;</span>,
+             <span class="dt">off_right =</span> <span class="dv">1</span>, <span class="dt">off_down =</span> <span class="dv">2</span>, <span class="dt">off_z =</span> <span class="dv">2</span>)
+<span class="co">#&gt; GLCM WAS SUCCESSFULLY ADDED TO 'es_2_122' SLOT OF RIA_image$glcm</span>
+<span class="co">#&gt; GLCM WAS SUCCESSFULLY ADDED TO 'ep_2_122' SLOT OF RIA_image$glcm</span>
+<span class="co">#&gt; GLCM WAS SUCCESSFULLY ADDED TO 'es_4_122' SLOT OF RIA_image$glcm</span>
+<span class="co">#&gt; GLCM WAS SUCCESSFULLY ADDED TO 'es_8_122' SLOT OF RIA_image$glcm</span>
+<span class="co">#&gt; GLCM WAS SUCCESSFULLY ADDED TO 'es_16_122' SLOT OF RIA_image$glcm</span>
+<span class="co">#&gt; GLCM WAS SUCCESSFULLY ADDED TO 'es_32_122' SLOT OF RIA_image$glcm</span>
+<span class="co">#&gt; GLCM WAS SUCCESSFULLY ADDED TO 'ep_4_122' SLOT OF RIA_image$glcm</span>
+<span class="co">#&gt; GLCM WAS SUCCESSFULLY ADDED TO 'ep_8_122' SLOT OF RIA_image$glcm</span>
+<span class="co">#&gt; GLCM WAS SUCCESSFULLY ADDED TO 'ep_16_122' SLOT OF RIA_image$glcm</span>
+<span class="co">#&gt; GLCM WAS SUCCESSFULLY ADDED TO 'ep_32_122' SLOT OF RIA_image$glcm</span>
+<span class="kw">names</span>(DICOM$glcm)
+<span class="co">#&gt;  [1] &quot;ep_32_122&quot; &quot;ep_2_122&quot;  &quot;es_2_122&quot;  &quot;es_4_122&quot;  &quot;es_8_122&quot; </span>
+<span class="co">#&gt;  [6] &quot;es_16_122&quot; &quot;es_32_122&quot; &quot;ep_4_122&quot;  &quot;ep_8_122&quot;  &quot;ep_16_122&quot;</span></code></pre></div>
+<p>In the near future, I’m planning to add a new batch function that can calculate GLCMs in all directions using one line of code.</p>
+</div>
+<div id="statistics-on-glcm-matrices" class="section level2">
+<h2>Statistics on GLCM matrices</h2>
+<p>The main purpose of calculating GLCMs, is to derive statistics from them. GLCM statistics can be calculated using the <em>glcm_stat</em> function. Overall, <code>RIA</code> can calculate 240 different GLCM statistics of which some contain more than one value. As previous functions, <em>glcm_stat</em> can process single or multiple GLCMs For single data processing, one can use the <strong>use_slot</strong> parameter to calculate GLCM statistics on a specific GLCM</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">DICOM =<span class="st"> </span><span class="kw">glcm_stat</span>(DICOM, <span class="dt">use_type =</span> <span class="st">&quot;single&quot;</span>, <span class="dt">use_slot =</span> <span class="st">&quot;glcm$ep_2_122&quot;</span>)
+<span class="co">#&gt; GLCM STATISTICS WAS SUCCESSFULLY ADDED TO 'ep_2_122' SLOT OF RIA_image$stat_glcm</span></code></pre></div>
+<p>The results as all statistical calculations, are saved to a “stat_” slot of the <code>RIA_image</code>, specifically to the <code>RIA_image$stat_glcm</code> slot. The name is automatically generated based on the supplied GLCM name. However it may be changed by the <strong>save_name</strong> input if desired.</p>
+<div id="batch-calculation-of-glcm-statistics" class="section level3">
+<h3>Batch calculation of GLCM statistics</h3>
+<p>The <em>glcm_stat</em> function also support batch calculations. Therefore, if you wish to calculate statistics for all calculated GLCMs the you can achieve this by one line of code:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">DICOM =<span class="st"> </span><span class="kw">glcm_stat</span>(DICOM, <span class="dt">use_type =</span> <span class="st">&quot;glcm&quot;</span>)
+<span class="co">#&gt; GLCM STATISTICS WAS SUCCESSFULLY ADDED TO 'ep_32_122' SLOT OF RIA_image$stat_glcm</span>
+<span class="co">#&gt; GLCM STATISTICS WAS SUCCESSFULLY ADDED TO 'ep_2_122' SLOT OF RIA_image$stat_glcm</span>
+<span class="co">#&gt; GLCM STATISTICS WAS SUCCESSFULLY ADDED TO 'es_2_122' SLOT OF RIA_image$stat_glcm</span>
+<span class="co">#&gt; GLCM STATISTICS WAS SUCCESSFULLY ADDED TO 'es_4_122' SLOT OF RIA_image$stat_glcm</span>
+<span class="co">#&gt; GLCM STATISTICS WAS SUCCESSFULLY ADDED TO 'es_8_122' SLOT OF RIA_image$stat_glcm</span>
+<span class="co">#&gt; GLCM STATISTICS WAS SUCCESSFULLY ADDED TO 'es_16_122' SLOT OF RIA_image$stat_glcm</span>
+<span class="co">#&gt; GLCM STATISTICS WAS SUCCESSFULLY ADDED TO 'es_32_122' SLOT OF RIA_image$stat_glcm</span>
+<span class="co">#&gt; GLCM STATISTICS WAS SUCCESSFULLY ADDED TO 'ep_4_122' SLOT OF RIA_image$stat_glcm</span>
+<span class="co">#&gt; GLCM STATISTICS WAS SUCCESSFULLY ADDED TO 'ep_8_122' SLOT OF RIA_image$stat_glcm</span>
+<span class="co">#&gt; GLCM STATISTICS WAS SUCCESSFULLY ADDED TO 'ep_16_122' SLOT OF RIA_image$stat_glcm</span>
+<span class="kw">names</span>(DICOM$stat_glcm)
+<span class="co">#&gt;  [1] &quot;ep_2_122&quot;  &quot;ep_32_122&quot; &quot;es_2_122&quot;  &quot;es_4_122&quot;  &quot;es_8_122&quot; </span>
+<span class="co">#&gt;  [6] &quot;es_16_122&quot; &quot;es_32_122&quot; &quot;ep_4_122&quot;  &quot;ep_8_122&quot;  &quot;ep_16_122&quot;</span></code></pre></div>
+<p>The names of the outputs can also be specified. Be aware of providing the same amount of names as there are GLCMs being processed. Failing to do so will throw an error.</p>
+<p>In the near future, I’m planning to add a new batch function that can combine GLCM statistics of all the different directions at a given distance to receive directionally invariant average results of the GLCMs.</p>
+</div>
+</div>
+</div>
+<div id="gray-level-run-length-matrix-glrlm-calculations-and-statistics" class="section level1">
+<h1>Gray level run length matrix (GLRLM) calculations and statistics</h1>
+<p>The function <em>glrlm</em> calculates GLRLM matrices of 2D and 3D images. GLRLM are higher-order statistics, meaning that statistics are calculated from the spatial relationship of more than two voxel values. GLRLM are matrices, where the number of rows equals the number of gray levels, while the number of columns equals the length of the longest run. <em>Run length</em> is defined as the number of voxels occurring next to each other with same values in a given direction. The i<sup>th</sup> row and j<sup>th</sup> column of the GLRLM represents how many times it occurs in the image, that <em>i</em> value voxels are next to each other <em>j</em> times. Therefore, for a given image several different GLRLM matrices may be calculated, depending on the <em>direction</em>. In <code>RIA</code> <em>direction</em> is determined by three integer parameters specifying the direction as a vector in co-ordinate space. There is no distance parameter, since we want to calculate how many same value voxels occur next to each other in that direction. Therefore the three inputs are logicals not integers.</p>
+<ul>
+<li>right: direction in the x plane</li>
+<li>down: direction in the y plane</li>
+<li>forward: direction in the z plane</li>
+</ul>
+<p>For example: to calculate the GLRLM matrix of the last modified image stored in <code>DICOM$data$modif</code>, in the direction of right: 1; down: 0; z-plane: 1; you just have to write:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">DICOM =<span class="st"> </span><span class="kw">glrlm</span>(<span class="dt">RIA_data_in =</span> DICOM, <span class="dt">right =</span> <span class="dv">1</span>, <span class="dt">down =</span> <span class="dv">0</span>, <span class="dt">forward =</span> <span class="dv">1</span>)
+<span class="co">#&gt; GLRLM WAS SUCCESSFULLY ADDED TO 'ep_32_101' SLOT OF RIA_image$glrlm</span>
+<span class="kw">dim</span>(DICOM$glrlm$ep_32)
+<span class="co">#&gt; [1] 32 16</span></code></pre></div>
+<p>As discussed in the first-order case, the image wished to be analyzed may be set using the <strong>use_orig</strong>, <strong>use_slot</strong> and <strong>save_name</strong> parameters. <code>RIA</code> looks at the name of the provided image, if numbers are present in it, the it will set the dimensions and the resulting name of the GLRLM based-on these values. If no numbers are present, then it will the automatic name generator of <code>RIA</code> to figure out the name of the last image manipulation. If it does not succeed, then it will calculate how many different gray levels there are in the image to set the dimensions of GLRLM matrix and the name of the statistic. However, it might occur for example that the data was dichotomized to 32 equally sized bins, and then one of the bins does not contain any data. In these cases the GLRLM will only be 31 x max(run length)!</p>
+<div id="batch-calculation-of-glrlm" class="section level2">
+<h2>Batch calculation of GLRLM</h2>
+<p>The <em>glrlm</em> function also support batch calculations on dichotomized images. Therefore, if you wish to calculate a given GLRLM for all dichotomizations all you have to do is:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">DICOM =<span class="st"> </span><span class="kw">glrlm</span>(<span class="dt">RIA_data_in =</span> DICOM, <span class="dt">use_type =</span> <span class="st">&quot;dichotomized&quot;</span>,
+             <span class="dt">right =</span> <span class="dv">1</span>, <span class="dt">down =</span> <span class="dv">0</span>, <span class="dt">forward =</span> <span class="dv">1</span>)
+<span class="co">#&gt; GLRLM WAS SUCCESSFULLY ADDED TO 'es_2_101' SLOT OF RIA_image$glrlm</span>
+<span class="co">#&gt; GLRLM WAS SUCCESSFULLY ADDED TO 'ep_2_101' SLOT OF RIA_image$glrlm</span>
+<span class="co">#&gt; GLRLM WAS SUCCESSFULLY ADDED TO 'es_4_101' SLOT OF RIA_image$glrlm</span>
+<span class="co">#&gt; GLRLM WAS SUCCESSFULLY ADDED TO 'es_8_101' SLOT OF RIA_image$glrlm</span>
+<span class="co">#&gt; GLRLM WAS SUCCESSFULLY ADDED TO 'es_16_101' SLOT OF RIA_image$glrlm</span>
+<span class="co">#&gt; GLRLM WAS SUCCESSFULLY ADDED TO 'es_32_101' SLOT OF RIA_image$glrlm</span>
+<span class="co">#&gt; GLRLM WAS SUCCESSFULLY ADDED TO 'ep_4_101' SLOT OF RIA_image$glrlm</span>
+<span class="co">#&gt; GLRLM WAS SUCCESSFULLY ADDED TO 'ep_8_101' SLOT OF RIA_image$glrlm</span>
+<span class="co">#&gt; GLRLM WAS SUCCESSFULLY ADDED TO 'ep_16_101' SLOT OF RIA_image$glrlm</span>
+<span class="co">#&gt; GLRLM WAS SUCCESSFULLY ADDED TO 'ep_32_101' SLOT OF RIA_image$glrlm</span>
+<span class="kw">names</span>(DICOM$glrlm)
+<span class="co">#&gt;  [1] &quot;ep_32_101&quot; &quot;es_2_101&quot;  &quot;ep_2_101&quot;  &quot;es_4_101&quot;  &quot;es_8_101&quot; </span>
+<span class="co">#&gt;  [6] &quot;es_16_101&quot; &quot;es_32_101&quot; &quot;ep_4_101&quot;  &quot;ep_8_101&quot;  &quot;ep_16_101&quot;</span></code></pre></div>
+<p>In the near future, I’m planning to add a new batch function that can calculate GLRLMs in all directions using one line of code.</p>
+</div>
+<div id="statistics-on-glrlm-matrices" class="section level2">
+<h2>Statistics on GLRLM matrices</h2>
+<p>The main purpose of calculating GLRLMs, is to derive statistics from them. GLRLM statistics can be calculated using the <em>glrlm_stat</em> function. Overall, <code>RIA</code> can calculate 11 different GLRLM statistics. As previous functions, <em>glrlm_stat</em> can process single and multiple GLRLMs at once. For single data processing, one can use the <strong>use_slot</strong> parameter to calculate GLRLM statistics on a specific GLRLM</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">DICOM =<span class="st"> </span><span class="kw">glrlm_stat</span>(DICOM, <span class="dt">use_type =</span> <span class="st">&quot;single&quot;</span>, <span class="dt">use_slot =</span> <span class="st">&quot;glrlm$ep_2_101&quot;</span>)
+<span class="co">#&gt; GLRLM STATISTICS WAS SUCCESSFULLY ADDED TO 'ep_2_101' SLOT OF RIA_image$stat_glrlm</span></code></pre></div>
+<p>The results as all statistical calculations, are saved to a “stat_” slot of the <code>RIA_image</code>, specifically to the <code>RIA_image$stat_glrlm</code> slot. The name is automatically generated based on the supplied GLRLM name. However it may be changed by the <strong>save_name</strong> input if desired.</p>
+<div id="batch-calculation-of-glrlm-statistics" class="section level3">
+<h3>Batch calculation of GLRLM statistics</h3>
+<p>The <em>glrlm_stat</em> function also support batch calculations. Therefore, if you wish to calculate statistics for all calculated GLRLMs the you can achieve this by one line of code:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">DICOM =<span class="st"> </span><span class="kw">glrlm_stat</span>(DICOM, <span class="dt">use_type =</span> <span class="st">&quot;glrlm&quot;</span>)
+<span class="co">#&gt; GLRLM STATISTICS WAS SUCCESSFULLY ADDED TO 'ep_32_101' SLOT OF RIA_image$stat_glrlm</span>
+<span class="co">#&gt; GLRLM STATISTICS WAS SUCCESSFULLY ADDED TO 'es_2_101' SLOT OF RIA_image$stat_glrlm</span>
+<span class="co">#&gt; GLRLM STATISTICS WAS SUCCESSFULLY ADDED TO 'ep_2_101' SLOT OF RIA_image$stat_glrlm</span>
+<span class="co">#&gt; GLRLM STATISTICS WAS SUCCESSFULLY ADDED TO 'es_4_101' SLOT OF RIA_image$stat_glrlm</span>
+<span class="co">#&gt; GLRLM STATISTICS WAS SUCCESSFULLY ADDED TO 'es_8_101' SLOT OF RIA_image$stat_glrlm</span>
+<span class="co">#&gt; GLRLM STATISTICS WAS SUCCESSFULLY ADDED TO 'es_16_101' SLOT OF RIA_image$stat_glrlm</span>
+<span class="co">#&gt; GLRLM STATISTICS WAS SUCCESSFULLY ADDED TO 'es_32_101' SLOT OF RIA_image$stat_glrlm</span>
+<span class="co">#&gt; GLRLM STATISTICS WAS SUCCESSFULLY ADDED TO 'ep_4_101' SLOT OF RIA_image$stat_glrlm</span>
+<span class="co">#&gt; GLRLM STATISTICS WAS SUCCESSFULLY ADDED TO 'ep_8_101' SLOT OF RIA_image$stat_glrlm</span>
+<span class="co">#&gt; GLRLM STATISTICS WAS SUCCESSFULLY ADDED TO 'ep_16_101' SLOT OF RIA_image$stat_glrlm</span>
+<span class="kw">names</span>(DICOM$stat_glrlm)
+<span class="co">#&gt;  [1] &quot;ep_2_101&quot;  &quot;ep_32_101&quot; &quot;es_2_101&quot;  &quot;es_4_101&quot;  &quot;es_8_101&quot; </span>
+<span class="co">#&gt;  [6] &quot;es_16_101&quot; &quot;es_32_101&quot; &quot;ep_4_101&quot;  &quot;ep_8_101&quot;  &quot;ep_16_101&quot;</span></code></pre></div>
+<p>The names of the outputs can also be specified. Be aware of providing the same number of names as there are GLRLMs being processed. Failing to do so will throw an error.</p>
+<p>In the near future, I’m planning to add a new batch function that can combine GLRLM statistics of all the different directions to receive directionally invariant average results of the GLRLMs.</p>
+</div>
+</div>
+</div>
+<div id="geometry-based-statistics" class="section level1">
+<h1>Geometry-based statistics</h1>
+<p>Several statistics have been derived to evaluate different geometrical properties of objects. <code>RIA</code> calculates 9 conventional geometrical parameters and 3 fractal dimensions. Geometrical statistics can be calculated both on the original image:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">DICOM =<span class="st"> </span><span class="kw">geometry</span>(<span class="dt">RIA_data_in =</span> DICOM, <span class="dt">use_orig =</span> <span class="ot">TRUE</span>, <span class="dt">calc_sub =</span> <span class="ot">FALSE</span>)
+<span class="co">#&gt; GEOMETRY-BASED STATISTICS WAS SUCCESSFULLY ADDED TO 'orig' SLOT OF RIA_image$stat_geometry</span>
+RIA:::<span class="kw">list_to_df</span>(DICOM$stat_geometry$orig)
+<span class="co">#&gt;                        Values</span>
+<span class="co">#&gt; volume           117.30811157</span>
+<span class="co">#&gt; v_ratio_to_all     1.00000000</span>
+<span class="co">#&gt; surface          492.88000000</span>
+<span class="co">#&gt; s_ratio_to_all     1.00000000</span>
+<span class="co">#&gt; surface_volume_r   4.20158498</span>
+<span class="co">#&gt; compactness1       1.06069937</span>
+<span class="co">#&gt; compactness2       0.01299825</span>
+<span class="co">#&gt; spher_dis          4.25309460</span>
+<span class="co">#&gt; spher              0.23512292</span>
+<span class="co">#&gt; fractal_bc_d       1.89130618</span>
+<span class="co">#&gt; fractal_i_d        1.93411435</span>
+<span class="co">#&gt; fractal_c_d        1.92374602</span></code></pre></div>
+<p>and also on dichotomized images. Similarly as previous functions, if the desired image is stored in <code>RIA_image$data$modif</code>, then by setting the <strong>use_orig</strong> parameter to <strong>FALSE</strong> the function will run on the modified image. Using the <strong>use_slot</strong> parameter a specific image can also be set. The output is automatically named, but can be changed using the <strong>save_name</strong> parameter. The main reason to run geometry-based statistics on dichotomized images is to evaluate the geometrical features of the different sub-components. To calculate statistics on all sub-components of an image the <strong>calc_sub</strong> parameter has to be set to <strong>TRUE</strong>, which is the default:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">DICOM =<span class="st"> </span><span class="kw">geometry</span>(<span class="dt">RIA_data_in =</span> DICOM, <span class="dt">use_slot =</span> <span class="st">&quot;dichotomized$es_2&quot;</span>)
+<span class="co">#&gt; GEOMETRY-BASED STATISTICS WAS SUCCESSFULLY ADDED TO 'es_2' SLOT OF RIA_image$stat_geometry</span>
+RIA:::<span class="kw">list_to_df</span>(DICOM$stat_geometry$es_2)
+<span class="co">#&gt;                        Values            NA</span>
+<span class="co">#&gt; volume           102.53243408  14.775677490</span>
+<span class="co">#&gt; v_ratio_to_all     0.87404386   0.125956145</span>
+<span class="co">#&gt; surface          441.22750000 168.643125000</span>
+<span class="co">#&gt; s_ratio_to_all     0.89520269   0.342158588</span>
+<span class="co">#&gt; surface_volume_r   4.30329684  11.413562939</span>
+<span class="co">#&gt; compactness1       0.99810895   0.273103148</span>
+<span class="co">#&gt; compactness2       0.01384163   0.005148032</span>
+<span class="co">#&gt; spher_dis          4.16489704   5.791435820</span>
+<span class="co">#&gt; spher              0.24010197   0.172668753</span>
+<span class="co">#&gt; fractal_bc_d       1.85349246   1.416819995</span>
+<span class="co">#&gt; fractal_i_d        1.90390391   1.421835255</span>
+<span class="co">#&gt; fractal_c_d        1.88899493   1.412545053</span></code></pre></div>
+<div id="additional-input-parameters-of-geometry-function" class="section level2">
+<h2>Additional input parameters of geometry function</h2>
+<p>Further inputs can be specified:</p>
+<ul>
+<li>xy_dim: a numeric value of the length of a voxel in the x or y plane, if it is not provided, then <code>RIA</code> uses the values present in the <code>RIA_image$log$orig_xy_dim</code>.</li>
+<li>z_dim: a numeric value of the length of a voxel in the z plane, if it is not provided, then <code>RIA</code> uses the values present in the <code>RIA_image$log$orig_z_dim</code>.</li>
+<li>all_vol: overall volume of the image, if it is not provided, then <code>RIA</code> uses the values present in the <code>RIA_image$log$orig_vol_mm</code>.</li>
+<li>all_surf: overall volume of the image, if it is not provided, then <code>RIA</code> uses the values present in the <code>RIA_image$log$orig_surf_mm</code>.</li>
+<li>calc_dist: logical indicating whether to calculate the maximum distance between the voxels. Calculations may take significant time.</li>
+</ul>
+<div id="batch-calculation-of-geometry-based-statistics" class="section level3">
+<h3>Batch calculation of geometry-based statistics</h3>
+<p>The <em>geometry</em> function also support batch calculations. Therefore, if you wish to calculate statistics for all dichotomizations, then all you have to do is:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">DICOM =<span class="st"> </span><span class="kw">geometry</span>(DICOM, <span class="dt">use_type =</span> <span class="st">&quot;dichotomized&quot;</span>)
+<span class="co">#&gt; GEOMETRY-BASED STATISTICS WAS SUCCESSFULLY ADDED TO 'es_2' SLOT OF RIA_image$stat_geometry</span>
+<span class="co">#&gt; GEOMETRY-BASED STATISTICS WAS SUCCESSFULLY ADDED TO 'ep_2' SLOT OF RIA_image$stat_geometry</span>
+<span class="co">#&gt; GEOMETRY-BASED STATISTICS WAS SUCCESSFULLY ADDED TO 'es_4' SLOT OF RIA_image$stat_geometry</span>
+<span class="co">#&gt; GEOMETRY-BASED STATISTICS WAS SUCCESSFULLY ADDED TO 'es_8' SLOT OF RIA_image$stat_geometry</span>
+<span class="co">#&gt; GEOMETRY-BASED STATISTICS WAS SUCCESSFULLY ADDED TO 'es_16' SLOT OF RIA_image$stat_geometry</span>
+<span class="co">#&gt; GEOMETRY-BASED STATISTICS WAS SUCCESSFULLY ADDED TO 'es_32' SLOT OF RIA_image$stat_geometry</span>
+<span class="co">#&gt; GEOMETRY-BASED STATISTICS WAS SUCCESSFULLY ADDED TO 'ep_4' SLOT OF RIA_image$stat_geometry</span>
+<span class="co">#&gt; GEOMETRY-BASED STATISTICS WAS SUCCESSFULLY ADDED TO 'ep_8' SLOT OF RIA_image$stat_geometry</span>
+<span class="co">#&gt; GEOMETRY-BASED STATISTICS WAS SUCCESSFULLY ADDED TO 'ep_16' SLOT OF RIA_image$stat_geometry</span>
+<span class="co">#&gt; GEOMETRY-BASED STATISTICS WAS SUCCESSFULLY ADDED TO 'ep_32' SLOT OF RIA_image$stat_geometry</span>
+<span class="kw">names</span>(DICOM$stat_geometry)
+<span class="co">#&gt;  [1] &quot;orig&quot;  &quot;es_2&quot;  &quot;ep_2&quot;  &quot;es_4&quot;  &quot;es_8&quot;  &quot;es_16&quot; &quot;es_32&quot; &quot;ep_4&quot; </span>
+<span class="co">#&gt;  [9] &quot;ep_8&quot;  &quot;ep_16&quot; &quot;ep_32&quot;</span></code></pre></div>
+</div>
+</div>
+</div>
+<div id="conclsions" class="section level1">
+<h1>Conclsions</h1>
+<p><code>RIA</code> package for R is a fast, versatile and user-friendly way to calculate radiomic statistics using only a few lines of code. One can calculate several hundreds of different statistics on various versions of an image. RIA is regularly updated with new features that further help radiomic analyses.</p>
+</div>
+
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

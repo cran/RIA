@@ -137,4 +137,3 @@ information is also saved in the log, which might be needed for further analysis
  RIA_image <- load_dicom("C://Users//Test//Documents//Radiomics//John_Smith//DICOM_folder//")
  }
 }
-

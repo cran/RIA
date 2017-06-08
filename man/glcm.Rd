@@ -26,7 +26,9 @@ by also calculating the glcm in the opposite direction (-1*off_right; -1*off_dow
 
 \item{normalize}{logical, indicating whether to change glcm elements to relaive frequencies.}
 
-\item{use_type}{string, currently only "single" data processing is supported.}
+\item{use_type}{string, can be \emph{"single"} which runs the function on a single image,
+which is determined using \emph{"use_orig"} or \emph{"use_slot"}. \emph{"dichotomized"}
+takes all datasets in the \emph{RIA_image$dichotomized} slot and runs the analysis on them.}
 
 \item{use_orig}{logical, indicating to use image present in \emph{RIA_data$orig}.
 If FALSE, the modified image will be used stored in \emph{RIA_data$modif}.}
@@ -64,6 +66,9 @@ RIA_image <- glcm(RIA_image, use_orig = FALSE, verbose_in = TRUE)
 #Use use_slot parameter to set which image to use
 RIA_image <- glcm(RIA_image, use_orig = FALSE, use_slot = "dichotomized$ep_4",
 off_right = 2, off_down = -1, off_z = 0)
-}
-}
 
+#Batch calculation of GLCM matrices on all dichotomized images
+RIA_image <- glcm(RIA_image, use_type = "dichotomized",
+off_right = 1, off_down = -1, off_z = 0)
+}
+}

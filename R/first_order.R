@@ -10,7 +10,9 @@
 #'
 #' @param RIA_data_in \emph{RIA_image}, created by \code{\link[RIA]{load_dicom}}.
 #'
-#' @param use_type string, currently only "single" data processing is supported.
+#' @param use_type string, can be \emph{"single"} which runs the function on a single image,
+#' which is determined using \emph{"use_orig"} or \emph{"use_slot"}. \emph{"dichotomized"}
+#' takes all datasets in the \emph{RIA_image$dichotomized} slot and runs the analysis on them.
 #'
 #' @param use_orig logical, indicating whether to use image present in \emph{RIA_data$orig}.
 #' If FALSE, the modified image will be used stored in \emph{RIA_data$modif}.
@@ -41,11 +43,14 @@
 #'
 #' #Use use_slot parameter to set which image to use
 #' RIA_image <- first_order(RIA_image, use_orig = FALSE, use_slot = "dichotomized$ep_4")
+#' 
+#' #Batch calculation of first-order statistics on all dichotomized images
+#' RIA_image <- first_order(RIA_image, use_type = "dichotomized")
 #' }
 
 
 
-first_order <- function(RIA_data_in, use_type = "single", use_orig = FALSE, use_slot = NULL, save_name = NULL, verbose_in = TRUE)
+first_order <- function(RIA_data_in, use_type = "single", use_orig = TRUE, use_slot = NULL, save_name = NULL, verbose_in = TRUE)
 {
   data_in <- check_data_in(RIA_data_in, use_type = use_type, use_orig = use_orig, use_slot = use_slot, verbose_in = verbose_in)
 
@@ -53,6 +58,10 @@ first_order <- function(RIA_data_in, use_type = "single", use_orig = FALSE, use_
   if(any(class(data_in) != "list")) data_in <- list(data_in)
 
   list_names <- names(data_in)
+  if(!is.null(save_name) & (length(data_in) != length(save_name))) {stop(paste0("PLEASE PROVIDE THE SAME NUMBER OF NAMES AS THERE ARE IMAGES!\n",
+                                                                                "NUMBER OF NAMES: ", length(save_name), "\n",
+                                                                                "NUMBER OF IMAGES: ", length(data_in), "\n"))
+      }
 
   for (i in 1: length(data_in))
   {
@@ -192,12 +201,25 @@ first_order <- function(RIA_data_in, use_type = "single", use_orig = FALSE, use_
       }
     }
   }
+  
+  if(use_type == "dichotomized") {
+      if(any(class(RIA_data_in) == "RIA_image"))
+      {
+          if(is.null(save_name[i])) {
+              txt <- list_names[i]
+              RIA_data_in$stat_fo[[txt]] <- metrics
+          }
+          if(!is.null(save_name[i])) {RIA_data_in$stat_fo[[save_name[i]]] <- metrics
+          
+          }
+      }
+  }
 
 
 
   if(is.null(save_name)) {txt_name <- txt
-  } else {txt_name <- save_name}
-  if(verbose_in) {message(" "); message(paste0("FIRST-ORDER STATISTICS WAS SUCCESSFULLY ADDED TO '", txt_name, "' SLOT OF RIA_image$stat_fo")); message(" ") }
+  } else {txt_name <- save_name[i]}
+  if(verbose_in) {message(paste0("FIRST-ORDER STATISTICS WAS SUCCESSFULLY ADDED TO '", txt_name, "' SLOT OF RIA_image$stat_fo\n")) }
 
   }
 

@@ -5,7 +5,9 @@
 #'
 #' @param RIA_data_in \emph{RIA_image}, created by \code{\link[RIA]{load_dicom}}.
 #'
-#' @param use_type string, currently only "single" data processing is supported.
+#' @param use_type string, can be \emph{"single"} which runs the function on a single image,
+#' which is determined using \emph{"use_orig"} or \emph{"use_slot"}. \emph{"glcm"}
+#' takes all datasets in the \emph{RIA_image$glcm} slot and runs the analysis on them.
 #'
 #' @param use_orig logical, indicating to use image present in \emph{RIA_data$orig}.
 #' If FALSE, the modified image will be used stored in \emph{RIA_data$modif}. However, GLCM matrices
@@ -32,6 +34,9 @@
 #' RIA_image <- glcm(RIA_image, use_orig = FALSE, use_slot = "dichotomized$ep_8",
 #' off_right = 0, off_down = 1, off_z = 0)
 #' RIA_image <- glcm_stat(RIA_image, use_orig = FALSE, use_slot = "glcm$ep_8_010")
+#' 
+#' #Batch calculation of GLCM-based statistics on all calculated GLCMs
+#' RIA_image <- glcm_stat(RIA_image, use_type = "dichotomized")
 #' }
 
 
@@ -43,8 +48,11 @@ glcm_stat <- function(RIA_data_in, use_type = "single", use_orig = FALSE, use_sl
   data_in_orig <- check_data_in(RIA_data_in, use_type = use_type, use_slot = use_slot, verbose_in = verbose_in)
 
   if(any(class(data_in_orig) != "list")) data_in_orig <- list(data_in_orig)
-
   list_names <- names(data_in_orig)
+  if(!is.null(save_name) & (length(data_in_orig) != length(save_name))) {stop(paste0("PLEASE PROVIDE THE SAME NUMBER OF NAMES AS THERE ARE IMAGES!\n",
+                                                                                "NUMBER OF NAMES: ", length(save_name), "\n",
+                                                                                "NUMBER OF IMAGES: ", length(data_in), "\n"))
+  }
 
   for (i in 1: length(data_in_orig))
   {
@@ -878,10 +886,22 @@ glcm_stat <- function(RIA_data_in, use_type = "single", use_orig = FALSE, use_sl
       }
     }
   }
+  
+  if(use_type == "glcm") {
+      if(any(class(RIA_data_in) == "RIA_image"))
+      {
+          if(is.null(save_name[i])) {
+              txt <- list_names[i]
+              RIA_data_in$stat_glcm[[txt]] <- metrics
+          }
+          if(!is.null(save_name[i])) {RIA_data_in$stat_glcm[[save_name[i]]] <- metrics
+          }
+      }
+  }
 
   if(is.null(save_name)) {txt_name <- txt
   } else {txt_name <- save_name}
-  if(verbose_in) {message(" "); message(paste0("GLCM STATISTICS WAS SUCCESSFULLY ADDED TO '", txt_name, "' SLOT OF RIA_image$stat_glcm"))}
+  if(verbose_in) {message(paste0("GLCM STATISTICS WAS SUCCESSFULLY ADDED TO '", txt_name, "' SLOT OF RIA_image$stat_glcm\n"))}
 
 
   }

@@ -17,7 +17,9 @@ glrlm(RIA_data_in, right = TRUE, down = FALSE, forward = FALSE,
 
 \item{forward}{logical, indicating whether the direction should in the cross plane.}
 
-\item{use_type}{string, currently only "single" data processing is supported.}
+\item{use_type}{string, can be \emph{"single"} which runs the function on a single image,
+which is determined using \emph{"use_orig"} or \emph{"use_slot"}. \emph{"dichotomized"}
+takes all datasets in the \emph{RIA_image$dichotomized} slot and runs the analysis on them.}
 
 \item{use_orig}{logical, indicating to use image present in \emph{RIA_data$orig}.
 If FALSE, the modified image will be used stored in \emph{RIA_data$modif}.}
@@ -58,6 +60,9 @@ RIA_image <- glrlm(RIA_image, use_orig = FALSE, verbose_in = TRUE)
 #Use use_slot parameter to set which image to use
 RIA_image <- glrlm(RIA_image, use_orig = FALSE, use_slot = "dichotomized$ep_4",
 right = TRUE, down = TRUE, forward = FALSE)
-}
-}
 
+#Batch calculation of GLRLM matrices on all dichotomized images
+RIA_image <- glrlm(RIA_image, use_type = "dichotomized",
+right = TRUE, down = TRUE, forward = FALSE)
+}
+}

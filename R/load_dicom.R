@@ -129,7 +129,7 @@ load_dicom <- function(filename, crop_in = TRUE, replace_in = TRUE, center_in = 
                        mosaic_in = FALSE, mosaicXY_in = NULL, sequence_in = FALSE
                        )
 {
-  if(verbose_in) {message(" "); message(paste0("LOADING DICOM FILES FROM: ", filename))}
+  if(verbose_in) {message(paste0("LOADING DICOM FILES FROM: ", filename, "\n"))}
 
   dcmImages <- oro.dicom::readDICOM(filename, recursive = recursive_in, exclude = exclude_in, verbose = verbose_in)
 
@@ -163,25 +163,25 @@ load_dicom <- function(filename, crop_in = TRUE, replace_in = TRUE, center_in = 
 
   if(crop_in)
   {
-    if(verbose_in) {message(" "); message(paste0("SMALLEST VALUES IS ", zero_value, ", AND WILL BE CONSIDERED AS REFERENCE POINT TO IDENTIFY VOXELS WITHOUT ANY SIGNAL"))}
-    if(verbose_in & center_in == FALSE) message(paste0("MIGHT CONSIDER RESCALING, SINCE SMALLEST VALUE IS NOT -1024, AND THUS HU VALUES MIGHT NOT BE CORRECT"))
+    if(verbose_in) {message(paste0("SMALLEST VALUES IS ", zero_value, ", AND WILL BE CONSIDERED AS REFERENCE POINT TO IDENTIFY VOXELS WITHOUT ANY SIGNAL\n"))}
+    if(verbose_in & center_in == FALSE) message(paste0("MIGHT CONSIDER RESCALING, SINCE SMALLEST VALUE IS NOT -1024, AND THUS HU VALUES MIGHT NOT BE CORRECT\n"))
 
-    RIA_image <- crop(RIA_image, zero_value, verbose_in = verbose_in)
+    RIA_image <- crop(RIA_image, zero_value, write_orig = TRUE, verbose_in = verbose_in)
   }
 
 
   ###Replace values
   if(replace_in)
   {
-    if(verbose_in) {message(" "); message(paste0("SMALLEST VALUES IS ", zero_value, ", AND WILL CHANGE TO NA"))}
+    if(verbose_in) {message(paste0("SMALLEST VALUES IS ", zero_value, ", AND WILL CHANGE TO NA\n"))}
 
     RIA_image <- change_to(RIA_image, zero_value_in = zero_value, verbose_in = verbose_in)
   }
 
-  ###Replace values
+  ###Shift to
   if(center_in & (min(data, na.rm = T) != min_to))
   {
-    if(verbose_in) {message(" "); message(paste0("SMALLEST VALUES IS not ", min_to, " THEREFORE SHIFTING SCALE TO ACHIVE THIS"))}
+    if(verbose_in) {message(paste0("SMALLEST VALUES IS not ", min_to, " THEREFORE SHIFTING VALUES TO ACHIVE THIS\n"))}
     RIA_image <- shift_to(RIA_image, to = min_to, min_value_in = zero_value, verbose_in = verbose_in)
   }
 
@@ -200,11 +200,11 @@ load_dicom <- function(filename, crop_in = TRUE, replace_in = TRUE, center_in = 
 
 
 
-  if(verbose_in) {message(" "); message(paste0("SUCCESSFULLY LOADED ", RIA_image$header$PatientsName, "'s DICOM IMAGES TO RIA IMAGE CLASS"))}
+  if(verbose_in) {message(paste0("SUCCESSFULLY LOADED ", RIA_image$header$PatientsName, "'s DICOM IMAGES TO RIA IMAGE CLASS\n"))}
   data_NA <- as.vector(RIA_image$data$orig)
   data_NA <- data_NA[!is.na(data_NA)]
 
-  if(length(data_NA) == 0) {message(" "); message("WARNING: RIA_image$data DOES NOT CONTAIN ANY DATA!!!")}
+  if(length(data_NA) == 0) {message("WARNING: RIA_image$data DOES NOT CONTAIN ANY DATA!!!\n")}
 
   return(RIA_image)
 }

@@ -16,4 +16,3 @@ rda data file containing Name, Group and Element codes of DICOM header info
 to be included into \emph{RIA_image} object by default when using \code{\link[RIA]{load_dicom}} function.
 Can be edited to change defaults.
 }
-
