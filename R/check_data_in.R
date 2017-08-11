@@ -27,8 +27,8 @@ check_data_in <- function(RIA_data_in, use_type = "single", use_orig = TRUE, use
         
     }
     
-    if(use_type == "dichotomized") {
-        return(RIA_data_in$dichotomized)
+    if(use_type == "discretized") {
+        return(RIA_data_in$discretized)
     }
     
     if(use_type == "glcm") {

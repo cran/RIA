@@ -12,7 +12,7 @@
 
 <meta name="author" content="Márton Kolossváry" />
 
-<meta name="date" content="2017-06-08" />
+<meta name="date" content="2017-08-11" />
 
 <title>RIA package manual</title>
 
@@ -70,7 +70,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 
 <h1 class="title toc-ignore">RIA package manual</h1>
 <h4 class="author"><em>Márton Kolossváry</em></h4>
-<h4 class="date"><em>2017-06-08</em></h4>
+<h4 class="date"><em>2017-08-11</em></h4>
 
 
 
@@ -164,10 +164,10 @@ DICOM =<span class="st"> </span><span class="kw">load_dicom</span>(<span class="
 <p>We will be using the NRS dataset for all following examples. Load the data using:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">DICOM &lt;-<span class="st"> </span>NRS</code></pre></div>
 </div>
-<div id="dichotomization-of-voxel-values" class="section level1">
-<h1>Dichotomization of voxel values</h1>
-<p>Dichotomization of voxel values is crucial for radiomic analysis. Since many metrics rely on the spatial relationship of different voxel values, we need to decrease the number of possible values. This is needed since we do not want to consider for example a voxel value of 456 any different from 457, since the difference is probably attributable to noise and does not hold any information regarding spatial heterogeneity. Dichotomization is done using the <em>dichotomize</em> function. It receives a <em>RIA_image</em> and outputs a RIA_image with a new slot <code>DICOM$dichotomized</code> containing the images with dichotomized values.</p>
-<p>Dichotomization is effected by two variables:</p>
+<div id="discretization-of-voxel-values" class="section level1">
+<h1>Discretization of voxel values</h1>
+<p>Discretization of voxel values is crucial for radiomic analysis. Since many metrics rely on the spatial relationship of different voxel values, we need to decrease the number of possible values. This is needed since we do not want to consider for example a voxel value of 456 any different from 457, since the difference is probably attributable to noise and does not hold any information regarding spatial heterogeneity. Discretization is done using the <em>discretize</em> function. It receives a <em>RIA_image</em> and outputs a RIA_image with a new slot <code>DICOM$discretized</code> containing the images with discretized values.</p>
+<p>Discretization is effected by two variables:</p>
 <ul>
 <li>the number of bins to which the values will be transformed to</li>
 <li>the length of each bin</li>
@@ -175,56 +175,56 @@ DICOM =<span class="st"> </span><span class="kw">load_dicom</span>(<span class="
 <div id="specifing-the-number-of-bins" class="section level2">
 <h2>Specifing the number of bins</h2>
 <p>The number of bins can be easily specified using the <strong>bins_in</strong> parameter.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">DICOM =<span class="st"> </span><span class="kw">dichotomize</span>(<span class="dt">RIA_data_in =</span> DICOM, <span class="dt">bins_in =</span> <span class="dv">2</span>)
-<span class="co">#&gt; SUCCESSFULLY DICHOTOMIZED DATA INTO 2 NUMBER OF EQUALLY SIZED BINS</span></code></pre></div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">DICOM =<span class="st"> </span><span class="kw">discretize</span>(<span class="dt">RIA_data_in =</span> DICOM, <span class="dt">bins_in =</span> <span class="dv">2</span>)
+<span class="co">#&gt; SUCCESSFULLY DISCRETIZED DATA INTO 2 NUMBER OF EQUALLY SIZED BINS</span></code></pre></div>
 </div>
 <div id="specifing-the-length-of-each-bin" class="section level2">
 <h2>Specifing the length of each bin</h2>
-<p>There are two main types of dichotomizations. We either have equally sized or equally probable bins. Equally sized bins mean that the range between the minimum and the maximum value is divided into a predefined number of bins of which all have the same lengths. For example is our smallest value is 0 and the largest is 100 and we wish to dichotomize into 4 equally sized bins then the cut points will be at 25, 50 and 75, result in 4 bins each with a length of 25 units. However if the dichotomization is done using equally probable bins then the length of each bin might be different, but the number of elements in it are the same. This might result is cut points such as: 10, 35 and 55 for example in case of a rightly skewed dataset. The type of dichotomization is defined by the <strong>equal_prob</strong> parameter. The default is <em>FALSE</em>, therefore by default images are dichtomized using equal sized bins. Setting it to <em>TRUE</em> will result in equally probable bins:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">DICOM =<span class="st"> </span><span class="kw">dichotomize</span>(<span class="dt">RIA_data_in =</span> DICOM, <span class="dt">bins_in =</span> <span class="dv">2</span>, <span class="dt">equal_prob =</span> <span class="ot">TRUE</span>)
-<span class="co">#&gt; SUCCESSFULLY DICHOTOMIZED DATA INTO 2 NUMBER OF EQUAL PROBABILITY BINS</span></code></pre></div>
-<p>The dichotomize function updates the log of the <em>RIA_image</em> by adding the dichotomization to the events:</p>
+<p>There are two main types of discretizations. We either have equally sized or equally probable bins. Equally sized bins mean that the range between the minimum and the maximum value is divided into a predefined number of bins of which all have the same lengths. For example is our smallest value is 0 and the largest is 100 and we wish to discretize into 4 equally sized bins then the cut points will be at 25, 50 and 75, result in 4 bins each with a length of 25 units. However if the discretization is done using equally probable bins then the length of each bin might be different, but the number of elements in it are the same. This might result is cut points such as: 10, 35 and 55 for example in case of a rightly skewed dataset. The type of discretization is defined by the <strong>equal_prob</strong> parameter. The default is <em>FALSE</em>, therefore by default images are dichtomized using equal sized bins. Setting it to <em>TRUE</em> will result in equally probable bins:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">DICOM =<span class="st"> </span><span class="kw">discretize</span>(<span class="dt">RIA_data_in =</span> DICOM, <span class="dt">bins_in =</span> <span class="dv">2</span>, <span class="dt">equal_prob =</span> <span class="ot">TRUE</span>)
+<span class="co">#&gt; SUCCESSFULLY DISCRETIZED DATA INTO 2 NUMBER OF EQUAL PROBABILITY BINS</span></code></pre></div>
+<p>The discretize function updates the log of the <em>RIA_image</em> by adding the discretization to the events:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">DICOM$log$events
-<span class="co">#&gt; [1] &quot;Created&quot;                    &quot;Cropped&quot;                   </span>
-<span class="co">#&gt; [3] &quot;Changed_to_NA&quot;              &quot;Shifted_by_-1024&quot;          </span>
-<span class="co">#&gt; [5] &quot;Dichotomized_equal_sized_2&quot; &quot;Dichotomized_equal_prob_2&quot;</span></code></pre></div>
-<p>It also adds the cut points that were used for the dichotomization:</p>
+<span class="co">#&gt; [1] &quot;Created&quot;                   &quot;Cropped&quot;                  </span>
+<span class="co">#&gt; [3] &quot;Changed_to_NA&quot;             &quot;Shifted_by_-1024&quot;         </span>
+<span class="co">#&gt; [5] &quot;Discretized_equal_sized_2&quot; &quot;Discretized_equal_prob_2&quot;</span></code></pre></div>
+<p>It also adds the cut points that were used for the discretization:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">DICOM$log$cuts_es_2
 <span class="co">#&gt; [1] 195</span>
 DICOM$log$cuts_ep_2
 <span class="co">#&gt; [1] 65</span></code></pre></div>
 <p>The names of the created images and corresponding elements in the <em>log</em> can be changed as we will see later. But for convenience <code>RIA</code> automatically names the new images. If not crucial for some reason, I would suggest to stick with the automatically predefined names.</p>
 </div>
-<div id="additional-input-parameters-of-dichotomize-function" class="section level2">
-<h2>Additional input parameters of dichotomize function</h2>
-<p>-<em>use_orig</em> whether to use the original image (which might be croped etc.) stored in <code>RIA_image$data$orig</code> or to use the modified image stored in <code>RIA_image$data$modif</code>. By default it is set to <em>TRUE</em>. Only in very special cases might one want to dichotomize an image that has already been dichotomized or modified by an other function.</p>
+<div id="additional-input-parameters-of-discretize-function" class="section level2">
+<h2>Additional input parameters of discretize function</h2>
+<p>-<em>use_orig</em> whether to use the original image (which might be croped etc.) stored in <code>RIA_image$data$orig</code> or to use the modified image stored in <code>RIA_image$data$modif</code>. By default it is set to <em>TRUE</em>. Only in very special cases might one want to discretize an image that has already been discretized or modified by an other function.</p>
 <p>-<em>write_orig</em> whether to overwrite the original image stored in <code>RIA_image$data$orig</code>. Usually it is not advised to overwrite the master image since then only modified images can be further processed. Therefore, by default it is set to <em>FALSE</em></p>
 <p>-<em>verbose_in</em> whether write information regarding the running processes in the console.</p>
 </div>
-<div id="batch-dichotomization" class="section level2">
-<h2>Batch dichotomization</h2>
-<p>Since the number of bins and the type of dichotomization can significantly effect our later results, usually several dichotomizations are performed on a image to receive many different images. Using <code>RIA</code> it is very easy perform several different dichotomizations with just one line of code. For example if you wish to dichotomize your image to 4, 8, 16 and 32 equally sized bins, all you have to do is:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">DICOM =<span class="st"> </span><span class="kw">dichotomize</span>(<span class="dt">RIA_data_in =</span> DICOM, <span class="dt">bins_in =</span> <span class="kw">c</span>(<span class="dv">4</span>,<span class="dv">8</span>,<span class="dv">16</span>,<span class="dv">32</span>))
-<span class="co">#&gt; SUCCESSFULLY DICHOTOMIZED DATA INTO 4 NUMBER OF EQUALLY SIZED BINS</span>
-<span class="co">#&gt; SUCCESSFULLY DICHOTOMIZED DATA INTO 8 NUMBER OF EQUALLY SIZED BINS</span>
-<span class="co">#&gt; SUCCESSFULLY DICHOTOMIZED DATA INTO 16 NUMBER OF EQUALLY SIZED BINS</span>
-<span class="co">#&gt; SUCCESSFULLY DICHOTOMIZED DATA INTO 32 NUMBER OF EQUALLY SIZED BINS</span></code></pre></div>
+<div id="batch-discretization" class="section level2">
+<h2>Batch discretization</h2>
+<p>Since the number of bins and the type of discretization can significantly effect our later results, usually several discretizations are performed on a image to receive many different images. Using <code>RIA</code> it is very easy perform several different discretizations with just one line of code. For example if you wish to discretize your image to 4, 8, 16 and 32 equally sized bins, all you have to do is:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">DICOM =<span class="st"> </span><span class="kw">discretize</span>(<span class="dt">RIA_data_in =</span> DICOM, <span class="dt">bins_in =</span> <span class="kw">c</span>(<span class="dv">4</span>,<span class="dv">8</span>,<span class="dv">16</span>,<span class="dv">32</span>))
+<span class="co">#&gt; SUCCESSFULLY DISCRETIZED DATA INTO 4 NUMBER OF EQUALLY SIZED BINS</span>
+<span class="co">#&gt; SUCCESSFULLY DISCRETIZED DATA INTO 8 NUMBER OF EQUALLY SIZED BINS</span>
+<span class="co">#&gt; SUCCESSFULLY DISCRETIZED DATA INTO 16 NUMBER OF EQUALLY SIZED BINS</span>
+<span class="co">#&gt; SUCCESSFULLY DISCRETIZED DATA INTO 32 NUMBER OF EQUALLY SIZED BINS</span></code></pre></div>
 <p>or more easily if you want 4, 8, 16 and 32 equally probable bins:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">DICOM =<span class="st"> </span><span class="kw">dichotomize</span>(<span class="dt">RIA_data_in =</span> DICOM, <span class="dt">bins_in =</span> <span class="dv">2</span>^(<span class="dv">2</span>:<span class="dv">5</span>), <span class="dt">equal_prob =</span> <span class="ot">TRUE</span>)
-<span class="co">#&gt; SUCCESSFULLY DICHOTOMIZED DATA INTO 4 NUMBER OF EQUAL PROBABILITY BINS</span>
-<span class="co">#&gt; SUCCESSFULLY DICHOTOMIZED DATA INTO 8 NUMBER OF EQUAL PROBABILITY BINS</span>
-<span class="co">#&gt; SUCCESSFULLY DICHOTOMIZED DATA INTO 16 NUMBER OF EQUAL PROBABILITY BINS</span>
-<span class="co">#&gt; SUCCESSFULLY DICHOTOMIZED DATA INTO 32 NUMBER OF EQUAL PROBABILITY BINS</span></code></pre></div>
-<p>These resulted in our image dichotomized in 2,4,8,16,32 equally probable and equally sized bins, which are stored in the <code>$dichotomized</code> slot of the <em>RIA_image</em>:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">DICOM =<span class="st"> </span><span class="kw">discretize</span>(<span class="dt">RIA_data_in =</span> DICOM, <span class="dt">bins_in =</span> <span class="dv">2</span>^(<span class="dv">2</span>:<span class="dv">5</span>), <span class="dt">equal_prob =</span> <span class="ot">TRUE</span>)
+<span class="co">#&gt; SUCCESSFULLY DISCRETIZED DATA INTO 4 NUMBER OF EQUAL PROBABILITY BINS</span>
+<span class="co">#&gt; SUCCESSFULLY DISCRETIZED DATA INTO 8 NUMBER OF EQUAL PROBABILITY BINS</span>
+<span class="co">#&gt; SUCCESSFULLY DISCRETIZED DATA INTO 16 NUMBER OF EQUAL PROBABILITY BINS</span>
+<span class="co">#&gt; SUCCESSFULLY DISCRETIZED DATA INTO 32 NUMBER OF EQUAL PROBABILITY BINS</span></code></pre></div>
+<p>These resulted in our image discretized in 2,4,8,16,32 equally probable and equally sized bins, which are stored in the <code>$discretized</code> slot of the <em>RIA_image</em>:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">DICOM$log$events
-<span class="co">#&gt;  [1] &quot;Created&quot;                     &quot;Cropped&quot;                    </span>
-<span class="co">#&gt;  [3] &quot;Changed_to_NA&quot;               &quot;Shifted_by_-1024&quot;           </span>
-<span class="co">#&gt;  [5] &quot;Dichotomized_equal_sized_2&quot;  &quot;Dichotomized_equal_prob_2&quot;  </span>
-<span class="co">#&gt;  [7] &quot;Dichotomized_equal_sized_4&quot;  &quot;Dichotomized_equal_sized_8&quot; </span>
-<span class="co">#&gt;  [9] &quot;Dichotomized_equal_sized_16&quot; &quot;Dichotomized_equal_sized_32&quot;</span>
-<span class="co">#&gt; [11] &quot;Dichotomized_equal_prob_4&quot;   &quot;Dichotomized_equal_prob_8&quot;  </span>
-<span class="co">#&gt; [13] &quot;Dichotomized_equal_prob_16&quot;  &quot;Dichotomized_equal_prob_32&quot;</span>
-<span class="kw">names</span>(DICOM$dichotomized)
+<span class="co">#&gt;  [1] &quot;Created&quot;                    &quot;Cropped&quot;                   </span>
+<span class="co">#&gt;  [3] &quot;Changed_to_NA&quot;              &quot;Shifted_by_-1024&quot;          </span>
+<span class="co">#&gt;  [5] &quot;Discretized_equal_sized_2&quot;  &quot;Discretized_equal_prob_2&quot;  </span>
+<span class="co">#&gt;  [7] &quot;Discretized_equal_sized_4&quot;  &quot;Discretized_equal_sized_8&quot; </span>
+<span class="co">#&gt;  [9] &quot;Discretized_equal_sized_16&quot; &quot;Discretized_equal_sized_32&quot;</span>
+<span class="co">#&gt; [11] &quot;Discretized_equal_prob_4&quot;   &quot;Discretized_equal_prob_8&quot;  </span>
+<span class="co">#&gt; [13] &quot;Discretized_equal_prob_16&quot;  &quot;Discretized_equal_prob_32&quot;</span>
+<span class="kw">names</span>(DICOM$discretized)
 <span class="co">#&gt;  [1] &quot;es_2&quot;  &quot;ep_2&quot;  &quot;es_4&quot;  &quot;es_8&quot;  &quot;es_16&quot; &quot;es_32&quot; &quot;ep_4&quot;  &quot;ep_8&quot; </span>
 <span class="co">#&gt;  [9] &quot;ep_16&quot; &quot;ep_32&quot;</span></code></pre></div>
 </div>
@@ -329,8 +329,8 @@ RIA:::<span class="kw">list_to_df</span>(DICOM$stat_fo$ep_32)
 <span class="co">#&gt; Energy        703988.000000000</span>
 <span class="co">#&gt; Uniformity         0.031417069</span>
 <span class="co">#&gt; Entropy            0.150231914</span></code></pre></div>
-<p>If the desired image is not present in the modif slot, since it was created earlier, then instead of switching the <code>DICOM$data$modif</code> image to the desired one, you may give a specific image you wish to use using the <strong>use_slot</strong> parameter. If the image you wish to use is in <code>DICOM$dichotomized$es_2</code>, then you can calculate first-order statistics on it by:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">DICOM =<span class="st"> </span><span class="kw">first_order</span>(<span class="dt">RIA_data_in =</span> DICOM, <span class="dt">use_orig =</span> <span class="ot">FALSE</span>, <span class="dt">use_slot =</span> <span class="st">&quot;dichotomized$es_2&quot;</span>)
+<p>If the desired image is not present in the modif slot, since it was created earlier, then instead of switching the <code>DICOM$data$modif</code> image to the desired one, you may give a specific image you wish to use using the <strong>use_slot</strong> parameter. If the image you wish to use is in <code>DICOM$discretized$es_2</code>, then you can calculate first-order statistics on it by:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">DICOM =<span class="st"> </span><span class="kw">first_order</span>(<span class="dt">RIA_data_in =</span> DICOM, <span class="dt">use_orig =</span> <span class="ot">FALSE</span>, <span class="dt">use_slot =</span> <span class="st">&quot;discretized$es_2&quot;</span>)
 <span class="co">#&gt; FIRST-ORDER STATISTICS WAS SUCCESSFULLY ADDED TO 'es_2' SLOT OF RIA_image$stat_fo</span>
 RIA:::<span class="kw">list_to_df</span>(DICOM$stat_fo$es_2)
 <span class="co">#&gt;                     Values</span>
@@ -384,7 +384,7 @@ RIA:::<span class="kw">list_to_df</span>(DICOM$stat_fo$es_2)
 <ul>
 <li><em>save_name</em> can be used to modify the name of the output. If provided, then the automatic name generated is overwritten by the provided string.</li>
 </ul>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">DICOM =<span class="st"> </span><span class="kw">first_order</span>(<span class="dt">RIA_data_in =</span> DICOM, <span class="dt">use_orig =</span> <span class="ot">FALSE</span>, <span class="dt">use_slot =</span> <span class="st">&quot;dichotomized$es_2&quot;</span>, <span class="dt">save_name =</span> <span class="kw">c</span>(<span class="st">&quot;equaly_sized_2bins&quot;</span>))
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">DICOM =<span class="st"> </span><span class="kw">first_order</span>(<span class="dt">RIA_data_in =</span> DICOM, <span class="dt">use_orig =</span> <span class="ot">FALSE</span>, <span class="dt">use_slot =</span> <span class="st">&quot;discretized$es_2&quot;</span>, <span class="dt">save_name =</span> <span class="kw">c</span>(<span class="st">&quot;equaly_sized_2bins&quot;</span>))
 <span class="co">#&gt; FIRST-ORDER STATISTICS WAS SUCCESSFULLY ADDED TO 'equaly_sized_2bins' SLOT OF RIA_image$stat_fo</span>
 RIA:::<span class="kw">list_to_df</span>(DICOM$stat_fo$equaly_sized_2bins)
 <span class="co">#&gt;                     Values</span>
@@ -435,8 +435,8 @@ RIA:::<span class="kw">list_to_df</span>(DICOM$stat_fo$equaly_sized_2bins)
 </div>
 <div id="batch-calculation-of-first-order-statistics" class="section level2">
 <h2>Batch calculation of first-order statistics</h2>
-<p>RIA supports batch calculation of first-order statistics. In many cases one wants to calculate the statistics on all modified images. Using one line of code you can calculate first-order statistics for all dichotomized images:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">DICOM =<span class="st"> </span><span class="kw">first_order</span>(<span class="dt">RIA_data_in =</span> DICOM, <span class="dt">use_type =</span> <span class="st">&quot;dichotomized&quot;</span>)
+<p>RIA supports batch calculation of first-order statistics. In many cases one wants to calculate the statistics on all modified images. Using one line of code you can calculate first-order statistics for all discretized images:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">DICOM =<span class="st"> </span><span class="kw">first_order</span>(<span class="dt">RIA_data_in =</span> DICOM, <span class="dt">use_type =</span> <span class="st">&quot;discretized&quot;</span>)
 <span class="co">#&gt; FIRST-ORDER STATISTICS WAS SUCCESSFULLY ADDED TO 'es_2' SLOT OF RIA_image$stat_fo</span>
 <span class="co">#&gt; FIRST-ORDER STATISTICS WAS SUCCESSFULLY ADDED TO 'ep_2' SLOT OF RIA_image$stat_fo</span>
 <span class="co">#&gt; FIRST-ORDER STATISTICS WAS SUCCESSFULLY ADDED TO 'es_4' SLOT OF RIA_image$stat_fo</span>
@@ -452,9 +452,9 @@ RIA:::<span class="kw">list_to_df</span>(DICOM$stat_fo$equaly_sized_2bins)
 <span class="co">#&gt;  [4] &quot;equaly_sized_2bins&quot; &quot;ep_2&quot;               &quot;es_4&quot;              </span>
 <span class="co">#&gt;  [7] &quot;es_8&quot;               &quot;es_16&quot;              &quot;es_32&quot;             </span>
 <span class="co">#&gt; [10] &quot;ep_4&quot;               &quot;ep_8&quot;               &quot;ep_16&quot;</span></code></pre></div>
-<p>The <strong>use_type</strong> input can be used to specify how the function behaves. By default, it is set to <em>“single”</em>, indicating single image processing. As seen above, there are multiple ways first-order statistics can be calculated on single images. However, if <strong>use_type</strong> is set to <em>“dichotomized”</em>, then the function will calculate the statistical metrics for all instances present in the given slot.</p>
+<p>The <strong>use_type</strong> input can be used to specify how the function behaves. By default, it is set to <em>“single”</em>, indicating single image processing. As seen above, there are multiple ways first-order statistics can be calculated on single images. However, if <strong>use_type</strong> is set to <em>“discretized”</em>, then the function will calculate the statistical metrics for all instances present in the given slot.</p>
 <p>The <strong>save_name</strong> parameter can still be used to rename the name of the statistics is needed.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">DICOM =<span class="st"> </span><span class="kw">first_order</span>(<span class="dt">RIA_data_in =</span> DICOM, <span class="dt">use_type =</span> <span class="st">&quot;dichotomized&quot;</span>,
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">DICOM =<span class="st"> </span><span class="kw">first_order</span>(<span class="dt">RIA_data_in =</span> DICOM, <span class="dt">use_type =</span> <span class="st">&quot;discretized&quot;</span>,
                     <span class="dt">save_name =</span> <span class="kw">c</span>(<span class="st">&quot;Name_1&quot;</span>, <span class="st">&quot;Name_2&quot;</span>, <span class="st">&quot;Name_3&quot;</span>, <span class="st">&quot;Name_4&quot;</span>,
                                   <span class="st">&quot;Name_5&quot;</span>, <span class="st">&quot;Name_6&quot;</span>, <span class="st">&quot;Name_7&quot;</span>, <span class="st">&quot;Name_8&quot;</span>,
                                   <span class="st">&quot;Name_9&quot;</span>, <span class="st">&quot;Name_10&quot;</span>))
@@ -477,11 +477,11 @@ RIA:::<span class="kw">list_to_df</span>(DICOM$stat_fo$equaly_sized_2bins)
 <span class="co">#&gt; [16] &quot;Name_4&quot;             &quot;Name_5&quot;             &quot;Name_6&quot;            </span>
 <span class="co">#&gt; [19] &quot;Name_7&quot;             &quot;Name_8&quot;             &quot;Name_9&quot;            </span>
 <span class="co">#&gt; [22] &quot;Name_10&quot;</span></code></pre></div>
-<p>Please provide the same number of names as the number of dichotomizations. If there is a discrepancy between the number of provided names and images, then the process will be stopped giving an error.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">DICOM =<span class="st"> </span><span class="kw">first_order</span>(<span class="dt">RIA_data_in =</span> DICOM, <span class="dt">use_type =</span> <span class="st">&quot;dichotomized&quot;</span>,
+<p>Please provide the same number of names as the number of discretizations. If there is a discrepancy between the number of provided names and images, then the process will be stopped giving an error.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">DICOM =<span class="st"> </span><span class="kw">first_order</span>(<span class="dt">RIA_data_in =</span> DICOM, <span class="dt">use_type =</span> <span class="st">&quot;discretized&quot;</span>,
                     <span class="dt">save_name =</span> <span class="kw">c</span>(<span class="st">&quot;Name_1&quot;</span>, <span class="st">&quot;Name_2&quot;</span>, <span class="st">&quot;Name_3&quot;</span>, <span class="st">&quot;Name_4&quot;</span>))
-<span class="co">#&gt; Error in first_order(RIA_data_in = DICOM, use_type = &quot;dichotomized&quot;, save_name = c(&quot;Name_1&quot;, : PLEASE PROVIDE THE SAME NUMBER OF NAMES AS THERE ARE IMAGES!</span>
-<span class="co">#&gt; NUMBER OF NAMES: 4</span>
+<span class="co">#&gt; Error in first_order(RIA_data_in = DICOM, use_type = &quot;discretized&quot;, save_name = c(&quot;Name_1&quot;, : PLEASE PROVIDE THE SAME NUMBER OF NAMES AS THERE ARE IMAGES!</span>
+<span class="co">#&gt; NUMBER OF NAMES:  4</span>
 <span class="co">#&gt; NUMBER OF IMAGES: 10</span></code></pre></div>
 </div>
 </div>
@@ -498,20 +498,20 @@ RIA:::<span class="kw">list_to_df</span>(DICOM$stat_fo$equaly_sized_2bins)
 <span class="co">#&gt; GLCM WAS SUCCESSFULLY ADDED TO 'ep_32_122' SLOT OF RIA_image$glcm</span>
 <span class="kw">dim</span>(DICOM$glcm$ep_32)
 <span class="co">#&gt; [1] 32 32</span></code></pre></div>
-<p>As discussed in the first-order case, the image wished to be analyzed may be set using the <strong>use_orig</strong>, <strong>use_slot</strong> and <strong>save_name</strong> parameters. <code>RIA</code> looks at the name of the provided image, if numbers are present in it, the it will set the dimensions and the resulting name of the GLCM based-on these values. If no numbers are present, then it will the automatic name generator of <code>RIA</code> to figure out the name of the last image manipulation. If it does not succeed, then it will calculate how many different gray levels there are in the image to set the dimensions of GLCM matrix and the name of the statistic. However, it might occur for example that the data was dichotomized to 32 equally sized bins, and then one of the bins does not contain any data. In these cases the GLCM will only be 31 x 31!</p>
+<p>As discussed in the first-order case, the image wished to be analyzed may be set using the <strong>use_orig</strong>, <strong>use_slot</strong> and <strong>save_name</strong> parameters. <code>RIA</code> looks at the name of the provided image, if numbers are present in it, the it will set the dimensions and the resulting name of the GLCM based-on these values. If no numbers are present, then it will the automatic name generator of <code>RIA</code> to figure out the name of the last image manipulation. If it does not succeed, then it will calculate how many different gray levels there are in the image to set the dimensions of GLCM matrix and the name of the statistic. However, it might occur for example that the data was discretized to 32 equally sized bins, and then one of the bins does not contain any data. In these cases the GLCM will only be 31 x 31!</p>
 <div id="additional-input-parameters-of-glcm-function" class="section level2">
 <h2>Additional input parameters of glcm function</h2>
 <p>Tow further parameters may be set to change the output of the function:</p>
 <ul>
 <li>symmetric: If TRUE, then the transpose of the initial GLCM matrix will be added to itself, which is the same as calculating the GLCM in the opposite direction. Doing so creates a symmetric GLCM matrix, which holds information regarding not only one direction, but also of the opposite direction as well, since asking how many times a <em>j</em> value voxel occurs next to a <em>i</em> value voxel in a given direction is the same as asking how many times a <em>i</em> value voxel occurs next to a <em>j</em> value one in the opposite direction. With this strategy, if you wish to calculate the GLCMs in all directions of space, then you only have to actually calculate half of them.</li>
 </ul>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">DICOM =<span class="st"> </span><span class="kw">glcm</span>(<span class="dt">RIA_data_in =</span> DICOM, <span class="dt">use_slot =</span> <span class="st">&quot;dichotomized$ep_2&quot;</span>, <span class="dt">off_right =</span> <span class="dv">1</span>, <span class="dt">off_down =</span> <span class="dv">2</span>, <span class="dt">off_z =</span> <span class="dv">2</span>, <span class="dt">symmetric =</span> <span class="ot">FALSE</span>, <span class="dt">normalize =</span> <span class="ot">FALSE</span>)
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">DICOM =<span class="st"> </span><span class="kw">glcm</span>(<span class="dt">RIA_data_in =</span> DICOM, <span class="dt">use_slot =</span> <span class="st">&quot;discretized$ep_2&quot;</span>, <span class="dt">off_right =</span> <span class="dv">1</span>, <span class="dt">off_down =</span> <span class="dv">2</span>, <span class="dt">off_z =</span> <span class="dv">2</span>, <span class="dt">symmetric =</span> <span class="ot">FALSE</span>, <span class="dt">normalize =</span> <span class="ot">FALSE</span>)
 <span class="co">#&gt; GLCM WAS SUCCESSFULLY ADDED TO 'ep_2_122' SLOT OF RIA_image$glcm</span>
 DICOM$glcm$ep_2
 <span class="co">#&gt;      [,1] [,2]</span>
 <span class="co">#&gt; [1,]    0    2</span>
 <span class="co">#&gt; [2,]    0    3</span>
-DICOM =<span class="st"> </span><span class="kw">glcm</span>(<span class="dt">RIA_data_in =</span> DICOM, <span class="dt">use_slot =</span> <span class="st">&quot;dichotomized$ep_2&quot;</span>, <span class="dt">off_right =</span> <span class="dv">1</span>, <span class="dt">off_down =</span> <span class="dv">2</span>, <span class="dt">off_z =</span> <span class="dv">2</span>, <span class="dt">symmetric =</span> <span class="ot">TRUE</span>, <span class="dt">normalize =</span> <span class="ot">FALSE</span>)
+DICOM =<span class="st"> </span><span class="kw">glcm</span>(<span class="dt">RIA_data_in =</span> DICOM, <span class="dt">use_slot =</span> <span class="st">&quot;discretized$ep_2&quot;</span>, <span class="dt">off_right =</span> <span class="dv">1</span>, <span class="dt">off_down =</span> <span class="dv">2</span>, <span class="dt">off_z =</span> <span class="dv">2</span>, <span class="dt">symmetric =</span> <span class="ot">TRUE</span>, <span class="dt">normalize =</span> <span class="ot">FALSE</span>)
 <span class="co">#&gt; GLCM WAS SUCCESSFULLY ADDED TO 'ep_2_122' SLOT OF RIA_image$glcm</span>
 DICOM$glcm$ep_2
 <span class="co">#&gt;      [,1] [,2]</span>
@@ -520,24 +520,23 @@ DICOM$glcm$ep_2
 <ul>
 <li>normalize: If TRUE, then instead of the absolute values of the occurrences are reported, but their relative frequencies.</li>
 </ul>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">DICOM =<span class="st"> </span><span class="kw">glcm</span>(<span class="dt">RIA_data_in =</span> DICOM, <span class="dt">use_slot =</span> <span class="st">&quot;dichotomized$ep_2&quot;</span>, <span class="dt">off_right =</span> <span class="dv">1</span>, <span class="dt">off_down =</span> <span class="dv">2</span>, <span class="dt">off_z =</span> <span class="dv">2</span>, <span class="dt">symmetric =</span> <span class="ot">TRUE</span>, <span class="dt">normalize =</span> <span class="ot">FALSE</span>)
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">DICOM =<span class="st"> </span><span class="kw">glcm</span>(<span class="dt">RIA_data_in =</span> DICOM, <span class="dt">use_slot =</span> <span class="st">&quot;discretized$ep_2&quot;</span>, <span class="dt">off_right =</span> <span class="dv">1</span>, <span class="dt">off_down =</span> <span class="dv">2</span>, <span class="dt">off_z =</span> <span class="dv">2</span>, <span class="dt">symmetric =</span> <span class="ot">TRUE</span>, <span class="dt">normalize =</span> <span class="ot">FALSE</span>)
 <span class="co">#&gt; GLCM WAS SUCCESSFULLY ADDED TO 'ep_2_122' SLOT OF RIA_image$glcm</span>
 DICOM$glcm$ep_2
 <span class="co">#&gt;      [,1] [,2]</span>
 <span class="co">#&gt; [1,]    0    2</span>
 <span class="co">#&gt; [2,]    2    6</span>
-DICOM =<span class="st"> </span><span class="kw">glcm</span>(<span class="dt">RIA_data_in =</span> DICOM, <span class="dt">use_slot =</span> <span class="st">&quot;dichotomized$ep_2&quot;</span>, <span class="dt">off_right =</span> <span class="dv">1</span>, <span class="dt">off_down =</span> <span class="dv">2</span>, <span class="dt">off_z =</span> <span class="dv">2</span>, <span class="dt">symmetric =</span> <span class="ot">TRUE</span>, <span class="dt">normalize =</span> <span class="ot">TRUE</span>)
+DICOM =<span class="st"> </span><span class="kw">glcm</span>(<span class="dt">RIA_data_in =</span> DICOM, <span class="dt">use_slot =</span> <span class="st">&quot;discretized$ep_2&quot;</span>, <span class="dt">off_right =</span> <span class="dv">1</span>, <span class="dt">off_down =</span> <span class="dv">2</span>, <span class="dt">off_z =</span> <span class="dv">2</span>, <span class="dt">symmetric =</span> <span class="ot">TRUE</span>, <span class="dt">normalize =</span> <span class="ot">TRUE</span>)
 <span class="co">#&gt; GLCM WAS SUCCESSFULLY ADDED TO 'ep_2_122' SLOT OF RIA_image$glcm</span>
 DICOM$glcm$ep_2
 <span class="co">#&gt;      [,1] [,2]</span>
 <span class="co">#&gt; [1,]  0.0  0.2</span>
 <span class="co">#&gt; [2,]  0.2  0.6</span></code></pre></div>
 <p>As GLCM statistics require probability values and in most cases GLCMs are calculated in all directions, both parameters are TRUE by default.</p>
-</div>
-<div id="batch-calculation-of-glcm" class="section level2">
-<h2>Batch calculation of GLCM</h2>
-<p>The <em>glcm</em> function also support batch calculations. Therefore, if you wish to calculate a given GLCM for all dichotomizations all you have to do is:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">DICOM =<span class="st"> </span><span class="kw">glcm</span>(<span class="dt">RIA_data_in =</span> DICOM, <span class="dt">use_type =</span> <span class="st">&quot;dichotomized&quot;</span>,
+<div id="batch-calculation-of-glcm" class="section level3">
+<h3>Batch calculation of GLCM</h3>
+<p>The <em>glcm</em> function also support batch calculations. Therefore, if you wish to calculate a given GLCM for all discretizations all you have to do is:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">DICOM =<span class="st"> </span><span class="kw">glcm</span>(<span class="dt">RIA_data_in =</span> DICOM, <span class="dt">use_type =</span> <span class="st">&quot;discretized&quot;</span>,
              <span class="dt">off_right =</span> <span class="dv">1</span>, <span class="dt">off_down =</span> <span class="dv">2</span>, <span class="dt">off_z =</span> <span class="dv">2</span>)
 <span class="co">#&gt; GLCM WAS SUCCESSFULLY ADDED TO 'es_2_122' SLOT OF RIA_image$glcm</span>
 <span class="co">#&gt; GLCM WAS SUCCESSFULLY ADDED TO 'ep_2_122' SLOT OF RIA_image$glcm</span>
@@ -552,7 +551,7 @@ DICOM$glcm$ep_2
 <span class="kw">names</span>(DICOM$glcm)
 <span class="co">#&gt;  [1] &quot;ep_32_122&quot; &quot;ep_2_122&quot;  &quot;es_2_122&quot;  &quot;es_4_122&quot;  &quot;es_8_122&quot; </span>
 <span class="co">#&gt;  [6] &quot;es_16_122&quot; &quot;es_32_122&quot; &quot;ep_4_122&quot;  &quot;ep_8_122&quot;  &quot;ep_16_122&quot;</span></code></pre></div>
-<p>In the near future, I’m planning to add a new batch function that can calculate GLCMs in all directions using one line of code.</p>
+</div>
 </div>
 <div id="statistics-on-glcm-matrices" class="section level2">
 <h2>Statistics on GLCM matrices</h2>
@@ -578,29 +577,214 @@ DICOM$glcm$ep_2
 <span class="co">#&gt;  [1] &quot;ep_2_122&quot;  &quot;ep_32_122&quot; &quot;es_2_122&quot;  &quot;es_4_122&quot;  &quot;es_8_122&quot; </span>
 <span class="co">#&gt;  [6] &quot;es_16_122&quot; &quot;es_32_122&quot; &quot;ep_4_122&quot;  &quot;ep_8_122&quot;  &quot;ep_16_122&quot;</span></code></pre></div>
 <p>The names of the outputs can also be specified. Be aware of providing the same amount of names as there are GLCMs being processed. Failing to do so will throw an error.</p>
-<p>In the near future, I’m planning to add a new batch function that can combine GLCM statistics of all the different directions at a given distance to receive directionally invariant average results of the GLCMs.</p>
 </div>
+</div>
+<div id="batch-calculation-of-glcm-matrices-in-all-directions" class="section level2">
+<h2>Batch calculation of GLCM matrices in all directions</h2>
+<p>To achieve rotationally invariant results, usually GLCM matrices are calculated in all directions. Using RIA, with one line of code you can calulate the GLCMs in all the different directions simply by calling:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">DICOM =<span class="st"> </span><span class="kw">glcm_all</span>(DICOM, <span class="dt">use_type =</span> <span class="st">&quot;single&quot;</span>)
+<span class="co">#&gt; GLCM WAS SUCCESSFULLY ADDED TO 'ep_32_100' SLOT OF RIA_image$glcm</span>
+<span class="co">#&gt; GLCM WAS SUCCESSFULLY ADDED TO 'ep_32_010' SLOT OF RIA_image$glcm</span>
+<span class="co">#&gt; GLCM WAS SUCCESSFULLY ADDED TO 'ep_32_110' SLOT OF RIA_image$glcm</span>
+<span class="co">#&gt; GLCM WAS SUCCESSFULLY ADDED TO 'ep_32_1-10' SLOT OF RIA_image$glcm</span>
+<span class="co">#&gt; GLCM WAS SUCCESSFULLY ADDED TO 'ep_32_101' SLOT OF RIA_image$glcm</span>
+<span class="co">#&gt; GLCM WAS SUCCESSFULLY ADDED TO 'ep_32_011' SLOT OF RIA_image$glcm</span>
+<span class="co">#&gt; GLCM WAS SUCCESSFULLY ADDED TO 'ep_32_111' SLOT OF RIA_image$glcm</span>
+<span class="co">#&gt; GLCM WAS SUCCESSFULLY ADDED TO 'ep_32_1-11' SLOT OF RIA_image$glcm</span>
+<span class="co">#&gt; GLCM WAS SUCCESSFULLY ADDED TO 'ep_32_10-1' SLOT OF RIA_image$glcm</span>
+<span class="co">#&gt; GLCM WAS SUCCESSFULLY ADDED TO 'ep_32_01-1' SLOT OF RIA_image$glcm</span>
+<span class="co">#&gt; GLCM WAS SUCCESSFULLY ADDED TO 'ep_32_11-1' SLOT OF RIA_image$glcm</span>
+<span class="co">#&gt; GLCM WAS SUCCESSFULLY ADDED TO 'ep_32_1-1-1' SLOT OF RIA_image$glcm</span>
+<span class="co">#&gt; GLCM WAS SUCCESSFULLY ADDED TO 'ep_32_001' SLOT OF RIA_image$glcm</span>
+<span class="kw">names</span>(DICOM$glcm)
+<span class="co">#&gt;  [1] &quot;ep_32_122&quot;   &quot;ep_2_122&quot;    &quot;es_2_122&quot;    &quot;es_4_122&quot;    &quot;es_8_122&quot;   </span>
+<span class="co">#&gt;  [6] &quot;es_16_122&quot;   &quot;es_32_122&quot;   &quot;ep_4_122&quot;    &quot;ep_8_122&quot;    &quot;ep_16_122&quot;  </span>
+<span class="co">#&gt; [11] &quot;ep_32_100&quot;   &quot;ep_32_010&quot;   &quot;ep_32_110&quot;   &quot;ep_32_1-10&quot;  &quot;ep_32_101&quot;  </span>
+<span class="co">#&gt; [16] &quot;ep_32_011&quot;   &quot;ep_32_111&quot;   &quot;ep_32_1-11&quot;  &quot;ep_32_10-1&quot;  &quot;ep_32_01-1&quot; </span>
+<span class="co">#&gt; [21] &quot;ep_32_11-1&quot;  &quot;ep_32_1-1-1&quot; &quot;ep_32_001&quot;</span></code></pre></div>
+<p>This uses the image stored in the <code>DICOM$data$modif</code>. This can be changed similarly to all other functions using the <strong>use_orig</strong>, <strong>use_slot</strong> and <strong>save_name</strong> parameters. RIA can also calculate all the different GLCMs on all modified images just by simply calling:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">DICOM =<span class="st"> </span><span class="kw">glcm_all</span>(DICOM, <span class="dt">use_type =</span> <span class="st">&quot;discretized&quot;</span>)
+<span class="co">#&gt; GLCM WAS SUCCESSFULLY ADDED TO 'es_2_100' SLOT OF RIA_image$glcm</span>
+<span class="co">#&gt; GLCM WAS SUCCESSFULLY ADDED TO 'ep_2_100' SLOT OF RIA_image$glcm</span>
+<span class="co">#&gt; GLCM WAS SUCCESSFULLY ADDED TO 'es_4_100' SLOT OF RIA_image$glcm</span>
+<span class="co">#&gt; GLCM WAS SUCCESSFULLY ADDED TO 'es_8_100' SLOT OF RIA_image$glcm</span>
+<span class="co">#&gt; GLCM WAS SUCCESSFULLY ADDED TO 'es_16_100' SLOT OF RIA_image$glcm</span>
+<span class="co">#&gt; GLCM WAS SUCCESSFULLY ADDED TO 'es_32_100' SLOT OF RIA_image$glcm</span>
+<span class="co">#&gt; GLCM WAS SUCCESSFULLY ADDED TO 'ep_4_100' SLOT OF RIA_image$glcm</span>
+<span class="co">#&gt; GLCM WAS SUCCESSFULLY ADDED TO 'ep_8_100' SLOT OF RIA_image$glcm</span>
+<span class="co">#&gt; GLCM WAS SUCCESSFULLY ADDED TO 'ep_16_100' SLOT OF RIA_image$glcm</span>
+<span class="co">#&gt; GLCM WAS SUCCESSFULLY ADDED TO 'ep_32_100' SLOT OF RIA_image$glcm</span>
+<span class="co">#&gt; GLCM WAS SUCCESSFULLY ADDED TO 'es_2_010' SLOT OF RIA_image$glcm</span>
+<span class="co">#&gt; GLCM WAS SUCCESSFULLY ADDED TO 'ep_2_010' SLOT OF RIA_image$glcm</span>
+<span class="co">#&gt; GLCM WAS SUCCESSFULLY ADDED TO 'es_4_010' SLOT OF RIA_image$glcm</span>
+<span class="co">#&gt; GLCM WAS SUCCESSFULLY ADDED TO 'es_8_010' SLOT OF RIA_image$glcm</span>
+<span class="co">#&gt; GLCM WAS SUCCESSFULLY ADDED TO 'es_16_010' SLOT OF RIA_image$glcm</span>
+<span class="co">#&gt; GLCM WAS SUCCESSFULLY ADDED TO 'es_32_010' SLOT OF RIA_image$glcm</span>
+<span class="co">#&gt; GLCM WAS SUCCESSFULLY ADDED TO 'ep_4_010' SLOT OF RIA_image$glcm</span>
+<span class="co">#&gt; GLCM WAS SUCCESSFULLY ADDED TO 'ep_8_010' SLOT OF RIA_image$glcm</span>
+<span class="co">#&gt; GLCM WAS SUCCESSFULLY ADDED TO 'ep_16_010' SLOT OF RIA_image$glcm</span>
+<span class="co">#&gt; GLCM WAS SUCCESSFULLY ADDED TO 'ep_32_010' SLOT OF RIA_image$glcm</span>
+<span class="co">#&gt; GLCM WAS SUCCESSFULLY ADDED TO 'es_2_110' SLOT OF RIA_image$glcm</span>
+<span class="co">#&gt; GLCM WAS SUCCESSFULLY ADDED TO 'ep_2_110' SLOT OF RIA_image$glcm</span>
+<span class="co">#&gt; GLCM WAS SUCCESSFULLY ADDED TO 'es_4_110' SLOT OF RIA_image$glcm</span>
+<span class="co">#&gt; GLCM WAS SUCCESSFULLY ADDED TO 'es_8_110' SLOT OF RIA_image$glcm</span>
+<span class="co">#&gt; GLCM WAS SUCCESSFULLY ADDED TO 'es_16_110' SLOT OF RIA_image$glcm</span>
+<span class="co">#&gt; GLCM WAS SUCCESSFULLY ADDED TO 'es_32_110' SLOT OF RIA_image$glcm</span>
+<span class="co">#&gt; GLCM WAS SUCCESSFULLY ADDED TO 'ep_4_110' SLOT OF RIA_image$glcm</span>
+<span class="co">#&gt; GLCM WAS SUCCESSFULLY ADDED TO 'ep_8_110' SLOT OF RIA_image$glcm</span>
+<span class="co">#&gt; GLCM WAS SUCCESSFULLY ADDED TO 'ep_16_110' SLOT OF RIA_image$glcm</span>
+<span class="co">#&gt; GLCM WAS SUCCESSFULLY ADDED TO 'ep_32_110' SLOT OF RIA_image$glcm</span>
+<span class="co">#&gt; GLCM WAS SUCCESSFULLY ADDED TO 'es_2_1-10' SLOT OF RIA_image$glcm</span>
+<span class="co">#&gt; GLCM WAS SUCCESSFULLY ADDED TO 'ep_2_1-10' SLOT OF RIA_image$glcm</span>
+<span class="co">#&gt; GLCM WAS SUCCESSFULLY ADDED TO 'es_4_1-10' SLOT OF RIA_image$glcm</span>
+<span class="co">#&gt; GLCM WAS SUCCESSFULLY ADDED TO 'es_8_1-10' SLOT OF RIA_image$glcm</span>
+<span class="co">#&gt; GLCM WAS SUCCESSFULLY ADDED TO 'es_16_1-10' SLOT OF RIA_image$glcm</span>
+<span class="co">#&gt; GLCM WAS SUCCESSFULLY ADDED TO 'es_32_1-10' SLOT OF RIA_image$glcm</span>
+<span class="co">#&gt; GLCM WAS SUCCESSFULLY ADDED TO 'ep_4_1-10' SLOT OF RIA_image$glcm</span>
+<span class="co">#&gt; GLCM WAS SUCCESSFULLY ADDED TO 'ep_8_1-10' SLOT OF RIA_image$glcm</span>
+<span class="co">#&gt; GLCM WAS SUCCESSFULLY ADDED TO 'ep_16_1-10' SLOT OF RIA_image$glcm</span>
+<span class="co">#&gt; GLCM WAS SUCCESSFULLY ADDED TO 'ep_32_1-10' SLOT OF RIA_image$glcm</span>
+<span class="co">#&gt; GLCM WAS SUCCESSFULLY ADDED TO 'es_2_101' SLOT OF RIA_image$glcm</span>
+<span class="co">#&gt; GLCM WAS SUCCESSFULLY ADDED TO 'ep_2_101' SLOT OF RIA_image$glcm</span>
+<span class="co">#&gt; GLCM WAS SUCCESSFULLY ADDED TO 'es_4_101' SLOT OF RIA_image$glcm</span>
+<span class="co">#&gt; GLCM WAS SUCCESSFULLY ADDED TO 'es_8_101' SLOT OF RIA_image$glcm</span>
+<span class="co">#&gt; GLCM WAS SUCCESSFULLY ADDED TO 'es_16_101' SLOT OF RIA_image$glcm</span>
+<span class="co">#&gt; GLCM WAS SUCCESSFULLY ADDED TO 'es_32_101' SLOT OF RIA_image$glcm</span>
+<span class="co">#&gt; GLCM WAS SUCCESSFULLY ADDED TO 'ep_4_101' SLOT OF RIA_image$glcm</span>
+<span class="co">#&gt; GLCM WAS SUCCESSFULLY ADDED TO 'ep_8_101' SLOT OF RIA_image$glcm</span>
+<span class="co">#&gt; GLCM WAS SUCCESSFULLY ADDED TO 'ep_16_101' SLOT OF RIA_image$glcm</span>
+<span class="co">#&gt; GLCM WAS SUCCESSFULLY ADDED TO 'ep_32_101' SLOT OF RIA_image$glcm</span>
+<span class="co">#&gt; GLCM WAS SUCCESSFULLY ADDED TO 'es_2_011' SLOT OF RIA_image$glcm</span>
+<span class="co">#&gt; GLCM WAS SUCCESSFULLY ADDED TO 'ep_2_011' SLOT OF RIA_image$glcm</span>
+<span class="co">#&gt; GLCM WAS SUCCESSFULLY ADDED TO 'es_4_011' SLOT OF RIA_image$glcm</span>
+<span class="co">#&gt; GLCM WAS SUCCESSFULLY ADDED TO 'es_8_011' SLOT OF RIA_image$glcm</span>
+<span class="co">#&gt; GLCM WAS SUCCESSFULLY ADDED TO 'es_16_011' SLOT OF RIA_image$glcm</span>
+<span class="co">#&gt; GLCM WAS SUCCESSFULLY ADDED TO 'es_32_011' SLOT OF RIA_image$glcm</span>
+<span class="co">#&gt; GLCM WAS SUCCESSFULLY ADDED TO 'ep_4_011' SLOT OF RIA_image$glcm</span>
+<span class="co">#&gt; GLCM WAS SUCCESSFULLY ADDED TO 'ep_8_011' SLOT OF RIA_image$glcm</span>
+<span class="co">#&gt; GLCM WAS SUCCESSFULLY ADDED TO 'ep_16_011' SLOT OF RIA_image$glcm</span>
+<span class="co">#&gt; GLCM WAS SUCCESSFULLY ADDED TO 'ep_32_011' SLOT OF RIA_image$glcm</span>
+<span class="co">#&gt; GLCM WAS SUCCESSFULLY ADDED TO 'es_2_111' SLOT OF RIA_image$glcm</span>
+<span class="co">#&gt; GLCM WAS SUCCESSFULLY ADDED TO 'ep_2_111' SLOT OF RIA_image$glcm</span>
+<span class="co">#&gt; GLCM WAS SUCCESSFULLY ADDED TO 'es_4_111' SLOT OF RIA_image$glcm</span>
+<span class="co">#&gt; GLCM WAS SUCCESSFULLY ADDED TO 'es_8_111' SLOT OF RIA_image$glcm</span>
+<span class="co">#&gt; GLCM WAS SUCCESSFULLY ADDED TO 'es_16_111' SLOT OF RIA_image$glcm</span>
+<span class="co">#&gt; GLCM WAS SUCCESSFULLY ADDED TO 'es_32_111' SLOT OF RIA_image$glcm</span>
+<span class="co">#&gt; GLCM WAS SUCCESSFULLY ADDED TO 'ep_4_111' SLOT OF RIA_image$glcm</span>
+<span class="co">#&gt; GLCM WAS SUCCESSFULLY ADDED TO 'ep_8_111' SLOT OF RIA_image$glcm</span>
+<span class="co">#&gt; GLCM WAS SUCCESSFULLY ADDED TO 'ep_16_111' SLOT OF RIA_image$glcm</span>
+<span class="co">#&gt; GLCM WAS SUCCESSFULLY ADDED TO 'ep_32_111' SLOT OF RIA_image$glcm</span>
+<span class="co">#&gt; GLCM WAS SUCCESSFULLY ADDED TO 'es_2_1-11' SLOT OF RIA_image$glcm</span>
+<span class="co">#&gt; GLCM WAS SUCCESSFULLY ADDED TO 'ep_2_1-11' SLOT OF RIA_image$glcm</span>
+<span class="co">#&gt; GLCM WAS SUCCESSFULLY ADDED TO 'es_4_1-11' SLOT OF RIA_image$glcm</span>
+<span class="co">#&gt; GLCM WAS SUCCESSFULLY ADDED TO 'es_8_1-11' SLOT OF RIA_image$glcm</span>
+<span class="co">#&gt; GLCM WAS SUCCESSFULLY ADDED TO 'es_16_1-11' SLOT OF RIA_image$glcm</span>
+<span class="co">#&gt; GLCM WAS SUCCESSFULLY ADDED TO 'es_32_1-11' SLOT OF RIA_image$glcm</span>
+<span class="co">#&gt; GLCM WAS SUCCESSFULLY ADDED TO 'ep_4_1-11' SLOT OF RIA_image$glcm</span>
+<span class="co">#&gt; GLCM WAS SUCCESSFULLY ADDED TO 'ep_8_1-11' SLOT OF RIA_image$glcm</span>
+<span class="co">#&gt; GLCM WAS SUCCESSFULLY ADDED TO 'ep_16_1-11' SLOT OF RIA_image$glcm</span>
+<span class="co">#&gt; GLCM WAS SUCCESSFULLY ADDED TO 'ep_32_1-11' SLOT OF RIA_image$glcm</span>
+<span class="co">#&gt; GLCM WAS SUCCESSFULLY ADDED TO 'es_2_10-1' SLOT OF RIA_image$glcm</span>
+<span class="co">#&gt; GLCM WAS SUCCESSFULLY ADDED TO 'ep_2_10-1' SLOT OF RIA_image$glcm</span>
+<span class="co">#&gt; GLCM WAS SUCCESSFULLY ADDED TO 'es_4_10-1' SLOT OF RIA_image$glcm</span>
+<span class="co">#&gt; GLCM WAS SUCCESSFULLY ADDED TO 'es_8_10-1' SLOT OF RIA_image$glcm</span>
+<span class="co">#&gt; GLCM WAS SUCCESSFULLY ADDED TO 'es_16_10-1' SLOT OF RIA_image$glcm</span>
+<span class="co">#&gt; GLCM WAS SUCCESSFULLY ADDED TO 'es_32_10-1' SLOT OF RIA_image$glcm</span>
+<span class="co">#&gt; GLCM WAS SUCCESSFULLY ADDED TO 'ep_4_10-1' SLOT OF RIA_image$glcm</span>
+<span class="co">#&gt; GLCM WAS SUCCESSFULLY ADDED TO 'ep_8_10-1' SLOT OF RIA_image$glcm</span>
+<span class="co">#&gt; GLCM WAS SUCCESSFULLY ADDED TO 'ep_16_10-1' SLOT OF RIA_image$glcm</span>
+<span class="co">#&gt; GLCM WAS SUCCESSFULLY ADDED TO 'ep_32_10-1' SLOT OF RIA_image$glcm</span>
+<span class="co">#&gt; GLCM WAS SUCCESSFULLY ADDED TO 'es_2_01-1' SLOT OF RIA_image$glcm</span>
+<span class="co">#&gt; GLCM WAS SUCCESSFULLY ADDED TO 'ep_2_01-1' SLOT OF RIA_image$glcm</span>
+<span class="co">#&gt; GLCM WAS SUCCESSFULLY ADDED TO 'es_4_01-1' SLOT OF RIA_image$glcm</span>
+<span class="co">#&gt; GLCM WAS SUCCESSFULLY ADDED TO 'es_8_01-1' SLOT OF RIA_image$glcm</span>
+<span class="co">#&gt; GLCM WAS SUCCESSFULLY ADDED TO 'es_16_01-1' SLOT OF RIA_image$glcm</span>
+<span class="co">#&gt; GLCM WAS SUCCESSFULLY ADDED TO 'es_32_01-1' SLOT OF RIA_image$glcm</span>
+<span class="co">#&gt; GLCM WAS SUCCESSFULLY ADDED TO 'ep_4_01-1' SLOT OF RIA_image$glcm</span>
+<span class="co">#&gt; GLCM WAS SUCCESSFULLY ADDED TO 'ep_8_01-1' SLOT OF RIA_image$glcm</span>
+<span class="co">#&gt; GLCM WAS SUCCESSFULLY ADDED TO 'ep_16_01-1' SLOT OF RIA_image$glcm</span>
+<span class="co">#&gt; GLCM WAS SUCCESSFULLY ADDED TO 'ep_32_01-1' SLOT OF RIA_image$glcm</span>
+<span class="co">#&gt; GLCM WAS SUCCESSFULLY ADDED TO 'es_2_11-1' SLOT OF RIA_image$glcm</span>
+<span class="co">#&gt; GLCM WAS SUCCESSFULLY ADDED TO 'ep_2_11-1' SLOT OF RIA_image$glcm</span>
+<span class="co">#&gt; GLCM WAS SUCCESSFULLY ADDED TO 'es_4_11-1' SLOT OF RIA_image$glcm</span>
+<span class="co">#&gt; GLCM WAS SUCCESSFULLY ADDED TO 'es_8_11-1' SLOT OF RIA_image$glcm</span>
+<span class="co">#&gt; GLCM WAS SUCCESSFULLY ADDED TO 'es_16_11-1' SLOT OF RIA_image$glcm</span>
+<span class="co">#&gt; GLCM WAS SUCCESSFULLY ADDED TO 'es_32_11-1' SLOT OF RIA_image$glcm</span>
+<span class="co">#&gt; GLCM WAS SUCCESSFULLY ADDED TO 'ep_4_11-1' SLOT OF RIA_image$glcm</span>
+<span class="co">#&gt; GLCM WAS SUCCESSFULLY ADDED TO 'ep_8_11-1' SLOT OF RIA_image$glcm</span>
+<span class="co">#&gt; GLCM WAS SUCCESSFULLY ADDED TO 'ep_16_11-1' SLOT OF RIA_image$glcm</span>
+<span class="co">#&gt; GLCM WAS SUCCESSFULLY ADDED TO 'ep_32_11-1' SLOT OF RIA_image$glcm</span>
+<span class="co">#&gt; GLCM WAS SUCCESSFULLY ADDED TO 'es_2_1-1-1' SLOT OF RIA_image$glcm</span>
+<span class="co">#&gt; GLCM WAS SUCCESSFULLY ADDED TO 'ep_2_1-1-1' SLOT OF RIA_image$glcm</span>
+<span class="co">#&gt; GLCM WAS SUCCESSFULLY ADDED TO 'es_4_1-1-1' SLOT OF RIA_image$glcm</span>
+<span class="co">#&gt; GLCM WAS SUCCESSFULLY ADDED TO 'es_8_1-1-1' SLOT OF RIA_image$glcm</span>
+<span class="co">#&gt; GLCM WAS SUCCESSFULLY ADDED TO 'es_16_1-1-1' SLOT OF RIA_image$glcm</span>
+<span class="co">#&gt; GLCM WAS SUCCESSFULLY ADDED TO 'es_32_1-1-1' SLOT OF RIA_image$glcm</span>
+<span class="co">#&gt; GLCM WAS SUCCESSFULLY ADDED TO 'ep_4_1-1-1' SLOT OF RIA_image$glcm</span>
+<span class="co">#&gt; GLCM WAS SUCCESSFULLY ADDED TO 'ep_8_1-1-1' SLOT OF RIA_image$glcm</span>
+<span class="co">#&gt; GLCM WAS SUCCESSFULLY ADDED TO 'ep_16_1-1-1' SLOT OF RIA_image$glcm</span>
+<span class="co">#&gt; GLCM WAS SUCCESSFULLY ADDED TO 'ep_32_1-1-1' SLOT OF RIA_image$glcm</span>
+<span class="co">#&gt; GLCM WAS SUCCESSFULLY ADDED TO 'es_2_001' SLOT OF RIA_image$glcm</span>
+<span class="co">#&gt; GLCM WAS SUCCESSFULLY ADDED TO 'ep_2_001' SLOT OF RIA_image$glcm</span>
+<span class="co">#&gt; GLCM WAS SUCCESSFULLY ADDED TO 'es_4_001' SLOT OF RIA_image$glcm</span>
+<span class="co">#&gt; GLCM WAS SUCCESSFULLY ADDED TO 'es_8_001' SLOT OF RIA_image$glcm</span>
+<span class="co">#&gt; GLCM WAS SUCCESSFULLY ADDED TO 'es_16_001' SLOT OF RIA_image$glcm</span>
+<span class="co">#&gt; GLCM WAS SUCCESSFULLY ADDED TO 'es_32_001' SLOT OF RIA_image$glcm</span>
+<span class="co">#&gt; GLCM WAS SUCCESSFULLY ADDED TO 'ep_4_001' SLOT OF RIA_image$glcm</span>
+<span class="co">#&gt; GLCM WAS SUCCESSFULLY ADDED TO 'ep_8_001' SLOT OF RIA_image$glcm</span>
+<span class="co">#&gt; GLCM WAS SUCCESSFULLY ADDED TO 'ep_16_001' SLOT OF RIA_image$glcm</span>
+<span class="co">#&gt; GLCM WAS SUCCESSFULLY ADDED TO 'ep_32_001' SLOT OF RIA_image$glcm</span>
+<span class="kw">names</span>(DICOM$glcm)
+<span class="co">#&gt;   [1] &quot;ep_32_122&quot;   &quot;ep_2_122&quot;    &quot;es_2_122&quot;    &quot;es_4_122&quot;    &quot;es_8_122&quot;   </span>
+<span class="co">#&gt;   [6] &quot;es_16_122&quot;   &quot;es_32_122&quot;   &quot;ep_4_122&quot;    &quot;ep_8_122&quot;    &quot;ep_16_122&quot;  </span>
+<span class="co">#&gt;  [11] &quot;ep_32_100&quot;   &quot;ep_32_010&quot;   &quot;ep_32_110&quot;   &quot;ep_32_1-10&quot;  &quot;ep_32_101&quot;  </span>
+<span class="co">#&gt;  [16] &quot;ep_32_011&quot;   &quot;ep_32_111&quot;   &quot;ep_32_1-11&quot;  &quot;ep_32_10-1&quot;  &quot;ep_32_01-1&quot; </span>
+<span class="co">#&gt;  [21] &quot;ep_32_11-1&quot;  &quot;ep_32_1-1-1&quot; &quot;ep_32_001&quot;   &quot;es_2_100&quot;    &quot;ep_2_100&quot;   </span>
+<span class="co">#&gt;  [26] &quot;es_4_100&quot;    &quot;es_8_100&quot;    &quot;es_16_100&quot;   &quot;es_32_100&quot;   &quot;ep_4_100&quot;   </span>
+<span class="co">#&gt;  [31] &quot;ep_8_100&quot;    &quot;ep_16_100&quot;   &quot;es_2_010&quot;    &quot;ep_2_010&quot;    &quot;es_4_010&quot;   </span>
+<span class="co">#&gt;  [36] &quot;es_8_010&quot;    &quot;es_16_010&quot;   &quot;es_32_010&quot;   &quot;ep_4_010&quot;    &quot;ep_8_010&quot;   </span>
+<span class="co">#&gt;  [41] &quot;ep_16_010&quot;   &quot;es_2_110&quot;    &quot;ep_2_110&quot;    &quot;es_4_110&quot;    &quot;es_8_110&quot;   </span>
+<span class="co">#&gt;  [46] &quot;es_16_110&quot;   &quot;es_32_110&quot;   &quot;ep_4_110&quot;    &quot;ep_8_110&quot;    &quot;ep_16_110&quot;  </span>
+<span class="co">#&gt;  [51] &quot;es_2_1-10&quot;   &quot;ep_2_1-10&quot;   &quot;es_4_1-10&quot;   &quot;es_8_1-10&quot;   &quot;es_16_1-10&quot; </span>
+<span class="co">#&gt;  [56] &quot;es_32_1-10&quot;  &quot;ep_4_1-10&quot;   &quot;ep_8_1-10&quot;   &quot;ep_16_1-10&quot;  &quot;es_2_101&quot;   </span>
+<span class="co">#&gt;  [61] &quot;ep_2_101&quot;    &quot;es_4_101&quot;    &quot;es_8_101&quot;    &quot;es_16_101&quot;   &quot;es_32_101&quot;  </span>
+<span class="co">#&gt;  [66] &quot;ep_4_101&quot;    &quot;ep_8_101&quot;    &quot;ep_16_101&quot;   &quot;es_2_011&quot;    &quot;ep_2_011&quot;   </span>
+<span class="co">#&gt;  [71] &quot;es_4_011&quot;    &quot;es_8_011&quot;    &quot;es_16_011&quot;   &quot;es_32_011&quot;   &quot;ep_4_011&quot;   </span>
+<span class="co">#&gt;  [76] &quot;ep_8_011&quot;    &quot;ep_16_011&quot;   &quot;es_2_111&quot;    &quot;ep_2_111&quot;    &quot;es_4_111&quot;   </span>
+<span class="co">#&gt;  [81] &quot;es_8_111&quot;    &quot;es_16_111&quot;   &quot;es_32_111&quot;   &quot;ep_4_111&quot;    &quot;ep_8_111&quot;   </span>
+<span class="co">#&gt;  [86] &quot;ep_16_111&quot;   &quot;es_2_1-11&quot;   &quot;ep_2_1-11&quot;   &quot;es_4_1-11&quot;   &quot;es_8_1-11&quot;  </span>
+<span class="co">#&gt;  [91] &quot;es_16_1-11&quot;  &quot;es_32_1-11&quot;  &quot;ep_4_1-11&quot;   &quot;ep_8_1-11&quot;   &quot;ep_16_1-11&quot; </span>
+<span class="co">#&gt;  [96] &quot;es_2_10-1&quot;   &quot;ep_2_10-1&quot;   &quot;es_4_10-1&quot;   &quot;es_8_10-1&quot;   &quot;es_16_10-1&quot; </span>
+<span class="co">#&gt; [101] &quot;es_32_10-1&quot;  &quot;ep_4_10-1&quot;   &quot;ep_8_10-1&quot;   &quot;ep_16_10-1&quot;  &quot;es_2_01-1&quot;  </span>
+<span class="co">#&gt; [106] &quot;ep_2_01-1&quot;   &quot;es_4_01-1&quot;   &quot;es_8_01-1&quot;   &quot;es_16_01-1&quot;  &quot;es_32_01-1&quot; </span>
+<span class="co">#&gt; [111] &quot;ep_4_01-1&quot;   &quot;ep_8_01-1&quot;   &quot;ep_16_01-1&quot;  &quot;es_2_11-1&quot;   &quot;ep_2_11-1&quot;  </span>
+<span class="co">#&gt; [116] &quot;es_4_11-1&quot;   &quot;es_8_11-1&quot;   &quot;es_16_11-1&quot;  &quot;es_32_11-1&quot;  &quot;ep_4_11-1&quot;  </span>
+<span class="co">#&gt; [121] &quot;ep_8_11-1&quot;   &quot;ep_16_11-1&quot;  &quot;es_2_1-1-1&quot;  &quot;ep_2_1-1-1&quot;  &quot;es_4_1-1-1&quot; </span>
+<span class="co">#&gt; [126] &quot;es_8_1-1-1&quot;  &quot;es_16_1-1-1&quot; &quot;es_32_1-1-1&quot; &quot;ep_4_1-1-1&quot;  &quot;ep_8_1-1-1&quot; </span>
+<span class="co">#&gt; [131] &quot;ep_16_1-1-1&quot; &quot;es_2_001&quot;    &quot;ep_2_001&quot;    &quot;es_4_001&quot;    &quot;es_8_001&quot;   </span>
+<span class="co">#&gt; [136] &quot;es_16_001&quot;   &quot;es_32_001&quot;   &quot;ep_4_001&quot;    &quot;ep_8_001&quot;    &quot;ep_16_001&quot;</span></code></pre></div>
+<p>In the near future RIA will have functions capable of calculating statistics and deriving aggregated statistics in a similar fashion.</p>
 </div>
 </div>
 <div id="gray-level-run-length-matrix-glrlm-calculations-and-statistics" class="section level1">
 <h1>Gray level run length matrix (GLRLM) calculations and statistics</h1>
 <p>The function <em>glrlm</em> calculates GLRLM matrices of 2D and 3D images. GLRLM are higher-order statistics, meaning that statistics are calculated from the spatial relationship of more than two voxel values. GLRLM are matrices, where the number of rows equals the number of gray levels, while the number of columns equals the length of the longest run. <em>Run length</em> is defined as the number of voxels occurring next to each other with same values in a given direction. The i<sup>th</sup> row and j<sup>th</sup> column of the GLRLM represents how many times it occurs in the image, that <em>i</em> value voxels are next to each other <em>j</em> times. Therefore, for a given image several different GLRLM matrices may be calculated, depending on the <em>direction</em>. In <code>RIA</code> <em>direction</em> is determined by three integer parameters specifying the direction as a vector in co-ordinate space. There is no distance parameter, since we want to calculate how many same value voxels occur next to each other in that direction. Therefore the three inputs are logicals not integers.</p>
 <ul>
-<li>right: direction in the x plane</li>
-<li>down: direction in the y plane</li>
-<li>forward: direction in the z plane</li>
+<li>off_right: positive values indicate to look to the right, negative values indicate to look to the left, while 0 indicates no offset in the X plane</li>
+<li>off_down: positive values indicate to look to the right, negative values indicate to look to the left, while 0 indicates no offset in the Y plane</li>
+<li>off_z: positive values indicate to look to the right, negative values indicate to look to the left, while 0 indicates no offset in the Z plane</li>
 </ul>
 <p>For example: to calculate the GLRLM matrix of the last modified image stored in <code>DICOM$data$modif</code>, in the direction of right: 1; down: 0; z-plane: 1; you just have to write:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">DICOM =<span class="st"> </span><span class="kw">glrlm</span>(<span class="dt">RIA_data_in =</span> DICOM, <span class="dt">right =</span> <span class="dv">1</span>, <span class="dt">down =</span> <span class="dv">0</span>, <span class="dt">forward =</span> <span class="dv">1</span>)
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">DICOM =<span class="st"> </span><span class="kw">glrlm</span>(<span class="dt">RIA_data_in =</span> DICOM, <span class="dt">off_right =</span> <span class="dv">1</span>, <span class="dt">off_down =</span> <span class="dv">0</span>, <span class="dt">off_z =</span> <span class="dv">1</span>)
 <span class="co">#&gt; GLRLM WAS SUCCESSFULLY ADDED TO 'ep_32_101' SLOT OF RIA_image$glrlm</span>
 <span class="kw">dim</span>(DICOM$glrlm$ep_32)
 <span class="co">#&gt; [1] 32 16</span></code></pre></div>
-<p>As discussed in the first-order case, the image wished to be analyzed may be set using the <strong>use_orig</strong>, <strong>use_slot</strong> and <strong>save_name</strong> parameters. <code>RIA</code> looks at the name of the provided image, if numbers are present in it, the it will set the dimensions and the resulting name of the GLRLM based-on these values. If no numbers are present, then it will the automatic name generator of <code>RIA</code> to figure out the name of the last image manipulation. If it does not succeed, then it will calculate how many different gray levels there are in the image to set the dimensions of GLRLM matrix and the name of the statistic. However, it might occur for example that the data was dichotomized to 32 equally sized bins, and then one of the bins does not contain any data. In these cases the GLRLM will only be 31 x max(run length)!</p>
+<p>As discussed in the first-order case, the image wished to be analyzed may be set using the <strong>use_orig</strong>, <strong>use_slot</strong> and <strong>save_name</strong> parameters. <code>RIA</code> looks at the name of the provided image, if numbers are present in it, the it will set the dimensions and the resulting name of the GLRLM based-on these values. If no numbers are present, then it will the automatic name generator of <code>RIA</code> to figure out the name of the last image manipulation. If it does not succeed, then it will calculate how many different gray levels there are in the image to set the dimensions of GLRLM matrix and the name of the statistic. However, it might occur for example that the data was discretized to 32 equally sized bins, and then one of the bins does not contain any data. In these cases the GLRLM will only be 31 x max(run length)!</p>
 <div id="batch-calculation-of-glrlm" class="section level2">
 <h2>Batch calculation of GLRLM</h2>
-<p>The <em>glrlm</em> function also support batch calculations on dichotomized images. Therefore, if you wish to calculate a given GLRLM for all dichotomizations all you have to do is:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">DICOM =<span class="st"> </span><span class="kw">glrlm</span>(<span class="dt">RIA_data_in =</span> DICOM, <span class="dt">use_type =</span> <span class="st">&quot;dichotomized&quot;</span>,
-             <span class="dt">right =</span> <span class="dv">1</span>, <span class="dt">down =</span> <span class="dv">0</span>, <span class="dt">forward =</span> <span class="dv">1</span>)
+<p>The <em>glrlm</em> function also support batch calculations on discretized images. Therefore, if you wish to calculate a given GLRLM for all discretizations all you have to do is:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">DICOM =<span class="st"> </span><span class="kw">glrlm</span>(<span class="dt">RIA_data_in =</span> DICOM, <span class="dt">use_type =</span> <span class="st">&quot;discretized&quot;</span>,
+             <span class="dt">off_right =</span> <span class="dv">1</span>, <span class="dt">off_down =</span> <span class="dv">0</span>, <span class="dt">off_z =</span> <span class="dv">1</span>)
 <span class="co">#&gt; GLRLM WAS SUCCESSFULLY ADDED TO 'es_2_101' SLOT OF RIA_image$glrlm</span>
 <span class="co">#&gt; GLRLM WAS SUCCESSFULLY ADDED TO 'ep_2_101' SLOT OF RIA_image$glrlm</span>
 <span class="co">#&gt; GLRLM WAS SUCCESSFULLY ADDED TO 'es_4_101' SLOT OF RIA_image$glrlm</span>
@@ -614,7 +798,6 @@ DICOM$glcm$ep_2
 <span class="kw">names</span>(DICOM$glrlm)
 <span class="co">#&gt;  [1] &quot;ep_32_101&quot; &quot;es_2_101&quot;  &quot;ep_2_101&quot;  &quot;es_4_101&quot;  &quot;es_8_101&quot; </span>
 <span class="co">#&gt;  [6] &quot;es_16_101&quot; &quot;es_32_101&quot; &quot;ep_4_101&quot;  &quot;ep_8_101&quot;  &quot;ep_16_101&quot;</span></code></pre></div>
-<p>In the near future, I’m planning to add a new batch function that can calculate GLRLMs in all directions using one line of code.</p>
 </div>
 <div id="statistics-on-glrlm-matrices" class="section level2">
 <h2>Statistics on GLRLM matrices</h2>
@@ -640,8 +823,191 @@ DICOM$glcm$ep_2
 <span class="co">#&gt;  [1] &quot;ep_2_101&quot;  &quot;ep_32_101&quot; &quot;es_2_101&quot;  &quot;es_4_101&quot;  &quot;es_8_101&quot; </span>
 <span class="co">#&gt;  [6] &quot;es_16_101&quot; &quot;es_32_101&quot; &quot;ep_4_101&quot;  &quot;ep_8_101&quot;  &quot;ep_16_101&quot;</span></code></pre></div>
 <p>The names of the outputs can also be specified. Be aware of providing the same number of names as there are GLRLMs being processed. Failing to do so will throw an error.</p>
-<p>In the near future, I’m planning to add a new batch function that can combine GLRLM statistics of all the different directions to receive directionally invariant average results of the GLRLMs.</p>
 </div>
+</div>
+<div id="batch-calculation-of-glrlm-matrices-in-all-directions" class="section level2">
+<h2>Batch calculation of GLRLM matrices in all directions</h2>
+<p>To achieve rotationally invariant results, usually GLRLM matrices are calculated in all directions. Using RIA, with one line of code you can calulate the GLRLMs in all the different directions simply by calling:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">DICOM =<span class="st"> </span><span class="kw">glrlm_all</span>(DICOM, <span class="dt">use_type =</span> <span class="st">&quot;single&quot;</span>)
+<span class="co">#&gt; GLRLM WAS SUCCESSFULLY ADDED TO 'ep_32_100' SLOT OF RIA_image$glrlm</span>
+<span class="co">#&gt; GLRLM WAS SUCCESSFULLY ADDED TO 'ep_32_010' SLOT OF RIA_image$glrlm</span>
+<span class="co">#&gt; GLRLM WAS SUCCESSFULLY ADDED TO 'ep_32_110' SLOT OF RIA_image$glrlm</span>
+<span class="co">#&gt; GLRLM WAS SUCCESSFULLY ADDED TO 'ep_32_1-10' SLOT OF RIA_image$glrlm</span>
+<span class="co">#&gt; GLRLM WAS SUCCESSFULLY ADDED TO 'ep_32_101' SLOT OF RIA_image$glrlm</span>
+<span class="co">#&gt; GLRLM WAS SUCCESSFULLY ADDED TO 'ep_32_011' SLOT OF RIA_image$glrlm</span>
+<span class="co">#&gt; GLRLM WAS SUCCESSFULLY ADDED TO 'ep_32_111' SLOT OF RIA_image$glrlm</span>
+<span class="co">#&gt; GLRLM WAS SUCCESSFULLY ADDED TO 'ep_32_1-11' SLOT OF RIA_image$glrlm</span>
+<span class="co">#&gt; GLRLM WAS SUCCESSFULLY ADDED TO 'ep_32_10-1' SLOT OF RIA_image$glrlm</span>
+<span class="co">#&gt; GLRLM WAS SUCCESSFULLY ADDED TO 'ep_32_01-1' SLOT OF RIA_image$glrlm</span>
+<span class="co">#&gt; GLRLM WAS SUCCESSFULLY ADDED TO 'ep_32_11-1' SLOT OF RIA_image$glrlm</span>
+<span class="co">#&gt; GLRLM WAS SUCCESSFULLY ADDED TO 'ep_32_1-1-1' SLOT OF RIA_image$glrlm</span>
+<span class="co">#&gt; GLRLM WAS SUCCESSFULLY ADDED TO 'ep_32_001' SLOT OF RIA_image$glrlm</span>
+<span class="kw">names</span>(DICOM$glrlm)
+<span class="co">#&gt;  [1] &quot;ep_32_101&quot;   &quot;es_2_101&quot;    &quot;ep_2_101&quot;    &quot;es_4_101&quot;    &quot;es_8_101&quot;   </span>
+<span class="co">#&gt;  [6] &quot;es_16_101&quot;   &quot;es_32_101&quot;   &quot;ep_4_101&quot;    &quot;ep_8_101&quot;    &quot;ep_16_101&quot;  </span>
+<span class="co">#&gt; [11] &quot;ep_32_100&quot;   &quot;ep_32_010&quot;   &quot;ep_32_110&quot;   &quot;ep_32_1-10&quot;  &quot;ep_32_011&quot;  </span>
+<span class="co">#&gt; [16] &quot;ep_32_111&quot;   &quot;ep_32_1-11&quot;  &quot;ep_32_10-1&quot;  &quot;ep_32_01-1&quot;  &quot;ep_32_11-1&quot; </span>
+<span class="co">#&gt; [21] &quot;ep_32_1-1-1&quot; &quot;ep_32_001&quot;</span></code></pre></div>
+<p>This uses the image stored in the <code>DICOM$data$modif</code>. This can be changed similarly to all other functions using the <strong>use_orig</strong>, <strong>use_slot</strong> and <strong>save_name</strong> parameters. RIA can also calculate all the different GLRLMs on all modified images just by simply calling:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">DICOM =<span class="st"> </span><span class="kw">glrlm_all</span>(DICOM, <span class="dt">use_type =</span> <span class="st">&quot;discretized&quot;</span>)
+<span class="co">#&gt; GLRLM WAS SUCCESSFULLY ADDED TO 'es_2_100' SLOT OF RIA_image$glrlm</span>
+<span class="co">#&gt; GLRLM WAS SUCCESSFULLY ADDED TO 'ep_2_100' SLOT OF RIA_image$glrlm</span>
+<span class="co">#&gt; GLRLM WAS SUCCESSFULLY ADDED TO 'es_4_100' SLOT OF RIA_image$glrlm</span>
+<span class="co">#&gt; GLRLM WAS SUCCESSFULLY ADDED TO 'es_8_100' SLOT OF RIA_image$glrlm</span>
+<span class="co">#&gt; GLRLM WAS SUCCESSFULLY ADDED TO 'es_16_100' SLOT OF RIA_image$glrlm</span>
+<span class="co">#&gt; GLRLM WAS SUCCESSFULLY ADDED TO 'es_32_100' SLOT OF RIA_image$glrlm</span>
+<span class="co">#&gt; GLRLM WAS SUCCESSFULLY ADDED TO 'ep_4_100' SLOT OF RIA_image$glrlm</span>
+<span class="co">#&gt; GLRLM WAS SUCCESSFULLY ADDED TO 'ep_8_100' SLOT OF RIA_image$glrlm</span>
+<span class="co">#&gt; GLRLM WAS SUCCESSFULLY ADDED TO 'ep_16_100' SLOT OF RIA_image$glrlm</span>
+<span class="co">#&gt; GLRLM WAS SUCCESSFULLY ADDED TO 'ep_32_100' SLOT OF RIA_image$glrlm</span>
+<span class="co">#&gt; GLRLM WAS SUCCESSFULLY ADDED TO 'es_2_010' SLOT OF RIA_image$glrlm</span>
+<span class="co">#&gt; GLRLM WAS SUCCESSFULLY ADDED TO 'ep_2_010' SLOT OF RIA_image$glrlm</span>
+<span class="co">#&gt; GLRLM WAS SUCCESSFULLY ADDED TO 'es_4_010' SLOT OF RIA_image$glrlm</span>
+<span class="co">#&gt; GLRLM WAS SUCCESSFULLY ADDED TO 'es_8_010' SLOT OF RIA_image$glrlm</span>
+<span class="co">#&gt; GLRLM WAS SUCCESSFULLY ADDED TO 'es_16_010' SLOT OF RIA_image$glrlm</span>
+<span class="co">#&gt; GLRLM WAS SUCCESSFULLY ADDED TO 'es_32_010' SLOT OF RIA_image$glrlm</span>
+<span class="co">#&gt; GLRLM WAS SUCCESSFULLY ADDED TO 'ep_4_010' SLOT OF RIA_image$glrlm</span>
+<span class="co">#&gt; GLRLM WAS SUCCESSFULLY ADDED TO 'ep_8_010' SLOT OF RIA_image$glrlm</span>
+<span class="co">#&gt; GLRLM WAS SUCCESSFULLY ADDED TO 'ep_16_010' SLOT OF RIA_image$glrlm</span>
+<span class="co">#&gt; GLRLM WAS SUCCESSFULLY ADDED TO 'ep_32_010' SLOT OF RIA_image$glrlm</span>
+<span class="co">#&gt; GLRLM WAS SUCCESSFULLY ADDED TO 'es_2_110' SLOT OF RIA_image$glrlm</span>
+<span class="co">#&gt; GLRLM WAS SUCCESSFULLY ADDED TO 'ep_2_110' SLOT OF RIA_image$glrlm</span>
+<span class="co">#&gt; GLRLM WAS SUCCESSFULLY ADDED TO 'es_4_110' SLOT OF RIA_image$glrlm</span>
+<span class="co">#&gt; GLRLM WAS SUCCESSFULLY ADDED TO 'es_8_110' SLOT OF RIA_image$glrlm</span>
+<span class="co">#&gt; GLRLM WAS SUCCESSFULLY ADDED TO 'es_16_110' SLOT OF RIA_image$glrlm</span>
+<span class="co">#&gt; GLRLM WAS SUCCESSFULLY ADDED TO 'es_32_110' SLOT OF RIA_image$glrlm</span>
+<span class="co">#&gt; GLRLM WAS SUCCESSFULLY ADDED TO 'ep_4_110' SLOT OF RIA_image$glrlm</span>
+<span class="co">#&gt; GLRLM WAS SUCCESSFULLY ADDED TO 'ep_8_110' SLOT OF RIA_image$glrlm</span>
+<span class="co">#&gt; GLRLM WAS SUCCESSFULLY ADDED TO 'ep_16_110' SLOT OF RIA_image$glrlm</span>
+<span class="co">#&gt; GLRLM WAS SUCCESSFULLY ADDED TO 'ep_32_110' SLOT OF RIA_image$glrlm</span>
+<span class="co">#&gt; GLRLM WAS SUCCESSFULLY ADDED TO 'es_2_1-10' SLOT OF RIA_image$glrlm</span>
+<span class="co">#&gt; GLRLM WAS SUCCESSFULLY ADDED TO 'ep_2_1-10' SLOT OF RIA_image$glrlm</span>
+<span class="co">#&gt; GLRLM WAS SUCCESSFULLY ADDED TO 'es_4_1-10' SLOT OF RIA_image$glrlm</span>
+<span class="co">#&gt; GLRLM WAS SUCCESSFULLY ADDED TO 'es_8_1-10' SLOT OF RIA_image$glrlm</span>
+<span class="co">#&gt; GLRLM WAS SUCCESSFULLY ADDED TO 'es_16_1-10' SLOT OF RIA_image$glrlm</span>
+<span class="co">#&gt; GLRLM WAS SUCCESSFULLY ADDED TO 'es_32_1-10' SLOT OF RIA_image$glrlm</span>
+<span class="co">#&gt; GLRLM WAS SUCCESSFULLY ADDED TO 'ep_4_1-10' SLOT OF RIA_image$glrlm</span>
+<span class="co">#&gt; GLRLM WAS SUCCESSFULLY ADDED TO 'ep_8_1-10' SLOT OF RIA_image$glrlm</span>
+<span class="co">#&gt; GLRLM WAS SUCCESSFULLY ADDED TO 'ep_16_1-10' SLOT OF RIA_image$glrlm</span>
+<span class="co">#&gt; GLRLM WAS SUCCESSFULLY ADDED TO 'ep_32_1-10' SLOT OF RIA_image$glrlm</span>
+<span class="co">#&gt; GLRLM WAS SUCCESSFULLY ADDED TO 'es_2_101' SLOT OF RIA_image$glrlm</span>
+<span class="co">#&gt; GLRLM WAS SUCCESSFULLY ADDED TO 'ep_2_101' SLOT OF RIA_image$glrlm</span>
+<span class="co">#&gt; GLRLM WAS SUCCESSFULLY ADDED TO 'es_4_101' SLOT OF RIA_image$glrlm</span>
+<span class="co">#&gt; GLRLM WAS SUCCESSFULLY ADDED TO 'es_8_101' SLOT OF RIA_image$glrlm</span>
+<span class="co">#&gt; GLRLM WAS SUCCESSFULLY ADDED TO 'es_16_101' SLOT OF RIA_image$glrlm</span>
+<span class="co">#&gt; GLRLM WAS SUCCESSFULLY ADDED TO 'es_32_101' SLOT OF RIA_image$glrlm</span>
+<span class="co">#&gt; GLRLM WAS SUCCESSFULLY ADDED TO 'ep_4_101' SLOT OF RIA_image$glrlm</span>
+<span class="co">#&gt; GLRLM WAS SUCCESSFULLY ADDED TO 'ep_8_101' SLOT OF RIA_image$glrlm</span>
+<span class="co">#&gt; GLRLM WAS SUCCESSFULLY ADDED TO 'ep_16_101' SLOT OF RIA_image$glrlm</span>
+<span class="co">#&gt; GLRLM WAS SUCCESSFULLY ADDED TO 'ep_32_101' SLOT OF RIA_image$glrlm</span>
+<span class="co">#&gt; GLRLM WAS SUCCESSFULLY ADDED TO 'es_2_011' SLOT OF RIA_image$glrlm</span>
+<span class="co">#&gt; GLRLM WAS SUCCESSFULLY ADDED TO 'ep_2_011' SLOT OF RIA_image$glrlm</span>
+<span class="co">#&gt; GLRLM WAS SUCCESSFULLY ADDED TO 'es_4_011' SLOT OF RIA_image$glrlm</span>
+<span class="co">#&gt; GLRLM WAS SUCCESSFULLY ADDED TO 'es_8_011' SLOT OF RIA_image$glrlm</span>
+<span class="co">#&gt; GLRLM WAS SUCCESSFULLY ADDED TO 'es_16_011' SLOT OF RIA_image$glrlm</span>
+<span class="co">#&gt; GLRLM WAS SUCCESSFULLY ADDED TO 'es_32_011' SLOT OF RIA_image$glrlm</span>
+<span class="co">#&gt; GLRLM WAS SUCCESSFULLY ADDED TO 'ep_4_011' SLOT OF RIA_image$glrlm</span>
+<span class="co">#&gt; GLRLM WAS SUCCESSFULLY ADDED TO 'ep_8_011' SLOT OF RIA_image$glrlm</span>
+<span class="co">#&gt; GLRLM WAS SUCCESSFULLY ADDED TO 'ep_16_011' SLOT OF RIA_image$glrlm</span>
+<span class="co">#&gt; GLRLM WAS SUCCESSFULLY ADDED TO 'ep_32_011' SLOT OF RIA_image$glrlm</span>
+<span class="co">#&gt; GLRLM WAS SUCCESSFULLY ADDED TO 'es_2_111' SLOT OF RIA_image$glrlm</span>
+<span class="co">#&gt; GLRLM WAS SUCCESSFULLY ADDED TO 'ep_2_111' SLOT OF RIA_image$glrlm</span>
+<span class="co">#&gt; GLRLM WAS SUCCESSFULLY ADDED TO 'es_4_111' SLOT OF RIA_image$glrlm</span>
+<span class="co">#&gt; GLRLM WAS SUCCESSFULLY ADDED TO 'es_8_111' SLOT OF RIA_image$glrlm</span>
+<span class="co">#&gt; GLRLM WAS SUCCESSFULLY ADDED TO 'es_16_111' SLOT OF RIA_image$glrlm</span>
+<span class="co">#&gt; GLRLM WAS SUCCESSFULLY ADDED TO 'es_32_111' SLOT OF RIA_image$glrlm</span>
+<span class="co">#&gt; GLRLM WAS SUCCESSFULLY ADDED TO 'ep_4_111' SLOT OF RIA_image$glrlm</span>
+<span class="co">#&gt; GLRLM WAS SUCCESSFULLY ADDED TO 'ep_8_111' SLOT OF RIA_image$glrlm</span>
+<span class="co">#&gt; GLRLM WAS SUCCESSFULLY ADDED TO 'ep_16_111' SLOT OF RIA_image$glrlm</span>
+<span class="co">#&gt; GLRLM WAS SUCCESSFULLY ADDED TO 'ep_32_111' SLOT OF RIA_image$glrlm</span>
+<span class="co">#&gt; GLRLM WAS SUCCESSFULLY ADDED TO 'es_2_1-11' SLOT OF RIA_image$glrlm</span>
+<span class="co">#&gt; GLRLM WAS SUCCESSFULLY ADDED TO 'ep_2_1-11' SLOT OF RIA_image$glrlm</span>
+<span class="co">#&gt; GLRLM WAS SUCCESSFULLY ADDED TO 'es_4_1-11' SLOT OF RIA_image$glrlm</span>
+<span class="co">#&gt; GLRLM WAS SUCCESSFULLY ADDED TO 'es_8_1-11' SLOT OF RIA_image$glrlm</span>
+<span class="co">#&gt; GLRLM WAS SUCCESSFULLY ADDED TO 'es_16_1-11' SLOT OF RIA_image$glrlm</span>
+<span class="co">#&gt; GLRLM WAS SUCCESSFULLY ADDED TO 'es_32_1-11' SLOT OF RIA_image$glrlm</span>
+<span class="co">#&gt; GLRLM WAS SUCCESSFULLY ADDED TO 'ep_4_1-11' SLOT OF RIA_image$glrlm</span>
+<span class="co">#&gt; GLRLM WAS SUCCESSFULLY ADDED TO 'ep_8_1-11' SLOT OF RIA_image$glrlm</span>
+<span class="co">#&gt; GLRLM WAS SUCCESSFULLY ADDED TO 'ep_16_1-11' SLOT OF RIA_image$glrlm</span>
+<span class="co">#&gt; GLRLM WAS SUCCESSFULLY ADDED TO 'ep_32_1-11' SLOT OF RIA_image$glrlm</span>
+<span class="co">#&gt; GLRLM WAS SUCCESSFULLY ADDED TO 'es_2_10-1' SLOT OF RIA_image$glrlm</span>
+<span class="co">#&gt; GLRLM WAS SUCCESSFULLY ADDED TO 'ep_2_10-1' SLOT OF RIA_image$glrlm</span>
+<span class="co">#&gt; GLRLM WAS SUCCESSFULLY ADDED TO 'es_4_10-1' SLOT OF RIA_image$glrlm</span>
+<span class="co">#&gt; GLRLM WAS SUCCESSFULLY ADDED TO 'es_8_10-1' SLOT OF RIA_image$glrlm</span>
+<span class="co">#&gt; GLRLM WAS SUCCESSFULLY ADDED TO 'es_16_10-1' SLOT OF RIA_image$glrlm</span>
+<span class="co">#&gt; GLRLM WAS SUCCESSFULLY ADDED TO 'es_32_10-1' SLOT OF RIA_image$glrlm</span>
+<span class="co">#&gt; GLRLM WAS SUCCESSFULLY ADDED TO 'ep_4_10-1' SLOT OF RIA_image$glrlm</span>
+<span class="co">#&gt; GLRLM WAS SUCCESSFULLY ADDED TO 'ep_8_10-1' SLOT OF RIA_image$glrlm</span>
+<span class="co">#&gt; GLRLM WAS SUCCESSFULLY ADDED TO 'ep_16_10-1' SLOT OF RIA_image$glrlm</span>
+<span class="co">#&gt; GLRLM WAS SUCCESSFULLY ADDED TO 'ep_32_10-1' SLOT OF RIA_image$glrlm</span>
+<span class="co">#&gt; GLRLM WAS SUCCESSFULLY ADDED TO 'es_2_01-1' SLOT OF RIA_image$glrlm</span>
+<span class="co">#&gt; GLRLM WAS SUCCESSFULLY ADDED TO 'ep_2_01-1' SLOT OF RIA_image$glrlm</span>
+<span class="co">#&gt; GLRLM WAS SUCCESSFULLY ADDED TO 'es_4_01-1' SLOT OF RIA_image$glrlm</span>
+<span class="co">#&gt; GLRLM WAS SUCCESSFULLY ADDED TO 'es_8_01-1' SLOT OF RIA_image$glrlm</span>
+<span class="co">#&gt; GLRLM WAS SUCCESSFULLY ADDED TO 'es_16_01-1' SLOT OF RIA_image$glrlm</span>
+<span class="co">#&gt; GLRLM WAS SUCCESSFULLY ADDED TO 'es_32_01-1' SLOT OF RIA_image$glrlm</span>
+<span class="co">#&gt; GLRLM WAS SUCCESSFULLY ADDED TO 'ep_4_01-1' SLOT OF RIA_image$glrlm</span>
+<span class="co">#&gt; GLRLM WAS SUCCESSFULLY ADDED TO 'ep_8_01-1' SLOT OF RIA_image$glrlm</span>
+<span class="co">#&gt; GLRLM WAS SUCCESSFULLY ADDED TO 'ep_16_01-1' SLOT OF RIA_image$glrlm</span>
+<span class="co">#&gt; GLRLM WAS SUCCESSFULLY ADDED TO 'ep_32_01-1' SLOT OF RIA_image$glrlm</span>
+<span class="co">#&gt; GLRLM WAS SUCCESSFULLY ADDED TO 'es_2_11-1' SLOT OF RIA_image$glrlm</span>
+<span class="co">#&gt; GLRLM WAS SUCCESSFULLY ADDED TO 'ep_2_11-1' SLOT OF RIA_image$glrlm</span>
+<span class="co">#&gt; GLRLM WAS SUCCESSFULLY ADDED TO 'es_4_11-1' SLOT OF RIA_image$glrlm</span>
+<span class="co">#&gt; GLRLM WAS SUCCESSFULLY ADDED TO 'es_8_11-1' SLOT OF RIA_image$glrlm</span>
+<span class="co">#&gt; GLRLM WAS SUCCESSFULLY ADDED TO 'es_16_11-1' SLOT OF RIA_image$glrlm</span>
+<span class="co">#&gt; GLRLM WAS SUCCESSFULLY ADDED TO 'es_32_11-1' SLOT OF RIA_image$glrlm</span>
+<span class="co">#&gt; GLRLM WAS SUCCESSFULLY ADDED TO 'ep_4_11-1' SLOT OF RIA_image$glrlm</span>
+<span class="co">#&gt; GLRLM WAS SUCCESSFULLY ADDED TO 'ep_8_11-1' SLOT OF RIA_image$glrlm</span>
+<span class="co">#&gt; GLRLM WAS SUCCESSFULLY ADDED TO 'ep_16_11-1' SLOT OF RIA_image$glrlm</span>
+<span class="co">#&gt; GLRLM WAS SUCCESSFULLY ADDED TO 'ep_32_11-1' SLOT OF RIA_image$glrlm</span>
+<span class="co">#&gt; GLRLM WAS SUCCESSFULLY ADDED TO 'es_2_1-1-1' SLOT OF RIA_image$glrlm</span>
+<span class="co">#&gt; GLRLM WAS SUCCESSFULLY ADDED TO 'ep_2_1-1-1' SLOT OF RIA_image$glrlm</span>
+<span class="co">#&gt; GLRLM WAS SUCCESSFULLY ADDED TO 'es_4_1-1-1' SLOT OF RIA_image$glrlm</span>
+<span class="co">#&gt; GLRLM WAS SUCCESSFULLY ADDED TO 'es_8_1-1-1' SLOT OF RIA_image$glrlm</span>
+<span class="co">#&gt; GLRLM WAS SUCCESSFULLY ADDED TO 'es_16_1-1-1' SLOT OF RIA_image$glrlm</span>
+<span class="co">#&gt; GLRLM WAS SUCCESSFULLY ADDED TO 'es_32_1-1-1' SLOT OF RIA_image$glrlm</span>
+<span class="co">#&gt; GLRLM WAS SUCCESSFULLY ADDED TO 'ep_4_1-1-1' SLOT OF RIA_image$glrlm</span>
+<span class="co">#&gt; GLRLM WAS SUCCESSFULLY ADDED TO 'ep_8_1-1-1' SLOT OF RIA_image$glrlm</span>
+<span class="co">#&gt; GLRLM WAS SUCCESSFULLY ADDED TO 'ep_16_1-1-1' SLOT OF RIA_image$glrlm</span>
+<span class="co">#&gt; GLRLM WAS SUCCESSFULLY ADDED TO 'ep_32_1-1-1' SLOT OF RIA_image$glrlm</span>
+<span class="co">#&gt; GLRLM WAS SUCCESSFULLY ADDED TO 'es_2_001' SLOT OF RIA_image$glrlm</span>
+<span class="co">#&gt; GLRLM WAS SUCCESSFULLY ADDED TO 'ep_2_001' SLOT OF RIA_image$glrlm</span>
+<span class="co">#&gt; GLRLM WAS SUCCESSFULLY ADDED TO 'es_4_001' SLOT OF RIA_image$glrlm</span>
+<span class="co">#&gt; GLRLM WAS SUCCESSFULLY ADDED TO 'es_8_001' SLOT OF RIA_image$glrlm</span>
+<span class="co">#&gt; GLRLM WAS SUCCESSFULLY ADDED TO 'es_16_001' SLOT OF RIA_image$glrlm</span>
+<span class="co">#&gt; GLRLM WAS SUCCESSFULLY ADDED TO 'es_32_001' SLOT OF RIA_image$glrlm</span>
+<span class="co">#&gt; GLRLM WAS SUCCESSFULLY ADDED TO 'ep_4_001' SLOT OF RIA_image$glrlm</span>
+<span class="co">#&gt; GLRLM WAS SUCCESSFULLY ADDED TO 'ep_8_001' SLOT OF RIA_image$glrlm</span>
+<span class="co">#&gt; GLRLM WAS SUCCESSFULLY ADDED TO 'ep_16_001' SLOT OF RIA_image$glrlm</span>
+<span class="co">#&gt; GLRLM WAS SUCCESSFULLY ADDED TO 'ep_32_001' SLOT OF RIA_image$glrlm</span>
+<span class="kw">names</span>(DICOM$glrlm)
+<span class="co">#&gt;   [1] &quot;ep_32_101&quot;   &quot;es_2_101&quot;    &quot;ep_2_101&quot;    &quot;es_4_101&quot;    &quot;es_8_101&quot;   </span>
+<span class="co">#&gt;   [6] &quot;es_16_101&quot;   &quot;es_32_101&quot;   &quot;ep_4_101&quot;    &quot;ep_8_101&quot;    &quot;ep_16_101&quot;  </span>
+<span class="co">#&gt;  [11] &quot;ep_32_100&quot;   &quot;ep_32_010&quot;   &quot;ep_32_110&quot;   &quot;ep_32_1-10&quot;  &quot;ep_32_011&quot;  </span>
+<span class="co">#&gt;  [16] &quot;ep_32_111&quot;   &quot;ep_32_1-11&quot;  &quot;ep_32_10-1&quot;  &quot;ep_32_01-1&quot;  &quot;ep_32_11-1&quot; </span>
+<span class="co">#&gt;  [21] &quot;ep_32_1-1-1&quot; &quot;ep_32_001&quot;   &quot;es_2_100&quot;    &quot;ep_2_100&quot;    &quot;es_4_100&quot;   </span>
+<span class="co">#&gt;  [26] &quot;es_8_100&quot;    &quot;es_16_100&quot;   &quot;es_32_100&quot;   &quot;ep_4_100&quot;    &quot;ep_8_100&quot;   </span>
+<span class="co">#&gt;  [31] &quot;ep_16_100&quot;   &quot;es_2_010&quot;    &quot;ep_2_010&quot;    &quot;es_4_010&quot;    &quot;es_8_010&quot;   </span>
+<span class="co">#&gt;  [36] &quot;es_16_010&quot;   &quot;es_32_010&quot;   &quot;ep_4_010&quot;    &quot;ep_8_010&quot;    &quot;ep_16_010&quot;  </span>
+<span class="co">#&gt;  [41] &quot;es_2_110&quot;    &quot;ep_2_110&quot;    &quot;es_4_110&quot;    &quot;es_8_110&quot;    &quot;es_16_110&quot;  </span>
+<span class="co">#&gt;  [46] &quot;es_32_110&quot;   &quot;ep_4_110&quot;    &quot;ep_8_110&quot;    &quot;ep_16_110&quot;   &quot;es_2_1-10&quot;  </span>
+<span class="co">#&gt;  [51] &quot;ep_2_1-10&quot;   &quot;es_4_1-10&quot;   &quot;es_8_1-10&quot;   &quot;es_16_1-10&quot;  &quot;es_32_1-10&quot; </span>
+<span class="co">#&gt;  [56] &quot;ep_4_1-10&quot;   &quot;ep_8_1-10&quot;   &quot;ep_16_1-10&quot;  &quot;es_2_011&quot;    &quot;ep_2_011&quot;   </span>
+<span class="co">#&gt;  [61] &quot;es_4_011&quot;    &quot;es_8_011&quot;    &quot;es_16_011&quot;   &quot;es_32_011&quot;   &quot;ep_4_011&quot;   </span>
+<span class="co">#&gt;  [66] &quot;ep_8_011&quot;    &quot;ep_16_011&quot;   &quot;es_2_111&quot;    &quot;ep_2_111&quot;    &quot;es_4_111&quot;   </span>
+<span class="co">#&gt;  [71] &quot;es_8_111&quot;    &quot;es_16_111&quot;   &quot;es_32_111&quot;   &quot;ep_4_111&quot;    &quot;ep_8_111&quot;   </span>
+<span class="co">#&gt;  [76] &quot;ep_16_111&quot;   &quot;es_2_1-11&quot;   &quot;ep_2_1-11&quot;   &quot;es_4_1-11&quot;   &quot;es_8_1-11&quot;  </span>
+<span class="co">#&gt;  [81] &quot;es_16_1-11&quot;  &quot;es_32_1-11&quot;  &quot;ep_4_1-11&quot;   &quot;ep_8_1-11&quot;   &quot;ep_16_1-11&quot; </span>
+<span class="co">#&gt;  [86] &quot;es_2_10-1&quot;   &quot;ep_2_10-1&quot;   &quot;es_4_10-1&quot;   &quot;es_8_10-1&quot;   &quot;es_16_10-1&quot; </span>
+<span class="co">#&gt;  [91] &quot;es_32_10-1&quot;  &quot;ep_4_10-1&quot;   &quot;ep_8_10-1&quot;   &quot;ep_16_10-1&quot;  &quot;es_2_01-1&quot;  </span>
+<span class="co">#&gt;  [96] &quot;ep_2_01-1&quot;   &quot;es_4_01-1&quot;   &quot;es_8_01-1&quot;   &quot;es_16_01-1&quot;  &quot;es_32_01-1&quot; </span>
+<span class="co">#&gt; [101] &quot;ep_4_01-1&quot;   &quot;ep_8_01-1&quot;   &quot;ep_16_01-1&quot;  &quot;es_2_11-1&quot;   &quot;ep_2_11-1&quot;  </span>
+<span class="co">#&gt; [106] &quot;es_4_11-1&quot;   &quot;es_8_11-1&quot;   &quot;es_16_11-1&quot;  &quot;es_32_11-1&quot;  &quot;ep_4_11-1&quot;  </span>
+<span class="co">#&gt; [111] &quot;ep_8_11-1&quot;   &quot;ep_16_11-1&quot;  &quot;es_2_1-1-1&quot;  &quot;ep_2_1-1-1&quot;  &quot;es_4_1-1-1&quot; </span>
+<span class="co">#&gt; [116] &quot;es_8_1-1-1&quot;  &quot;es_16_1-1-1&quot; &quot;es_32_1-1-1&quot; &quot;ep_4_1-1-1&quot;  &quot;ep_8_1-1-1&quot; </span>
+<span class="co">#&gt; [121] &quot;ep_16_1-1-1&quot; &quot;es_2_001&quot;    &quot;ep_2_001&quot;    &quot;es_4_001&quot;    &quot;es_8_001&quot;   </span>
+<span class="co">#&gt; [126] &quot;es_16_001&quot;   &quot;es_32_001&quot;   &quot;ep_4_001&quot;    &quot;ep_8_001&quot;    &quot;ep_16_001&quot;</span></code></pre></div>
+<p>In the near future RIA will have functions capable of calculating statistics and deriving aggregated statistics in a similar fashion.</p>
 </div>
 </div>
 <div id="geometry-based-statistics" class="section level1">
@@ -663,8 +1029,8 @@ RIA:::<span class="kw">list_to_df</span>(DICOM$stat_geometry$orig)
 <span class="co">#&gt; fractal_bc_d       1.89130618</span>
 <span class="co">#&gt; fractal_i_d        1.93411435</span>
 <span class="co">#&gt; fractal_c_d        1.92374602</span></code></pre></div>
-<p>and also on dichotomized images. Similarly as previous functions, if the desired image is stored in <code>RIA_image$data$modif</code>, then by setting the <strong>use_orig</strong> parameter to <strong>FALSE</strong> the function will run on the modified image. Using the <strong>use_slot</strong> parameter a specific image can also be set. The output is automatically named, but can be changed using the <strong>save_name</strong> parameter. The main reason to run geometry-based statistics on dichotomized images is to evaluate the geometrical features of the different sub-components. To calculate statistics on all sub-components of an image the <strong>calc_sub</strong> parameter has to be set to <strong>TRUE</strong>, which is the default:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">DICOM =<span class="st"> </span><span class="kw">geometry</span>(<span class="dt">RIA_data_in =</span> DICOM, <span class="dt">use_slot =</span> <span class="st">&quot;dichotomized$es_2&quot;</span>)
+<p>and also on discretized images. Similarly as previous functions, if the desired image is stored in <code>RIA_image$data$modif</code>, then by setting the <strong>use_orig</strong> parameter to <strong>FALSE</strong> the function will run on the modified image. Using the <strong>use_slot</strong> parameter a specific image can also be set. The output is automatically named, but can be changed using the <strong>save_name</strong> parameter. The main reason to run geometry-based statistics on discretized images is to evaluate the geometrical features of the different sub-components. To calculate statistics on all sub-components of an image the <strong>calc_sub</strong> parameter has to be set to <strong>TRUE</strong>, which is the default:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">DICOM =<span class="st"> </span><span class="kw">geometry</span>(<span class="dt">RIA_data_in =</span> DICOM, <span class="dt">use_slot =</span> <span class="st">&quot;discretized$es_2&quot;</span>)
 <span class="co">#&gt; GEOMETRY-BASED STATISTICS WAS SUCCESSFULLY ADDED TO 'es_2' SLOT OF RIA_image$stat_geometry</span>
 RIA:::<span class="kw">list_to_df</span>(DICOM$stat_geometry$es_2)
 <span class="co">#&gt;                        Values            NA</span>
@@ -692,8 +1058,8 @@ RIA:::<span class="kw">list_to_df</span>(DICOM$stat_geometry$es_2)
 </ul>
 <div id="batch-calculation-of-geometry-based-statistics" class="section level3">
 <h3>Batch calculation of geometry-based statistics</h3>
-<p>The <em>geometry</em> function also support batch calculations. Therefore, if you wish to calculate statistics for all dichotomizations, then all you have to do is:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">DICOM =<span class="st"> </span><span class="kw">geometry</span>(DICOM, <span class="dt">use_type =</span> <span class="st">&quot;dichotomized&quot;</span>)
+<p>The <em>geometry</em> function also support batch calculations. Therefore, if you wish to calculate statistics for all discretizations, then all you have to do is:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">DICOM =<span class="st"> </span><span class="kw">geometry</span>(DICOM, <span class="dt">use_type =</span> <span class="st">&quot;discretized&quot;</span>)
 <span class="co">#&gt; GEOMETRY-BASED STATISTICS WAS SUCCESSFULLY ADDED TO 'es_2' SLOT OF RIA_image$stat_geometry</span>
 <span class="co">#&gt; GEOMETRY-BASED STATISTICS WAS SUCCESSFULLY ADDED TO 'ep_2' SLOT OF RIA_image$stat_geometry</span>
 <span class="co">#&gt; GEOMETRY-BASED STATISTICS WAS SUCCESSFULLY ADDED TO 'es_4' SLOT OF RIA_image$stat_geometry</span>

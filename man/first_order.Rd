@@ -11,16 +11,16 @@ first_order(RIA_data_in, use_type = "single", use_orig = TRUE,
 \item{RIA_data_in}{\emph{RIA_image}, created by \code{\link[RIA]{load_dicom}}.}
 
 \item{use_type}{string, can be \emph{"single"} which runs the function on a single image,
-which is determined using \emph{"use_orig"} or \emph{"use_slot"}. \emph{"dichotomized"}
-takes all datasets in the \emph{RIA_image$dichotomized} slot and runs the analysis on them.}
+which is determined using \emph{"use_orig"} or \emph{"use_slot"}. \emph{"discretized"}
+takes all datasets in the \emph{RIA_image$discretized} slot and runs the analysis on them.}
 
 \item{use_orig}{logical, indicating whether to use image present in \emph{RIA_data$orig}.
 If FALSE, the modified image will be used stored in \emph{RIA_data$modif}.}
 
 \item{use_slot}{string, name of slot where data wished to be used is. Use if the desired image
 is not in the \emph{data$orig} or \emph{data$modif} slot of the \emph{RIA_image}. For example,
-if the desired dataset is in \emph{RIA_image$dichotomized$ep_4}, then \emph{use_slot} should be
-\emph{dichotomized$ep_4}. The results are automatically saved. If the results are not saved to
+if the desired dataset is in \emph{RIA_image$discretized$ep_4}, then \emph{use_slot} should be
+\emph{discretized$ep_4}. The results are automatically saved. If the results are not saved to
 the desired slot, then please use \emph{save_name} parameter.}
 
 \item{save_name}{string, indicating the name of subslot of \emph{$stat_fo} to save results to.
@@ -52,9 +52,9 @@ use_orig = TRUE, write_orig = FALSE)
 RIA_image <- first_order(RIA_image, use_orig = FALSE, verbose_in = TRUE)
 
 #Use use_slot parameter to set which image to use
-RIA_image <- first_order(RIA_image, use_orig = FALSE, use_slot = "dichotomized$ep_4")
+RIA_image <- first_order(RIA_image, use_orig = FALSE, use_slot = "discretized$ep_4")
 
-#Batch calculation of first-order statistics on all dichotomized images
-RIA_image <- first_order(RIA_image, use_type = "dichotomized")
+#Batch calculation of first-order statistics on all discretized images
+RIA_image <- first_order(RIA_image, use_type = "discretized")
 }
 }

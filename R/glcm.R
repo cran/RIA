@@ -25,16 +25,16 @@
 #' @param normalize logical, indicating whether to change glcm elements to relaive frequencies.
 #'
 #' @param use_type string, can be \emph{"single"} which runs the function on a single image,
-#' which is determined using \emph{"use_orig"} or \emph{"use_slot"}. \emph{"dichotomized"}
-#' takes all datasets in the \emph{RIA_image$dichotomized} slot and runs the analysis on them.
+#' which is determined using \emph{"use_orig"} or \emph{"use_slot"}. \emph{"discretized"}
+#' takes all datasets in the \emph{RIA_image$discretized} slot and runs the analysis on them.
 #'
 #' @param use_orig logical, indicating to use image present in \emph{RIA_data$orig}.
 #' If FALSE, the modified image will be used stored in \emph{RIA_data$modif}.
 #'
 #' @param use_slot string, name of slot where data wished to be used is. Use if the desired image
 #' is not in the \emph{data$orig} or \emph{data$modif} slot of the \emph{RIA_image}. For example,
-#' if the desired dataset is in \emph{RIA_image$dichotomized$ep_4}, then \emph{use_slot} should be
-#' \emph{dichotomized$ep_4}. The results are automatically saved. If the results are not saved to
+#' if the desired dataset is in \emph{RIA_image$discretized$ep_4}, then \emph{use_slot} should be
+#' \emph{discretized$ep_4}. The results are automatically saved. If the results are not saved to
 #' the desired slot, then please use \emph{save_name} parameter.
 #'
 #' @param save_name string, indicating the name of subslot of \emph{$glcm} to save results to.
@@ -46,17 +46,17 @@
 #' @return \emph{RIA_image} containing the GLCM.
 #'
 #' @examples \dontrun{
-#' #Dichotomize loaded image and then calculate GLCM matrix of RIA_image$modif
-#' RIA_image <- dichotomize(RIA_image, bins_in = c(4, 8), equal_prob = TRUE,
+#' #Discretize loaded image and then calculate GLCM matrix of RIA_image$modif
+#' RIA_image <- discretize(RIA_image, bins_in = c(4, 8), equal_prob = TRUE,
 #' use_orig = TRUE, write_orig = FALSE)
 #' RIA_image <- glcm(RIA_image, use_orig = FALSE, verbose_in = TRUE)
 #'
 #' #Use use_slot parameter to set which image to use
-#' RIA_image <- glcm(RIA_image, use_orig = FALSE, use_slot = "dichotomized$ep_4",
+#' RIA_image <- glcm(RIA_image, use_orig = FALSE, use_slot = "discretized$ep_4",
 #' off_right = 2, off_down = -1, off_z = 0)
 #' 
-#' #Batch calculation of GLCM matrices on all dichotomized images
-#' RIA_image <- glcm(RIA_image, use_type = "dichotomized",
+#' #Batch calculation of GLCM matrices on all discretized images
+#' RIA_image <- glcm(RIA_image, use_type = "discretized",
 #' off_right = 1, off_down = -1, off_z = 0)
 #' }
 
@@ -67,8 +67,8 @@ glcm <- function(RIA_data_in, off_right = 1, off_down = 0, off_z = 0, symmetric 
   if(any(class(data_in_orig) != "list")) data_in_orig <- list(data_in_orig)
   list_names <- names(data_in_orig)
   if(!is.null(save_name) & (length(data_in_orig) != length(save_name))) {stop(paste0("PLEASE PROVIDE THE SAME NUMBER OF NAMES AS THERE ARE IMAGES!\n",
-                                                                                "NUMBER OF NAMES: ", length(save_name), "\n",
-                                                                                "NUMBER OF IMAGES: ", length(data_in), "\n"))
+                                                                                "NUMBER OF NAMES:  ", length(save_name), "\n",
+                                                                                "NUMBER OF IMAGES: ", length(data_in_orig), "\n"))
   }
   
 
@@ -144,7 +144,7 @@ glcm <- function(RIA_data_in, off_right = 1, off_down = 0, off_z = 0, symmetric 
     }
   }
   
-  if(use_type == "dichotomized") {
+  if(use_type == "discretized") {
       if(any(class(RIA_data_in) == "RIA_image"))
       {
           if(is.null(save_name[k])) {
