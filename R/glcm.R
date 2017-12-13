@@ -1,5 +1,6 @@
 #' @title Creates gray-level co-occurrence matrix of RIA image
 #' @export
+#' @encoding UTF-8
 #'
 #' @description  Creates gray-level co-occurrence matrix (GLCM) from \emph{RIA_image}.
 #' GLCM assesses the spatial relation of voxels to each other. By default the \emph{$modif}
@@ -59,6 +60,27 @@
 #' RIA_image <- glcm(RIA_image, use_type = "discretized",
 #' off_right = 1, off_down = -1, off_z = 0)
 #' }
+#' 
+#' @references 
+#' Robert M. HARALICK et al. 
+#' Textural Features for Image Classification.
+#' IEEE Transactions on Systems, Man, and Cybernetics. 1973; SMC-3:610-621.
+#' DOI: 10.1109/TSMC.1973.4309314
+#' \url{http://ieeexplore.ieee.org/document/4309314/}
+#' 
+#' Márton KOLOSSVÁRY et al.
+#' Radiomic Features Are Superior to Conventional Quantitative Computed Tomographic
+#' Metrics to Identify Coronary Plaques With Napkin-Ring Sign
+#' Circulation: Cardiovascular Imaging (2017).
+#' DOI: 10.1161/circimaging.117.006843
+#' \url{http://circimaging.ahajournals.org/content/10/12/e006843}
+#' 
+#' Márton KOLOSSVÁRY et al.
+#' Cardiac Computed Tomography Radiomics: A Comprehensive Review on Radiomic Techniques.
+#' Journal of Thoracic Imaging (2017).
+#' DOI: 10.1097/RTI.0000000000000268
+#' \url{https://www.ncbi.nlm.nih.gov/pubmed/28346329}
+#' @encoding UTF-8
 
 glcm <- function(RIA_data_in, off_right = 1, off_down = 0, off_z = 0, symmetric = TRUE, normalize = TRUE, use_type = "single", use_orig = FALSE, use_slot = NULL, save_name = NULL, verbose_in = TRUE)
 {

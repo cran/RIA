@@ -1,5 +1,6 @@
 #' @title Creates gray-level run length matrix from RIA image
 #' @export
+#' @encoding UTF-8
 #'
 #' @description  Creates gray-level run length matrix (GLRLM) from \emph{RIA_image}.
 #' GLRLM assesses the spatial relation of voxels to each other by investigating how many times
@@ -57,6 +58,27 @@
 #' RIA_image <- glrlm(RIA_image, use_type = "discretized",
 #' off_right = 1, off_down = 1, off_z = 0)
 #' }
+#' 
+#' @references 
+#' Mary M. Galloway et al.
+#' Texture analysis using gray level run lengths.
+#' Computer Graphics and Image Processing. 1975; 4:172-179.
+#' DOI: 10.1016/S0146-664X(75)80008-6
+#' \url{https://www.sciencedirect.com/science/article/pii/S0146664X75800086}
+#' 
+#' Márton KOLOSSVÁRY et al.
+#' Radiomic Features Are Superior to Conventional Quantitative Computed Tomographic
+#' Metrics to Identify Coronary Plaques With Napkin-Ring Sign
+#' Circulation: Cardiovascular Imaging (2017).
+#' DOI: 10.1161/circimaging.117.006843
+#' \url{http://circimaging.ahajournals.org/content/10/12/e006843}
+#' 
+#' Márton KOLOSSVÁRY et al.
+#' Cardiac Computed Tomography Radiomics: A Comprehensive Review on Radiomic Techniques.
+#' Journal of Thoracic Imaging (2017).
+#' DOI: 10.1097/RTI.0000000000000268
+#' \url{https://www.ncbi.nlm.nih.gov/pubmed/28346329}
+#' @encoding UTF-8
 
 glrlm <- function(RIA_data_in, off_right = 1, off_down = 0, off_z = 0, use_type = "single", use_orig = FALSE, use_slot = NULL, save_name = NULL, verbose_in = TRUE)
 {

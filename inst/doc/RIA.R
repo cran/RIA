@@ -5,16 +5,16 @@ knitr::opts_chunk$set(collapse = TRUE, comment = "#>")
 library(RIA)
 
 ## ---- eval=FALSE---------------------------------------------------------
-#  DICOM = load_dicom(filename = "C:\\DICOM\\")
+#  DICOM = load_dicom(filename = "C:/DICOM/")
 
 ## ---- eval=FALSE---------------------------------------------------------
-#  DICOM = load_dicom(filename = "C:\\DICOM\\", crop_in = FALSE)
+#  DICOM = load_dicom(filename = "C:/DICOM/", crop_in = FALSE)
 
 ## ---- eval=FALSE---------------------------------------------------------
-#  DICOM = load_dicom(filename = "C:\\DICOM\\", replace_in = FALSE)
+#  DICOM = load_dicom(filename = "C:/DICOM/", replace_in = FALSE)
 
 ## ---- eval=FALSE---------------------------------------------------------
-#  DICOM = load_dicom(filename = "C:\\DICOM\\", center_in = FALSE)
+#  DICOM = load_dicom(filename = "C:/DICOM/", center_in = FALSE)
 
 ## ------------------------------------------------------------------------
 DICOM_codes
@@ -22,11 +22,11 @@ DICOM_codes
 ## ---- eval=FALSE---------------------------------------------------------
 #  add <- as.data.frame(array(c("Manufacturer", "0008", "0070"), dim = c(1,3)))
 #  colnames(add) <- c("Name", "Group", "Element")
-#  DICOM = load_dicom(filename = "C:\\DICOM\\", header_add = add)
+#  DICOM = load_dicom(filename = "C:/DICOM/", header_add = add)
 
 ## ---- eval=FALSE---------------------------------------------------------
 #  exclude <- as.data.frame(DICOM_codes[3:6,])
-#  DICOM = load_dicom(filename = "C:\\DICOM\\", header_exclude = exclude)
+#  DICOM = load_dicom(filename = "C:/DICOM/", header_exclude = exclude)
 
 ## ------------------------------------------------------------------------
 DICOM <- NRS
@@ -107,19 +107,26 @@ DICOM = glcm(RIA_data_in = DICOM, use_type = "discretized",
 names(DICOM$glcm)
 
 ## ------------------------------------------------------------------------
-DICOM = glcm_stat(DICOM, use_type = "single", use_slot = "glcm$ep_2_122")
-
-## ------------------------------------------------------------------------
-DICOM = glcm_stat(DICOM, use_type = "glcm")
-names(DICOM$stat_glcm)
-
-## ------------------------------------------------------------------------
 DICOM = glcm_all(DICOM, use_type = "single")
 names(DICOM$glcm)
 
 ## ------------------------------------------------------------------------
 DICOM = glcm_all(DICOM, use_type = "discretized")
 names(DICOM$glcm)
+
+## ------------------------------------------------------------------------
+DICOM = glcm_all(DICOM, use_type = "discretized", distance = c(1:3))
+names(DICOM$glcm)
+
+## ------------------------------------------------------------------------
+DICOM = glcm_stat(DICOM, use_type = "single", use_slot = "glcm$ep_2_122")
+
+## ------------------------------------------------------------------------
+DICOM = glcm_stat(DICOM, use_type = "glcm")
+names(DICOM$stat_glcm)
+
+## ---- eval=FALSE---------------------------------------------------------
+#  DICOM <- glcm_stat_all(DICOM)
 
 ## ------------------------------------------------------------------------
 DICOM = glrlm(RIA_data_in = DICOM, off_right = 1, off_down = 0, off_z = 1)
@@ -131,19 +138,22 @@ DICOM = glrlm(RIA_data_in = DICOM, use_type = "discretized",
 names(DICOM$glrlm)
 
 ## ------------------------------------------------------------------------
-DICOM = glrlm_stat(DICOM, use_type = "single", use_slot = "glrlm$ep_2_101")
-
-## ------------------------------------------------------------------------
-DICOM = glrlm_stat(DICOM, use_type = "glrlm")
-names(DICOM$stat_glrlm)
-
-## ------------------------------------------------------------------------
 DICOM = glrlm_all(DICOM, use_type = "single")
 names(DICOM$glrlm)
 
 ## ------------------------------------------------------------------------
 DICOM = glrlm_all(DICOM, use_type = "discretized")
 names(DICOM$glrlm)
+
+## ------------------------------------------------------------------------
+DICOM = glrlm_stat(DICOM, use_type = "single", use_slot = "glrlm$ep_2_101")
+
+## ------------------------------------------------------------------------
+DICOM = glrlm_stat(DICOM, use_type = "glrlm")
+names(DICOM$stat_glrlm)
+
+## ---- eval=FALSE---------------------------------------------------------
+#  DICOM <- glrlm_stat_all(DICOM)
 
 ## ------------------------------------------------------------------------
 DICOM = geometry(RIA_data_in = DICOM, use_orig = TRUE, calc_sub = FALSE)
@@ -156,4 +166,7 @@ RIA:::list_to_df(DICOM$stat_geometry$es_2)
 ## ------------------------------------------------------------------------
 DICOM = geometry(DICOM, use_type = "discretized")
 names(DICOM$stat_geometry)
+
+## ---- eval=FALSE---------------------------------------------------------
+#  DICOM <- radiomics_all(DICOM, equal_prob = FALSE, bins_in = c(2,8,32,128), distance = c(1:3))
 

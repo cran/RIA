@@ -1,6 +1,31 @@
 citHeader("To cite package 'RIA' in publications use:")
 
 citEntry(entry="article",
+	title = paste("Radiomic Features Are Superior to Conventional Quantitative Computed Tomographic Metrics to Identify Coronary Plaques With Napkin-Ring Sign"),
+
+  author= c(
+    person("M\U00E1rton", "Kolossv\U00E1ry"),
+    person("J\u00FAlia", "Kar\u00E1dy"),
+    person("B\U00E1lint", "Szilveszter"),
+    person("Pieter", "Kitslaar"),
+    person("Udo", "Hoffmann"),
+    person("B\U00E9la", "Merkely"),
+    person("P\U00E1l", "Maurovich-Horvat")),
+
+  journal = "Circulation: Cardiovascular Imaging",
+	year  = "2017",
+	volume="10",
+	number="12",
+	pages = "0000-0000",
+	doi   = "10.1161/circimaging.117.006843",
+
+	textVersion = paste("M\U00E1rton Kolossv\U00E1ry,", "J\u00FAlia Kar\u00E1dy,", "B\U00E1lint Szilveszter,", "Pieter Kitslaar,", "Udo Hoffmann,", "B\U00E9la Merkely,", "P\U00E1l Maurovich-Horvat",
+		  "(2017). Radiomic Features Are Superior to Conventional Quantitative Computed Tomographic Metrics to Identify Coronary Plaques With Napkin-Ring Sign
+		   Circulation: Cardiovascular Imaging,",
+		  "DOI:10.1161/circimaging.117.006843")
+)
+
+citEntry(entry="article",
 	title = paste("Cardiac Computed Tomography Radiomics: A Comprehensive Review on Radiomic Techniques."),
 
   author= c(

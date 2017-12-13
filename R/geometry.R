@@ -60,7 +60,21 @@
 #' #Batch calculation of geometry-based statistics on all discretized images and subcomponents
 #' RIA_image <- geometry(RIA_image, use_type = "discretized", calc_sub = TRUE)
 #' }
-
+#' 
+#' 
+#' @references Márton KOLOSSVÁRY et al.
+#' Radiomic Features Are Superior to Conventional Quantitative Computed Tomographic
+#' Metrics to Identify Coronary Plaques With Napkin-Ring Sign
+#' Circulation: Cardiovascular Imaging (2017).
+#' DOI: 10.1161/circimaging.117.006843
+#' \url{http://circimaging.ahajournals.org/content/10/12/e006843}
+#' 
+#' Márton KOLOSSVÁRY et al.
+#' Cardiac Computed Tomography Radiomics: A Comprehensive Review on Radiomic Techniques.
+#' Journal of Thoracic Imaging (2017).
+#' DOI: 10.1097/RTI.0000000000000268
+#' \url{https://www.ncbi.nlm.nih.gov/pubmed/28346329}
+#' @encoding UTF-8
 
 geometry<- function(RIA_data_in, xy_dim = RIA_data_in$log$orig_xy_dim, z_dim = RIA_data_in$log$orig_z_dim, all_vol = RIA_data_in$log$orig_vol_mm, all_surf = RIA_data_in$log$orig_surf_mm,
                     calc_dist = FALSE, calc_sub = TRUE, use_type = "single", use_orig = FALSE,
@@ -85,8 +99,25 @@ geometry<- function(RIA_data_in, xy_dim = RIA_data_in$log$orig_xy_dim, z_dim = R
     if(length(data_NA) == 0) {message("WARNING: SUPPLIED RIA_image DOES NOT CONTAIN ANY DATA!!!")}
     if(length(dim(data_in)) < 2 | length(dim(data_in)) > 3) stop(paste0("DATA LOADED IS ", length(dim(data_in)), " DIMENSIONAL. ONLY 2D AND 3D DATA ARE SUPPORTED!"))
 
-    if(!calc_sub) {data_in[!is.na(data_in)] <- 1; data_NA <- 1}
-    values <- as.numeric(names(table(data_NA)))
+    # if(!calc_sub) {data_in[!is.na(data_in)] <- 1; data_NA <- 1}
+    # values <- as.numeric(names(table(data_NA)))
+    
+    #create gray level number, first by the name of the file, then the event log, then by the number of gray levels
+    if(!calc_sub) {
+      data_in[!is.na(data_in)] <- 1; data_NA <- 1
+      gray_levels <- as.numeric(names(table(data_NA)))
+    } else {
+      num_ind <- unlist(gregexpr('[1-9]', list_names[k]))
+      num_txt <- substr(list_names[k], num_ind[1], num_ind[length(num_ind)])
+      gray_levels <- as.numeric(num_txt)
+      if(length(gray_levels) == 0) {
+        txt <- automatic_name(RIA_data_in, use_orig, use_slot)
+        num_ind <- unlist(gregexpr('[1-9]', txt))
+        num_txt <- substr(txt, num_ind[1], num_ind[length(num_ind)])
+        gray_levels <- as.numeric(num_txt)
+      }
+    }
+
 
     #volume
     calc_v  <- list();    calc_vr <- list()
@@ -102,7 +133,7 @@ geometry<- function(RIA_data_in, xy_dim = RIA_data_in$log$orig_xy_dim, z_dim = R
     calc_bc_d <- list();    calc_i_d  <- list();    calc_c_d  <- list()
 
 
-    for(j in values) {
+    for(j in 1:gray_levels) {
       mod_dichot_data <- data_in
       mod_dichot_data[mod_dichot_data != j] <- NA
 

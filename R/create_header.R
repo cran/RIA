@@ -34,6 +34,8 @@
 create_header <- function(directory, addition = NULL, exclusion = NULL)
 {
 
+  if(substr(directory, nchar(directory), nchar(directory)) != "/") directory <- paste0(directory, "/")
+     
   singe_dicom <- paste(directory, list.files(directory)[1], sep = "")
   dcmImages<- oro.dicom::readDICOMFile(singe_dicom)
   header_path <- paste("dcmImages$hdr", sep = "")

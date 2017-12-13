@@ -14,6 +14,22 @@
 #'  Further attributes may also be added by RIA functions.
 #'
 #' @param filename string, file path to directory containing \emph{dcm} files.
+#' 
+#' @param mask_filename string, file path to optional directory containing \emph{dcm} files
+#' of mask image.
+#' 
+#' @param keep_mask_values integer vector, indicates which value or values of the mask image
+#' to use as indicator to identify voxels wished to be processed. Usually 1-s indicate voxels
+#' wished to be processed. However, one mask image might contain several segmentations, in which
+#' case supplying several integers is allowed. Furthermore, if the same string is supplyied to
+#' \emph{filename} and \emph{mask_filename}, then the integers in \emph{keep_mask_values} are used
+#' to specify which voxel values to analyze. This way the provided image can be segmented to specific
+#' compontents. For example, if you wish to analyze only the low-density non-calcified component
+#' of coronary plaques, then \emph{keep_mask_values} can specify this by setting it to: -100:30
+#' 
+#' @param switch_z logical, indicating whether to change the orientation of the images in the Z axis. Some
+#' software reverse the order of the manipulated image in the Z axis, and therefore the images of the mask
+#' image need to be reveresed.
 #'
 #' @param crop_in logical, indicating whether to crop \emph{RIA_image} to smallest bounding box.
 #'
@@ -120,9 +136,24 @@
 #'  while 1024 will be substracted from all other data points.
 #'  RIA_image <- load_dicom("C://Users//Test//Documents//Radiomics//John_Smith//DICOM_folder//")
 #'  }
+#'  
+#' @references Márton KOLOSSVÁRY et al.
+#' Radiomic Features Are Superior to Conventional Quantitative Computed Tomographic
+#' Metrics to Identify Coronary Plaques With Napkin-Ring Sign
+#' Circulation: Cardiovascular Imaging (2017).
+#' DOI: 10.1161/circimaging.117.006843
+#' \url{http://circimaging.ahajournals.org/content/10/12/e006843}
+#' 
+#' Márton KOLOSSVÁRY et al.
+#' Cardiac Computed Tomography Radiomics: A Comprehensive Review on Radiomic Techniques.
+#' Journal of Thoracic Imaging (2017).
+#' DOI: 10.1097/RTI.0000000000000268
+#' \url{https://www.ncbi.nlm.nih.gov/pubmed/28346329}
+#' @encoding UTF-8
 
 
-load_dicom <- function(filename, crop_in = TRUE, replace_in = TRUE, center_in = TRUE,  zero_value = NULL, min_to = -1024,
+load_dicom <- function(filename, mask_filename = NULL, keep_mask_values = 1, switch_z = TRUE, 
+                       crop_in = TRUE, replace_in = TRUE, center_in = TRUE,  zero_value = NULL, min_to = -1024,
                        header_add = NULL, header_exclude = NULL, verbose_in = TRUE,
                        recursive_in = TRUE, exclude_in = "sql",
                        mode_in = "integer", transpose_in = TRUE, pixelData_in = TRUE,
@@ -142,12 +173,45 @@ load_dicom <- function(filename, crop_in = TRUE, replace_in = TRUE, center_in = 
   data  <- oro.dicom::create3D(dcmImages, mode = mode_in, transpose = transpose_in, pixelData = pixelData_in,
                                  mosaic = mosaic_in, mosaicXY = mosaicXY_in, sequence = sequence_in)
   }
-
+  
   ###create RIA_image structure
   RIA_image <- list(data = NULL, header = list(), log = list())
   if(length(dim(data)) == 3 | length(dim(data)) == 2) {class(RIA_image) <- append(class(RIA_image), "RIA_image")
   } else {stop(paste0("DICOM LOADED IS ", length(dim(data)), " DIMENSIONAL. ONLY 2D AND 3D DATA ARE SUPPORTED!"))}
 
+  
+  if(is.null(zero_value)) zero_value <- min(data, na.rm = TRUE)
+  
+  #mask image
+  if(!is.null(mask_filename)) {
+      if(identical(filename, mask_filename)) {
+          if(verbose_in) {message(paste0("CANCELING OUT VALUES OTHER THAN THOSE SPECIFIED IN 'keep_mask_values' PARAMETER \n"))}
+          data[!data %in% keep_mask_values] <- zero_value
+      } else {
+          if(verbose_in) {message(paste0("LOADING DICOM IMAGES OF MASK IMAGE FROM: ", mask_filename, "\n"))}
+          dcmImages_mask <- oro.dicom::readDICOM(mask_filename, recursive = recursive_in, exclude = exclude_in, verbose = verbose_in)
+          if(length(dcmImages_mask$img)==1) {
+              data_mask  <- suppressWarnings(oro.dicom::create3D(dcmImages_mask, mode = mode_in, transpose = transpose_in, pixelData = pixelData_in,
+                                                            mosaic = mosaic_in, mosaicXY = mosaicXY_in, sequence = sequence_in))
+          } else {
+              data_mask  <- oro.dicom::create3D(dcmImages_mask, mode = mode_in, transpose = transpose_in, pixelData = pixelData_in,
+                                           mosaic = mosaic_in, mosaicXY = mosaicXY_in, sequence = sequence_in)
+          }
+          
+          if(!all(dim(data) == dim(data_mask))) {
+              stop(paste0("DIMENSIONS OF THE IMAGE AND THE MASK ARE NOT EQUAL!\n",
+                          "DIMENSION OF IMAGE: ", dim(data)[1], " ",  dim(data)[2], " ", dim(data)[3], "\n",
+                          "DIMENSION OF MASK:  ", dim(data_mask)[1], " ", dim(data_mask)[2], " ", dim(data_mask)[3], "\n"))
+          } else {
+              if(switch_z) {data_mask[,,dim(data_mask)[3]:1] <- data_mask
+              message("MASK IMAGE WAS TRANSFORMED TO ACHIEVE PROPER ORIENTATION OF THE ORIGINAL AND THE MASK IMAGE.\n")
+              }
+              data[!data_mask %in% keep_mask_values] <- zero_value
+          }
+      }
+  }
+  
+  
   RIA_image$data$orig  <- data
   RIA_image$data$modif <- NULL
   class(RIA_image$header) <- append(class(RIA_image$header), "RIA_header")
@@ -156,11 +220,19 @@ load_dicom <- function(filename, crop_in = TRUE, replace_in = TRUE, center_in = 
   RIA_image$log$events  <- "Created"
   RIA_image$log$orig_dim  <- dim(data)
   RIA_image$log$directory  <- filename
+  
+  
+  if(!is.null(mask_filename)) {
+    if(identical(filename, mask_filename)) {
+      RIA_image$log$events  <- "Filtered_using_"
+    } else {
+      RIA_image$log$events  <- "Filtered_using_mask_values_"
+    }
+  }
+  
 
-
+  
   ###Crop data
-  if(is.null(zero_value)) zero_value <- min(RIA_image$data$orig, na.rm = TRUE)
-
   if(crop_in)
   {
     if(verbose_in) {message(paste0("SMALLEST VALUES IS ", zero_value, ", AND WILL BE CONSIDERED AS REFERENCE POINT TO IDENTIFY VOXELS WITHOUT ANY SIGNAL\n"))}

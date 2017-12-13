@@ -38,6 +38,20 @@
 #' #Batch calculation of GLCM-based statistics on all calculated GLCMs
 #' RIA_image <- glcm_stat(RIA_image, use_type = "discretized")
 #' }
+#'
+#' @references Márton KOLOSSVÁRY et al.
+#' Radiomic Features Are Superior to Conventional Quantitative Computed Tomographic
+#' Metrics to Identify Coronary Plaques With Napkin-Ring Sign
+#' Circulation: Cardiovascular Imaging (2017).
+#' DOI: 10.1161/circimaging.117.006843
+#' \url{http://circimaging.ahajournals.org/content/10/12/e006843}
+#' 
+#' Márton KOLOSSVÁRY et al.
+#' Cardiac Computed Tomography Radiomics: A Comprehensive Review on Radiomic Techniques.
+#' Journal of Thoracic Imaging (2017).
+#' DOI: 10.1097/RTI.0000000000000268
+#' \url{https://www.ncbi.nlm.nih.gov/pubmed/28346329}
+#' @encoding UTF-8
 
 
 
@@ -306,9 +320,9 @@ glcm_stat <- function(RIA_data_in, use_type = "single", use_orig = FALSE, use_sl
   Average_s             <- avg(data_in, type_in = "squared")
   Average_e             <- avg(data_in, type_in = "entropy")
 
-  Variance     <- variance(data_in, type_in = "single")
-  Variance_s   <- variance(data_in, type_in = "squared")
-  Variance_e   <- variance(data_in, type_in = "entropy")
+  Variances     <- variance(data_in, type_in = "single")
+  Variances_s   <- variance(data_in, type_in = "squared")
+  Variances_e   <- variance(data_in, type_in = "entropy")
 
   Correlation           <- correlation(data_in, type_in = "single")
   Correlation_s         <- correlation(data_in, type_in = "squared")
@@ -566,9 +580,9 @@ glcm_stat <- function(RIA_data_in, use_type = "single", use_orig = FALSE, use_sl
     Average               <- Average,
     Average_s             <- Average_s,
     Average_e             <- Average_e,
-    Variance     <- Variance,
-    Variance_s   <- Variance_s,
-    Variance_e   <- Variance_e,
+    Variances     <- Variances,
+    Variances_s   <- Variances_s,
+    Variances_e   <- Variances_e,
     Correlation           <- Correlation,
     Correlation_s         <- Correlation_s,
     Correlation_e         <- Correlation_e,
@@ -810,9 +824,9 @@ glcm_stat <- function(RIA_data_in, use_type = "single", use_orig = FALSE, use_sl
                       "Average",
                       "Average_s",
                       "Average_e",
-                      "Variance",
-                      "Variance_s",
-                      "Variance_e",
+                      "Variances",
+                      "Variances_s",
+                      "Variances_e",
                       "Correlation",
                       "Correlation_s",
                       "Correlation_e",

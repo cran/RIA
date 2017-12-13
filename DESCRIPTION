@@ -1,8 +1,8 @@
 Package: RIA
 Type: Package
 Title: Radiomics Image Analysis Toolbox for Grayscale Images
-Version: 1.2.0
-Date: 2017-08-11
+Version: 1.3.0
+Date: 2017-12-13
 Authors@R: person("Marton", "Kolossvary", role = c("aut", "cre"), email = "marton.kolossvary@cirg.hu")
 Maintainer: Marton Kolossvary <marton.kolossvary@cirg.hu>
 Description: Radiomics image analysis toolbox for grayscale 2D and 3D images. RIA calculates first-order,
@@ -17,7 +17,9 @@ RoxygenNote: 6.0.1
 NeedsCompilation: no
 Suggests: knitr, rmarkdown
 VignetteBuilder: knitr
-Packaged: 2017-08-11 13:18:48 UTC; Marci
+Encoding: UTF-8
+URL: http://circimaging.ahajournals.org/content/10/12/e006843
+Packaged: 2017-12-13 17:48:25 UTC; Marci
 Author: Marton Kolossvary [aut, cre]
 Repository: CRAN
-Date/Publication: 2017-08-11 13:38:42 UTC
+Date/Publication: 2017-12-13 18:04:47 UTC
