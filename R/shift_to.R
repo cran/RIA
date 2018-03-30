@@ -1,26 +1,8 @@
 # Shift image intensities by given amount
 #
-# Shifts image intensities by given amount. The amount of shift will be determined so that the
-# smallest original value indicated by "min_value_in will" have the value "to" after transformation.
-# Used by load_dicom to shift values if necessary.
-#
 # RIA_data_in RIA_image, matrix or array
-#
-# to if min_value_in provided then the amount will be determined so that the smallest value will equal
-# to the to parameter. If not, then all values will be added to
-#
-# min_value_in integer provided indicating smallest value
-#
-# use_orig indicating to use image present in RIA_data$orig. If FALSE, the modified image
-# will be used stored in RIA_data$modif.
-#
-# write_orig indicating to write cropped image  to RIA_data$orig. If FALSE, the modified image
-# will be used stored in RIA_data$modif.
-#
-# verbose_in logical indicating whether to print detailed information.
-# Most prints can also be suppresed using the suppressMessages function.
-#
 # Return: RIA_image object croped to smallest bouding box, whith RIA_log updated.
+# (c): Márton Kolossváry, 2018
 
 
 

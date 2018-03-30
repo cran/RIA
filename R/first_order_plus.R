@@ -1,4 +1,5 @@
-##Additional first-order statistics
+# Additional first-order statistics
+# (c): Márton Kolossváry, 2018
 
 mode <- function(data) {
   uniq <- unique(data)

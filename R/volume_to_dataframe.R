@@ -6,8 +6,8 @@
 # data 2-3D array
 # xy_dim inplane resolution
 # y_dim crossplane resolution
-
 # return 3 or 4 column matrix with coordinates and voxel values
+# (c): Márton Kolossváry, 2018
 
 
 volume_to_dataframe <- function(data, xy_dim = 0.5, z_dim = 0.5) {

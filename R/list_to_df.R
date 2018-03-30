@@ -6,6 +6,7 @@
 # sci_not whether to present results with scientific notation
 #
 # return dataframe of values
+# (c): Márton Kolossváry, 2018
 
 
 list_to_df <- function(list_in, sci_not = FALSE)

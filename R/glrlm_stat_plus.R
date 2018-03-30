@@ -1,4 +1,5 @@
-##statistics fog glrlms
+# statistics for glrlms
+# (c): Márton Kolossváry, 2018
 
 sre <- function(data) {
   if(length(data) == 0) {return (0)}

@@ -13,28 +13,28 @@ vignette: >
 knitr::opts_chunk$set(collapse = TRUE, comment = "#>")
 ```
 
-Radiomics Image Analysis (RIA) package was developed to facilitate radiomic analysis of grayscale images. `RIA` can calculate hundreds of different statistics on both 2D and 3D images. Almost all calculations are vectorized and therefore are super-efficient. The package is developed by Márton Kolossváry a medical doctor not an engineer, therefore all functionalities of the software package are developed in a way that can be learnt by non-professionals. `RIA` is constantly updated with new functionalities and wrap-around functions to make the calculation of radiomic metrics even simpler.
+Radiomics Image Analysis (RIA) package was developed to facilitate radiomic analysis of medical images. `RIA` can calculate hundreds of different statistics on both 2D and 3D images. `RIA` supports analysis of `DICOM`, `NIfTI` and `nrrd` images. Almost all calculations are vectorized and therefore are super-efficient. The package is developed by Márton Kolossváry a medical doctor not an engineer, therefore all functionalities of the software package are developed in a way that can be learnt by non-professionals. `RIA` is constantly updated with new functionalities and wrap-around functions to make the calculation of radiomic metrics even simpler.
 
-If you do not wish to understand all the details of each function and just wish to start calculating right away, please read the chapter "Converting DICOM images to RIA_image" and then jump right to "One click solution to calculate all radiomic statistics".
+If you do not wish to understand all the details of each function and just wish to start calculating right away, please read the chapter "Converting medical images images to RIA_image" and then jump right to "One click solution to calculate all radiomic statistics".
 
 First, lest simply load `RIA`
 ```{r, results = "hide"}
 library(RIA)
 ```
 
-#Converting DICOM images to RIA_image
-DICOM images can be converted to RIA_image class using the *load_dicom* function. All you have to do is give the location of the *.dcm* or *.dicom* files as a string.
+#Converting medical images to RIA_image
+Medical images can be converted to RIA_image class using the *load_dicom*, *load_nifti* and the *load_nrrd* functions. All you have to do is give the location of the file or files as a string. Current examples are given for *load_dicom*, however *load_nifti* and *load_nrrd* work the same, but please be aware of subtle differences explained in help of these functions and in specific sections of the user manual!
 
 ```{r, eval=FALSE}
 DICOM = load_dicom(filename = "C:/DICOM/")
 ```
 *load_dicom* does several things:
 
-1. Converts DICOM files to RIA_image class using the *readDICOM* function of the *oro.dicom* package
+1. Converts DICOM files to RIA_image class using the *readDICOM* function of the *oro.dicom* package. If *load_nifti* is used the image loading is done by the *readNIfTI* function of the *oro.nifti* package, while the function *read.nrrd* is used from the *nat* package in case *load_nrrd* is used.
 
-1. If **mask_filename** is provided, then the image is filtered one of two ways. If the **mask_filename** is the same as the **filename**, then the values in **keep_mask_values** indicate which voxels values to keep in the original image. This way the image can be segmented for a specific subset of voxels with given intensities. For example, if you would wish to only analyze low-density non-calcified voxels, you could set the **keep_mask_values** to **-100:30**. If a different folder is given to **mask_filename**, then *RIA* loads the mask image as well. Using the **keep_mask_values**, you can select which values you consider to indicate which voxels to keep. By convention, the default is 1. However, multiple values may be given, which is convenient in cases when several regions of interest are provided in the mask image. Furthermore, some software after image manipulation reverse the order of the images in the Z axis, and therefore they need to be changed back. In this case **switch_z** needs to be set *TRUE*. Whenever using mask images to identify voxels to be analyzed, please always make sure, that the orientation of the mask image and of the original image is the same!
+1. If **mask_filename** is provided, then the image is filtered one of two ways. If the **mask_filename** is the same as the **filename**, then the values in **keep_mask_values** indicate which voxels values to keep in the original image. This way the image can be segmented for a specific subset of voxels with given intensities. For example, if you would wish to only analyze low-density non-calcified voxels, you could set the **keep_mask_values** to **-100:30**. If a different folder is given to **mask_filename**, then *RIA* loads the mask image which needs to be the same image type as the original image. Using the **keep_mask_values**, you can select which values you consider to indicate which voxels to keep. By convention, the default is 1. However, multiple values may be given, which is convenient in cases when several regions of interest are provided in the mask image. Furthermore, some software after image manipulation reverse the order of the images in the Z axis, and therefore they need to be changed back. In this case **switch_z** needs to be set *TRUE*. Whenever using mask images to identify voxels to be analyzed, please always make sure, that the orientation of the mask image and of the original image is the same!
 
-1. The 2D or 3D image is croped to the smallest bounding box still containing the whole image. It is useful to minimize the size of the image to save memory. The **zero_value** supplied to the *load_dicom* function is used to identify voxels not containing any data. If it is not supplied, then the smallest value present in the dataset is considered as indicating voxels without any data. If for some reason it is important that the RIA_image be the same size (same x,y,z dimensions) as the original supplied image, then this functionality can be turn off by:
+1. The 2D or 3D image is croped to the smallest bounding box still containing the whole image. It is useful to minimize the size of the image to save memory. The **zero_value** supplied to the *load_dicom*, *load_nifti* or *load_nrrd* function is used to identify voxels not containing any data. If it is not supplied, then the smallest value present in the dataset is considered as indicating voxels without any data. If for some reason it is important that the RIA_image be the same size (same x,y,z dimensions) as the original supplied image, then this functionality can be turn off by:
 
     ```{r, eval=FALSE}
     DICOM = load_dicom(filename = "C:/DICOM/", crop_in = FALSE)
@@ -49,16 +49,17 @@ DICOM = load_dicom(filename = "C:/DICOM/")
     ```{r, eval=FALSE}
     DICOM = load_dicom(filename = "C:/DICOM/", center_in = FALSE)
     ```
+By default **center_in** is set to *FALSE* for *load_nifti* and *load_nrrd*, since these images are often preprocessed and therefore contain the proper values for analysis. But please be aware, that in all cases, the load images should be inspected to see in the values are reasonable, for example if the minimum and maximum values are in the range that would be expected!
 
-1. Finally, *load_dicom* adds basic information regarding the original image and ran processes into the *header*  and *log* slot of *RIA_image*
+1. Finally, *load_dicom*, *load_nifti* or *load_nrrd* adds basic information regarding the original image and ran processes into the *header* (if available) and *log* slot of *RIA_image*.
 
-All above mentioned settings can be combined as wished to achieve proper conversion of the DICOM image. Furthermore, all parameters of the *readDICOM* function of the *oro.dicom* package can also be set in the *load_dicom* function.
+All above mentioned settings can be combined as wished to achieve proper conversion of the DICOM image. Furthermore, all parameters of the *readDICOM*, *readNIfTI* and *read.nrrd* function of the *oro.dicom* *oro.nifti* and *nat* packages can be set in the *load_dicom*, *load_nifti* and *load_nrrd* functions.
 
-As a result the *DICOM* object will have three slots:
+As a result the *RIA_image* object will have three slots:
 
-1. `DICOM$data` which contains the original image as a 2D or 3D numerical array in  `DICOM$data$orig`, and a modified image in `DICOM$data$modif` that has been created using one of the functions. Only one original and one modified image are stored in the `DICOM$data` slot. However, several modified images can be saved to new slots as we will see later.
+1. `RIA_image$data` which contains the original image as a 2D or 3D numerical array in  `RIA_image$data$orig`, and a modified image in `RIA_image$data$modif` that has been created using one of the functions. Only one original and one modified image are stored in the `RIA_image$data` slot. However, several modified images can be saved to new slots as we will see later.
 
-1. `DICOM$header` which contains basic information regarding the loaded image. These entries are populated from the DICOM header of the image. Elements can be added or removed from the predefined set of DICOM_codes:
+1. `RIA_image$header` which contains basic information regarding the loaded image. These entries are populated from the DICOM header of the image. Elements can be added or removed from the predefined set of DICOM_codes:
     ```{r}
     DICOM_codes
     ```
@@ -74,7 +75,7 @@ As a result the *DICOM* object will have three slots:
     DICOM = load_dicom(filename = "C:/DICOM/", header_exclude = exclude)
     ```
 
-1. `DICOM$log` which contains information regarding the original image and ran processes on the *RIA_image*. The log is constantly updated by the functions, and some functions use it for inputs. *load_dicom* adds the following to the log:
+1. `RIA_image$log` which contains information regarding the original image and ran processes on the *RIA_image*. The log is constantly updated by the functions, and some functions use it for inputs. *load_dicom*, *load_nifti* and *load_nrrd* adds the following to the log if possible:
     * `DICOM$log$events` is a vector containing the ran processes.
     * `DICOM$log$orig_dim` is a vector containing the original dimensions of the DICOM image.
     * `DICOM$log$directory` is a string containing the location of the DICOM images.
@@ -102,7 +103,7 @@ DICOM <- NRS
 
 #Discretization of voxel values
 Discretization of voxel values is crucial for radiomic analysis. Since many metrics rely on the spatial relationship of different voxel values, we need to decrease the number of possible values. This is needed since we do not want to consider for example a voxel value of 456 any different from 457, since the difference is probably attributable to noise and does not hold any information regarding spatial heterogeneity.
-Discretization is done using the *discretize* function. It receives a *RIA_image* and outputs a RIA_image with a new slot `DICOM$discretized` containing the images with discretized values.
+Discretization is done using the *discretize* function. It receives a *RIA_image* and outputs a RIA_image with a new slot `RIA_image$discretized` containing the images with discretized values.
 
 Discretization is effected by two variables:
 
@@ -162,21 +163,21 @@ names(DICOM$discretized)
 
 #First-order statistics
 First-order statistics are derived from the distribution of values and therefore discard all spatial information. Many of these metrics are commonly known (mean, median), however several metrics describing the heterogeneity of the values might be less known (energy, entropy). `RIA` can calculate 44 different first-order statistics using the *first_order* function. As with all statistical measures, it is saved in a separate slot of the *RIA_image*, and the name of the slot starts with *stat_* and since first-order, end with *fo*, resulting in the slot name of *stat_fo*.
-A detailed list and explanation of each statistic can be found in the supplementary material of: [Márton Kolossváry et al. ](http://circimaging.ahajournals.org/content/10/12/e006843)
+A detailed list and explanation of each statistic can be found in the supplementary material of: [Márton Kolossváry et al. ](https://www.ncbi.nlm.nih.gov/pubmed/29233836)
 
-By default, *first_order* calculates statistics on the image present in `DICOM$data$orig`.
+By default, *first_order* calculates statistics on the image present in `RIA_image$data$orig`.
 ```{r}
 DICOM = first_order(RIA_data_in = DICOM)
 RIA:::list_to_df(DICOM$stat_fo$orig)
 ```
 
-If you wish to calculate statistics on a modified image, then by setting the **use_orig** to *FALSE*, the image present in the `DICOM$data$modif` will be used. This is usually the last image that was created using some kind of image manipulation.
+If you wish to calculate statistics on a modified image, then by setting the **use_orig** to *FALSE*, the image present in the `RIA_image$data$modif` will be used. This is usually the last image that was created using some kind of image manipulation.
 ```{r}
 DICOM = first_order(RIA_data_in = DICOM, use_orig = FALSE)
 RIA:::list_to_df(DICOM$stat_fo$ep_32)
 ```
 
-If the desired image is not present in the modif slot, since it was created earlier, then instead of switching the `DICOM$data$modif` image to the desired one, you may give a specific image you wish to use using the **use_slot** parameter. If the image you wish to use is in `DICOM$discretized$es_2`, then you can calculate first-order statistics on it by:
+If the desired image is not present in the modif slot, since it was created earlier, then instead of switching the `RIA_image$data$modif` image to the desired one, you may give a specific image you wish to use using the **use_slot** parameter. If the image you wish to use is in `RIA_image$discretized$es_2`, then you can calculate first-order statistics on it by:
 ```{r}
 DICOM = first_order(RIA_data_in = DICOM, use_orig = FALSE, use_slot = "discretized$es_2")
 RIA:::list_to_df(DICOM$stat_fo$es_2)
@@ -222,7 +223,7 @@ The function *glcm* calculates GLCM matrices of 2D and 3D images. GLCMs are seco
 - off_down: how many voxels to look downwards (y coordinate)
 - off_z: how many voxels to look to in the cross-plane direction (z coordinate). This parameter is only used if the image is 3D
 
-For example: to calculate the GLCM matrix of the last modified image stored in `DICOM$data$modif`, in the direction of right: 1; down: 2; z-plane: 2; you just have to write:
+For example: to calculate the GLCM matrix of the last modified image stored in `RIA_image$data$modif`, in the direction of right: 1; down: 2; z-plane: 2; you just have to write:
 ```{r}
 DICOM = glcm(RIA_data_in = DICOM, off_right = 1, off_down = 2, off_z = 2)
 dim(DICOM$glcm$ep_32)
@@ -266,13 +267,13 @@ To achieve rotationally invariant results, usually GLCM matrices are calculated 
 DICOM = glcm_all(DICOM, use_type = "single")
 names(DICOM$glcm)
 ```
-This uses the image stored in the `DICOM$data$modif`. This can be changed similarly to all other functions using the **use_orig**, **use_slot** and **save_name** parameters.
+This uses the image stored in the `RIA_image$data$modif`. This can be changed similarly to all other functions using the **use_orig**, **use_slot** and **save_name** parameters.
 `RIA` can also calculate all the different GLCMs on all modified images just by simply calling:
 ```{r}
 DICOM = glcm_all(DICOM, use_type = "discretized")
 names(DICOM$glcm)
 ```
-By default *glcm_all* uses a distance of 1 to calculate the matrices in all directions. Using the **distance** parameter this can be set to any specific positive integer. A value of 2 would mean `RIA` looks not at the voxels right next to each other, but at one with one voxel between them to calculate the GLCM matrices.
+By default *glcm_all* uses a distance of 1 to calculate the matrices in all directions. Using the **distance** parameter this can be set to any specific positive integer. A value of 2 would mean `RIA` looks not at the voxels right next to each other, but at one with one voxel between them to calculate the GLCM matrices. However `RIA` only looks in directions equivalent to the directions to the distance = 1 case, intermediate voxels are currently not supported in cases of bigger distances.
 ```{r}
 DICOM = glcm_all(DICOM, use_type = "discretized", distance = c(1:3))
 names(DICOM$glcm)
@@ -280,7 +281,7 @@ names(DICOM$glcm)
 
 ##Statistics on GLCM matrices
 The main purpose of calculating GLCMs, is to derive statistics from them. GLCM statistics can be calculated using the *glcm_stat* function. Overall, `RIA` can calculate 240 different GLCM statistics of which some contain more than one value.
-A detailed list and explanation of each statistic can be found in the supplementary material of: [Márton Kolossváry et al. ](http://circimaging.ahajournals.org/content/10/12/e006843)
+A detailed list and explanation of each statistic can be found in the supplementary material of: [Márton Kolossváry et al. ](https://www.ncbi.nlm.nih.gov/pubmed/29233836)
 
 As previous functions, *glcm_stat* can process single or multiple GLCMs
 For single data processing, one can use the **use_slot** parameter to calculate GLCM statistics on a specific GLCM
@@ -307,7 +308,6 @@ DICOM <- glcm_stat_all(DICOM)
 The function used to calculate the aggregated statistic can be set using the **statistic** parameter. The supplied string must contain a "X", which will be replaced with the array of the GLCM statistics value. Further attributes of the function may also be given. For example, if you wish to calculate the median of all GLCMs calculated in different directions, then it must be supplied as: *"median(X, na.rm = TRUE)"*. These batch functions only work with automatically calculated and named images and statistics using previously mentioned batch functions!
 
 
-
 #Gray level run length matrix  (GLRLM) calculations and statistics
 The function *glrlm* calculates GLRLM matrices of 2D and 3D images. GLRLM are higher-order statistics, meaning that statistics are calculated from the spatial relationship of more than two voxel values. GLRLM are matrices, where the number of rows equals the number of gray levels, while the number of columns equals the length of the longest run. *Run length* is defined as the number of voxels occurring next to each other with same values in a given direction. The i^th^ row and j^th^ column of the GLRLM represents how many times it occurs in the image, that *i* value voxels are next to each other *j* times. Therefore, for a given image several different GLRLM matrices may be calculated, depending on the *direction*. In `RIA` *direction* is determined by three integer parameters specifying the direction as a vector in co-ordinate space. There is no distance parameter, since we want to calculate how many same value voxels occur next to each other in that direction. Therefore the three inputs are logicals not integers.
 
@@ -315,7 +315,7 @@ The function *glrlm* calculates GLRLM matrices of 2D and 3D images. GLRLM are hi
 - off_down: positive values indicate to look to the right, negative values indicate to look to the left, while 0 indicates no offset in the Y plane
 - off_z: positive values indicate to look to the right, negative values indicate to look to the left, while 0 indicates no offset in the Z plane
 
-For example: to calculate the GLRLM matrix of the last modified image stored in `DICOM$data$modif`, in the direction of right: 1; down: 0; z-plane: 1; you just have to write:
+For example: to calculate the GLRLM matrix of the last modified image stored in `RIA_image$data$modif`, in the direction of right: 1; down: 0; z-plane: 1; you just have to write:
 ```{r}
 DICOM = glrlm(RIA_data_in = DICOM, off_right = 1, off_down = 0, off_z = 1)
 dim(DICOM$glrlm$ep_32)
@@ -402,12 +402,24 @@ names(DICOM$stat_geometry)
 
 
 #One click solution to calculate all radiomic statistics
-Previous chapters showed each detail of the RIA package. However, many researchers just wish to calculate radiomic features without having to know exactly what is going on and do not wish to fine tune all functions by themselves. The *radiomics_all* function does all the work. With a simple line of code, you can calculate all the desired parameters without any hassle. After loading the DICOM images to `RIA` format, just type the following:
+Previous chapters showed each detail of the RIA package. However, many researchers just wish to calculate radiomic features without having to know exactly what is going on and do not wish to fine tune all functions by themselves. The *radiomics_all* function does all the work. With a simple line of code, you can calculate all the desired parameters without any hassle. After loading the radiological images to `RIA` format, just type the following:
 ```{r, eval=FALSE}
 DICOM <- radiomics_all(DICOM, equal_prob = FALSE, bins_in = c(2,8,32,128), distance = c(1:3))
 ```
-This simple line of code discretizes the image into 2, 8, 32 and 128 bins and calculates first-order statistics, GLCM based statistics averaged in all directions, GLRLM based statistics averaged in all directions and geometry based statistics on the original image. If you wish to calculate first-order statistics or geometry based statistics on discretized images as well, you can specify this by setting **fo_discretized** and **geometry_discretized** to *TRUE*.
+This simple line of code discretizes the image into 2, 8, 32 and 128 equally sized bins and calculates first-order statistics, GLCM based statistics averaged in all directions for distances 1, 2 and 3, GLRLM based statistics averaged in all directions and geometry based statistics on the original image. If you wish to calculate first-order statistics or geometry based statistics on discretized images as well, you can specify this by setting **fo_discretized** and **geometry_discretized** to *TRUE*.
+
+In the next section learn how to export all you calculated statistics just using one line of code.
+
+
+#Export of radiomic statistics
+All saved radiomic metrics in the `RIA_image` can be conveniently saved using the *save_RIA* function. All you have to do is supply the folder where you wish to export the results to using the **save_to** parameter You may also set the name of the exported files using the **save_name** parameter. A grouping label specifying which class the case belongs to can also be set using the **group_name** parameter. A last but not least, you need to set which slots of statistics you wish to export, if you wish to export all of them, then set the **stats** as:
+```{r, eval=FALSE}
+save_RIA(DICOM, save_to = "C:/Test/", save_name = "My_first_radiomics", group_name = "Case", stats = c("stat_fo", "stat_glcm_avg", "stat_glrlm_avg", "geometry")
+```
+And that's it! There you have your first radiomics analysis!
 
 
 #Conclsions
-`RIA` package for R is a fast, versatile and user-friendly way to calculate radiomic statistics using only a few lines of code. One can calculate several hundreds of different statistics on various versions of an image. `RIA` is regularly updated with new features that further help radiomic analyses.
+`RIA` package for R is a fast, versatile and user-friendly way to calculate radiomic statistics on *DICOM*, *NIfTI* and *nrrd* images using only a few lines of code. One can calculate several hundreds of different statistics on various versions of an image.
+If you wish to better understand Radiomics, please read:
+["Cardiac Computed Tomography Radiomics: A Comprehensive Review on Radiomic Techniques"](https://www.ncbi.nlm.nih.gov/pubmed/28346329) and ["Radiomic Features Are Superior to Conventional Quantitative Computed Tomographic Metrics to Identify Coronary Plaques With Napkin-Ring Sign"](https://www.ncbi.nlm.nih.gov/pubmed/29233836) which describes the calculation and each statistic in detail in the supplementary files.

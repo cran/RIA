@@ -1,5 +1,5 @@
 # Additional functions for geometry parameters
-
+# (c): Márton Kolossváry, 2018
 
 volume <- function(data, xy_dim = 0.5, z_dim = 0.4) {
 

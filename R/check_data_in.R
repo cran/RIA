@@ -1,4 +1,5 @@
 # General function to check validitiy of RIA_image object
+# (c): Márton Kolossváry, 2018
 
 check_data_in <- function(RIA_data_in, use_type = "single", use_orig = TRUE, use_slot = NULL, verbose_in = TRUE)
 {

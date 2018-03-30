@@ -1,4 +1,5 @@
-##statistics on NxN symmetric matrixes
+# Additional statistics on NxN symmetric matrixes
+# (c): Márton Kolossváry, 2018
 
 contrast <- function(data, type_in = "single", base = 2) {
   dim_m <- dim(data)[1]

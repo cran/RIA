@@ -35,15 +35,15 @@ citEntry(entry="article",
     person("P\U00E1l", "Maurovich-Horvat")),
 
   journal = "Journal of Thoracic Imaging",
-	year  = "2017",
-	volume="00",
-	number="00",
-	pages = "0000-0000",
+	year  = "2018",
+	volume="33",
+	number="1",
+	pages = "26-34",
 	doi   = "10.1097/RTI.0000000000000268",
 
 	textVersion = paste("M\U00E1rton Kolossv\U00E1ry,", "Mikl\U00F3s Kellermayer,",
 		  "B\U00E9la Merkely,", "P\U00E1l Maurovich-Horvat",
-		  "(2017). Cardiac Computed Tomography Radiomics: A Comprehensive Review on Radiomic Techniques.
+		  "(2018). Cardiac Computed Tomography Radiomics: A Comprehensive Review on Radiomic Techniques.
 		   Journal of Thoracic Imaging,",
-		  "[epub ahead of print] DOI:10.1097/RTI.0000000000000268")
+		  "DOI:10.1097/RTI.0000000000000268")
 )

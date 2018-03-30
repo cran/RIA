@@ -12,7 +12,7 @@
 
 <meta name="author" content="Márton Kolossváry" />
 
-<meta name="date" content="2017-12-13" />
+<meta name="date" content="2018-03-30" />
 
 <title>RIA package manual</title>
 
@@ -70,12 +70,12 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 
 <h1 class="title toc-ignore">RIA package manual</h1>
 <h4 class="author"><em>Márton Kolossváry</em></h4>
-<h4 class="date"><em>2017-12-13</em></h4>
+<h4 class="date"><em>2018-03-30</em></h4>
 
 
 
-<p>Radiomics Image Analysis (RIA) package was developed to facilitate radiomic analysis of grayscale images. <code>RIA</code> can calculate hundreds of different statistics on both 2D and 3D images. Almost all calculations are vectorized and therefore are super-efficient. The package is developed by Márton Kolossváry a medical doctor not an engineer, therefore all functionalities of the software package are developed in a way that can be learnt by non-professionals. <code>RIA</code> is constantly updated with new functionalities and wrap-around functions to make the calculation of radiomic metrics even simpler.</p>
-<p>If you do not wish to understand all the details of each function and just wish to start calculating right away, please read the chapter “Converting DICOM images to RIA_image” and then jump right to “One click solution to calculate all radiomic statistics”.</p>
+<p>Radiomics Image Analysis (RIA) package was developed to facilitate radiomic analysis of medical images. <code>RIA</code> can calculate hundreds of different statistics on both 2D and 3D images. <code>RIA</code> supports analysis of <code>DICOM</code>, <code>NIfTI</code> and <code>nrrd</code> images. Almost all calculations are vectorized and therefore are super-efficient. The package is developed by Márton Kolossváry a medical doctor not an engineer, therefore all functionalities of the software package are developed in a way that can be learnt by non-professionals. <code>RIA</code> is constantly updated with new functionalities and wrap-around functions to make the calculation of radiomic metrics even simpler.</p>
+<p>If you do not wish to understand all the details of each function and just wish to start calculating right away, please read the chapter “Converting medical images images to RIA_image” and then jump right to “One click solution to calculate all radiomic statistics”.</p>
 <p>First, lest simply load <code>RIA</code></p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(RIA)
 <span class="co">#&gt; </span>
@@ -98,32 +98,33 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <span class="co">#&gt; </span>
 <span class="co">#&gt; Márton KOLOSSVÁRY et al.</span>
 <span class="co">#&gt; Cardiac Computed Tomography Radiomics: A Comprehensive Review on Radiomic Techniques.</span>
-<span class="co">#&gt; Journal of Thoracic Imaging (2017).</span>
+<span class="co">#&gt; Journal of Thoracic Imaging (2018).</span>
 <span class="co">#&gt; DOI: 10.1097/RTI.0000000000000268</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; Please check for updates regularly for bug fixes and new functionalities!</span>
 <span class="co">#&gt; </span></code></pre></div>
-<div id="converting-dicom-images-to-ria_image" class="section level1">
-<h1>Converting DICOM images to RIA_image</h1>
-<p>DICOM images can be converted to RIA_image class using the <em>load_dicom</em> function. All you have to do is give the location of the <em>.dcm</em> or <em>.dicom</em> files as a string.</p>
+<div id="converting-medical-images-to-ria_image" class="section level1">
+<h1>Converting medical images to RIA_image</h1>
+<p>Medical images can be converted to RIA_image class using the <em>load_dicom</em>, <em>load_nifti</em> and the <em>load_nrrd</em> functions. All you have to do is give the location of the file or files as a string. Current examples are given for <em>load_dicom</em>, however <em>load_nifti</em> and <em>load_nrrd</em> work the same, but please be aware of subtle differences explained in help of these functions and in specific sections of the user manual!</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">DICOM =<span class="st"> </span><span class="kw">load_dicom</span>(<span class="dt">filename =</span> <span class="st">&quot;C:/DICOM/&quot;</span>)</code></pre></div>
 <p><em>load_dicom</em> does several things:</p>
 <ol style="list-style-type: decimal">
-<li><p>Converts DICOM files to RIA_image class using the <em>readDICOM</em> function of the <em>oro.dicom</em> package</p></li>
-<li><p>If <strong>mask_filename</strong> is provided, then the image is filtered one of two ways. If the <strong>mask_filename</strong> is the same as the <strong>filename</strong>, then the values in <strong>keep_mask_values</strong> indicate which voxels values to keep in the original image. This way the image can be segmented for a specific subset of voxels with given intensities. For example, if you would wish to only analyze low-density non-calcified voxels, you could set the <strong>keep_mask_values</strong> to <strong>-100:30</strong>. If a different folder is given to <strong>mask_filename</strong>, then <em>RIA</em> loads the mask image as well. Using the <strong>keep_mask_values</strong>, you can select which values you consider to indicate which voxels to keep. By convention, the default is 1. However, multiple values may be given, which is convenient in cases when several regions of interest are provided in the mask image. Furthermore, some software after image manipulation reverse the order of the images in the Z axis, and therefore they need to be changed back. In this case <strong>switch_z</strong> needs to be set <em>TRUE</em>. Whenever using mask images to identify voxels to be analyzed, please always make sure, that the orientation of the mask image and of the original image is the same!</p></li>
-<li><p>The 2D or 3D image is croped to the smallest bounding box still containing the whole image. It is useful to minimize the size of the image to save memory. The <strong>zero_value</strong> supplied to the <em>load_dicom</em> function is used to identify voxels not containing any data. If it is not supplied, then the smallest value present in the dataset is considered as indicating voxels without any data. If for some reason it is important that the RIA_image be the same size (same x,y,z dimensions) as the original supplied image, then this functionality can be turn off by:</p>
+<li><p>Converts DICOM files to RIA_image class using the <em>readDICOM</em> function of the <em>oro.dicom</em> package. If <em>load_nifti</em> is used the image loading is done by the <em>readNIfTI</em> function of the <em>oro.nifti</em> package, while the function <em>read.nrrd</em> is used from the <em>nat</em> package in case <em>load_nrrd</em> is used.</p></li>
+<li><p>If <strong>mask_filename</strong> is provided, then the image is filtered one of two ways. If the <strong>mask_filename</strong> is the same as the <strong>filename</strong>, then the values in <strong>keep_mask_values</strong> indicate which voxels values to keep in the original image. This way the image can be segmented for a specific subset of voxels with given intensities. For example, if you would wish to only analyze low-density non-calcified voxels, you could set the <strong>keep_mask_values</strong> to <strong>-100:30</strong>. If a different folder is given to <strong>mask_filename</strong>, then <em>RIA</em> loads the mask image which needs to be the same image type as the original image. Using the <strong>keep_mask_values</strong>, you can select which values you consider to indicate which voxels to keep. By convention, the default is 1. However, multiple values may be given, which is convenient in cases when several regions of interest are provided in the mask image. Furthermore, some software after image manipulation reverse the order of the images in the Z axis, and therefore they need to be changed back. In this case <strong>switch_z</strong> needs to be set <em>TRUE</em>. Whenever using mask images to identify voxels to be analyzed, please always make sure, that the orientation of the mask image and of the original image is the same!</p></li>
+<li><p>The 2D or 3D image is croped to the smallest bounding box still containing the whole image. It is useful to minimize the size of the image to save memory. The <strong>zero_value</strong> supplied to the <em>load_dicom</em>, <em>load_nifti</em> or <em>load_nrrd</em> function is used to identify voxels not containing any data. If it is not supplied, then the smallest value present in the dataset is considered as indicating voxels without any data. If for some reason it is important that the RIA_image be the same size (same x,y,z dimensions) as the original supplied image, then this functionality can be turn off by:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">DICOM =<span class="st"> </span><span class="kw">load_dicom</span>(<span class="dt">filename =</span> <span class="st">&quot;C:/DICOM/&quot;</span>, <span class="dt">crop_in =</span> <span class="ot">FALSE</span>)</code></pre></div></li>
 <li><p>Then the smallest values which indicate no data, are changed to <em>NA</em> for further calculations. If wished to be turned of, then use:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">DICOM =<span class="st"> </span><span class="kw">load_dicom</span>(<span class="dt">filename =</span> <span class="st">&quot;C:/DICOM/&quot;</span>, <span class="dt">replace_in =</span> <span class="ot">FALSE</span>)</code></pre></div></li>
 <li><p>Since some DICOM images do not store negative values, rather store all values as non-negative integers, shifting of the values is needed. The desired smallest value is set by the <strong>min_to</strong> input. If not specified then by default it is set to <em>-1024</em>. Please check for all data whether shifting is needed! If shifting of the values is not needed then use:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">DICOM =<span class="st"> </span><span class="kw">load_dicom</span>(<span class="dt">filename =</span> <span class="st">&quot;C:/DICOM/&quot;</span>, <span class="dt">center_in =</span> <span class="ot">FALSE</span>)</code></pre></div></li>
-<li><p>Finally, <em>load_dicom</em> adds basic information regarding the original image and ran processes into the <em>header</em> and <em>log</em> slot of <em>RIA_image</em></p></li>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">DICOM =<span class="st"> </span><span class="kw">load_dicom</span>(<span class="dt">filename =</span> <span class="st">&quot;C:/DICOM/&quot;</span>, <span class="dt">center_in =</span> <span class="ot">FALSE</span>)</code></pre></div>
+<p>By default <strong>center_in</strong> is set to <em>FALSE</em> for <em>load_nifti</em> and <em>load_nrrd</em>, since these images are often preprocessed and therefore contain the proper values for analysis. But please be aware, that in all cases, the load images should be inspected to see in the values are reasonable, for example if the minimum and maximum values are in the range that would be expected!</p></li>
+<li><p>Finally, <em>load_dicom</em>, <em>load_nifti</em> or <em>load_nrrd</em> adds basic information regarding the original image and ran processes into the <em>header</em> (if available) and <em>log</em> slot of <em>RIA_image</em>.</p></li>
 </ol>
-<p>All above mentioned settings can be combined as wished to achieve proper conversion of the DICOM image. Furthermore, all parameters of the <em>readDICOM</em> function of the <em>oro.dicom</em> package can also be set in the <em>load_dicom</em> function.</p>
-<p>As a result the <em>DICOM</em> object will have three slots:</p>
+<p>All above mentioned settings can be combined as wished to achieve proper conversion of the DICOM image. Furthermore, all parameters of the <em>readDICOM</em>, <em>readNIfTI</em> and <em>read.nrrd</em> function of the <em>oro.dicom</em> <em>oro.nifti</em> and <em>nat</em> packages can be set in the <em>load_dicom</em>, <em>load_nifti</em> and <em>load_nrrd</em> functions.</p>
+<p>As a result the <em>RIA_image</em> object will have three slots:</p>
 <ol style="list-style-type: decimal">
-<li><p><code>DICOM$data</code> which contains the original image as a 2D or 3D numerical array in <code>DICOM$data$orig</code>, and a modified image in <code>DICOM$data$modif</code> that has been created using one of the functions. Only one original and one modified image are stored in the <code>DICOM$data</code> slot. However, several modified images can be saved to new slots as we will see later.</p></li>
-<li><p><code>DICOM$header</code> which contains basic information regarding the loaded image. These entries are populated from the DICOM header of the image. Elements can be added or removed from the predefined set of DICOM_codes:</p>
+<li><p><code>RIA_image$data</code> which contains the original image as a 2D or 3D numerical array in <code>RIA_image$data$orig</code>, and a modified image in <code>RIA_image$data$modif</code> that has been created using one of the functions. Only one original and one modified image are stored in the <code>RIA_image$data</code> slot. However, several modified images can be saved to new slots as we will see later.</p></li>
+<li><p><code>RIA_image$header</code> which contains basic information regarding the loaded image. These entries are populated from the DICOM header of the image. Elements can be added or removed from the predefined set of DICOM_codes:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">DICOM_codes
 <span class="co">#&gt;                    Name Group Element</span>
 <span class="co">#&gt; 1             StudyDate     8      22</span>
@@ -148,7 +149,7 @@ DICOM =<span class="st"> </span><span class="kw">load_dicom</span>(<span class="
 <p>Or elements can be removed. For example if you wish to anonymize your data:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">exclude &lt;-<span class="st"> </span><span class="kw">as.data.frame</span>(DICOM_codes[<span class="dv">3</span>:<span class="dv">6</span>,])
 DICOM =<span class="st"> </span><span class="kw">load_dicom</span>(<span class="dt">filename =</span> <span class="st">&quot;C:/DICOM/&quot;</span>, <span class="dt">header_exclude =</span> exclude)</code></pre></div></li>
-<li><code>DICOM$log</code> which contains information regarding the original image and ran processes on the <em>RIA_image</em>. The log is constantly updated by the functions, and some functions use it for inputs. <em>load_dicom</em> adds the following to the log:
+<li><code>RIA_image$log</code> which contains information regarding the original image and ran processes on the <em>RIA_image</em>. The log is constantly updated by the functions, and some functions use it for inputs. <em>load_dicom</em>, <em>load_nifti</em> and <em>load_nrrd</em> adds the following to the log if possible:
 <ul>
 <li><code>DICOM$log$events</code> is a vector containing the ran processes.</li>
 <li><code>DICOM$log$orig_dim</code> is a vector containing the original dimensions of the DICOM image.</li>
@@ -175,7 +176,7 @@ DICOM =<span class="st"> </span><span class="kw">load_dicom</span>(<span class="
 </div>
 <div id="discretization-of-voxel-values" class="section level1">
 <h1>Discretization of voxel values</h1>
-<p>Discretization of voxel values is crucial for radiomic analysis. Since many metrics rely on the spatial relationship of different voxel values, we need to decrease the number of possible values. This is needed since we do not want to consider for example a voxel value of 456 any different from 457, since the difference is probably attributable to noise and does not hold any information regarding spatial heterogeneity. Discretization is done using the <em>discretize</em> function. It receives a <em>RIA_image</em> and outputs a RIA_image with a new slot <code>DICOM$discretized</code> containing the images with discretized values.</p>
+<p>Discretization of voxel values is crucial for radiomic analysis. Since many metrics rely on the spatial relationship of different voxel values, we need to decrease the number of possible values. This is needed since we do not want to consider for example a voxel value of 456 any different from 457, since the difference is probably attributable to noise and does not hold any information regarding spatial heterogeneity. Discretization is done using the <em>discretize</em> function. It receives a <em>RIA_image</em> and outputs a RIA_image with a new slot <code>RIA_image$discretized</code> containing the images with discretized values.</p>
 <p>Discretization is effected by two variables:</p>
 <ul>
 <li>the number of bins to which the values will be transformed to</li>
@@ -240,8 +241,8 @@ DICOM$log$cuts_ep_2
 </div>
 <div id="first-order-statistics" class="section level1">
 <h1>First-order statistics</h1>
-<p>First-order statistics are derived from the distribution of values and therefore discard all spatial information. Many of these metrics are commonly known (mean, median), however several metrics describing the heterogeneity of the values might be less known (energy, entropy). <code>RIA</code> can calculate 44 different first-order statistics using the <em>first_order</em> function. As with all statistical measures, it is saved in a separate slot of the <em>RIA_image</em>, and the name of the slot starts with <em>stat_</em> and since first-order, end with <em>fo</em>, resulting in the slot name of <em>stat_fo</em>. A detailed list and explanation of each statistic can be found in the supplementary material of: <a href="http://circimaging.ahajournals.org/content/10/12/e006843">Márton Kolossváry et al.</a></p>
-<p>By default, <em>first_order</em> calculates statistics on the image present in <code>DICOM$data$orig</code>.</p>
+<p>First-order statistics are derived from the distribution of values and therefore discard all spatial information. Many of these metrics are commonly known (mean, median), however several metrics describing the heterogeneity of the values might be less known (energy, entropy). <code>RIA</code> can calculate 44 different first-order statistics using the <em>first_order</em> function. As with all statistical measures, it is saved in a separate slot of the <em>RIA_image</em>, and the name of the slot starts with <em>stat_</em> and since first-order, end with <em>fo</em>, resulting in the slot name of <em>stat_fo</em>. A detailed list and explanation of each statistic can be found in the supplementary material of: <a href="https://www.ncbi.nlm.nih.gov/pubmed/29233836">Márton Kolossváry et al.</a></p>
+<p>By default, <em>first_order</em> calculates statistics on the image present in <code>RIA_image$data$orig</code>.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">DICOM =<span class="st"> </span><span class="kw">first_order</span>(<span class="dt">RIA_data_in =</span> DICOM)
 <span class="co">#&gt; FIRST-ORDER STATISTICS WAS SUCCESSFULLY ADDED TO 'orig' SLOT OF RIA_image$stat_fo</span>
 RIA:::<span class="kw">list_to_df</span>(DICOM$stat_fo$orig)
@@ -290,7 +291,7 @@ RIA:::<span class="kw">list_to_df</span>(DICOM$stat_fo$orig)
 <span class="co">#&gt; Energy        29486550.000000000</span>
 <span class="co">#&gt; Uniformity           0.004236877</span>
 <span class="co">#&gt; Entropy              0.005577447</span></code></pre></div>
-<p>If you wish to calculate statistics on a modified image, then by setting the <strong>use_orig</strong> to <em>FALSE</em>, the image present in the <code>DICOM$data$modif</code> will be used. This is usually the last image that was created using some kind of image manipulation.</p>
+<p>If you wish to calculate statistics on a modified image, then by setting the <strong>use_orig</strong> to <em>FALSE</em>, the image present in the <code>RIA_image$data$modif</code> will be used. This is usually the last image that was created using some kind of image manipulation.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">DICOM =<span class="st"> </span><span class="kw">first_order</span>(<span class="dt">RIA_data_in =</span> DICOM, <span class="dt">use_orig =</span> <span class="ot">FALSE</span>)
 <span class="co">#&gt; FIRST-ORDER STATISTICS WAS SUCCESSFULLY ADDED TO 'ep_32' SLOT OF RIA_image$stat_fo</span>
 RIA:::<span class="kw">list_to_df</span>(DICOM$stat_fo$ep_32)
@@ -339,7 +340,7 @@ RIA:::<span class="kw">list_to_df</span>(DICOM$stat_fo$ep_32)
 <span class="co">#&gt; Energy        703988.000000000</span>
 <span class="co">#&gt; Uniformity         0.031417069</span>
 <span class="co">#&gt; Entropy            0.150231914</span></code></pre></div>
-<p>If the desired image is not present in the modif slot, since it was created earlier, then instead of switching the <code>DICOM$data$modif</code> image to the desired one, you may give a specific image you wish to use using the <strong>use_slot</strong> parameter. If the image you wish to use is in <code>DICOM$discretized$es_2</code>, then you can calculate first-order statistics on it by:</p>
+<p>If the desired image is not present in the modif slot, since it was created earlier, then instead of switching the <code>RIA_image$data$modif</code> image to the desired one, you may give a specific image you wish to use using the <strong>use_slot</strong> parameter. If the image you wish to use is in <code>RIA_image$discretized$es_2</code>, then you can calculate first-order statistics on it by:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">DICOM =<span class="st"> </span><span class="kw">first_order</span>(<span class="dt">RIA_data_in =</span> DICOM, <span class="dt">use_orig =</span> <span class="ot">FALSE</span>, <span class="dt">use_slot =</span> <span class="st">&quot;discretized$es_2&quot;</span>)
 <span class="co">#&gt; FIRST-ORDER STATISTICS WAS SUCCESSFULLY ADDED TO 'es_2' SLOT OF RIA_image$stat_fo</span>
 RIA:::<span class="kw">list_to_df</span>(DICOM$stat_fo$es_2)
@@ -503,7 +504,7 @@ RIA:::<span class="kw">list_to_df</span>(DICOM$stat_fo$equaly_sized_2bins)
 <li>off_down: how many voxels to look downwards (y coordinate)</li>
 <li>off_z: how many voxels to look to in the cross-plane direction (z coordinate). This parameter is only used if the image is 3D</li>
 </ul>
-<p>For example: to calculate the GLCM matrix of the last modified image stored in <code>DICOM$data$modif</code>, in the direction of right: 1; down: 2; z-plane: 2; you just have to write:</p>
+<p>For example: to calculate the GLCM matrix of the last modified image stored in <code>RIA_image$data$modif</code>, in the direction of right: 1; down: 2; z-plane: 2; you just have to write:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">DICOM =<span class="st"> </span><span class="kw">glcm</span>(<span class="dt">RIA_data_in =</span> DICOM, <span class="dt">off_right =</span> <span class="dv">1</span>, <span class="dt">off_down =</span> <span class="dv">2</span>, <span class="dt">off_z =</span> <span class="dv">2</span>)
 <span class="co">#&gt; GLCM WAS SUCCESSFULLY ADDED TO 'ep_32_122' SLOT OF RIA_image$glcm</span>
 <span class="kw">dim</span>(DICOM$glcm$ep_32)
@@ -586,7 +587,7 @@ DICOM$glcm$ep_2
 <span class="co">#&gt; [11] &quot;ep_32_100&quot;   &quot;ep_32_010&quot;   &quot;ep_32_110&quot;   &quot;ep_32_1-10&quot;  &quot;ep_32_101&quot;  </span>
 <span class="co">#&gt; [16] &quot;ep_32_011&quot;   &quot;ep_32_111&quot;   &quot;ep_32_1-11&quot;  &quot;ep_32_10-1&quot;  &quot;ep_32_01-1&quot; </span>
 <span class="co">#&gt; [21] &quot;ep_32_11-1&quot;  &quot;ep_32_1-1-1&quot; &quot;ep_32_001&quot;</span></code></pre></div>
-<p>This uses the image stored in the <code>DICOM$data$modif</code>. This can be changed similarly to all other functions using the <strong>use_orig</strong>, <strong>use_slot</strong> and <strong>save_name</strong> parameters. <code>RIA</code> can also calculate all the different GLCMs on all modified images just by simply calling:</p>
+<p>This uses the image stored in the <code>RIA_image$data$modif</code>. This can be changed similarly to all other functions using the <strong>use_orig</strong>, <strong>use_slot</strong> and <strong>save_name</strong> parameters. <code>RIA</code> can also calculate all the different GLCMs on all modified images just by simply calling:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">DICOM =<span class="st"> </span><span class="kw">glcm_all</span>(DICOM, <span class="dt">use_type =</span> <span class="st">&quot;discretized&quot;</span>)
 <span class="co">#&gt; GLCM WAS SUCCESSFULLY ADDED TO 'es_2_100' SLOT OF RIA_image$glcm</span>
 <span class="co">#&gt; GLCM WAS SUCCESSFULLY ADDED TO 'ep_2_100' SLOT OF RIA_image$glcm</span>
@@ -747,7 +748,7 @@ DICOM$glcm$ep_2
 <span class="co">#&gt; [126] &quot;es_8_1-1-1&quot;  &quot;es_16_1-1-1&quot; &quot;es_32_1-1-1&quot; &quot;ep_4_1-1-1&quot;  &quot;ep_8_1-1-1&quot; </span>
 <span class="co">#&gt; [131] &quot;ep_16_1-1-1&quot; &quot;es_2_001&quot;    &quot;ep_2_001&quot;    &quot;es_4_001&quot;    &quot;es_8_001&quot;   </span>
 <span class="co">#&gt; [136] &quot;es_16_001&quot;   &quot;es_32_001&quot;   &quot;ep_4_001&quot;    &quot;ep_8_001&quot;    &quot;ep_16_001&quot;</span></code></pre></div>
-<p>By default <em>glcm_all</em> uses a distance of 1 to calculate the matrices in all directions. Using the <strong>distance</strong> parameter this can be set to any specific positive integer. A value of 2 would mean <code>RIA</code> looks not at the voxels right next to each other, but at one with one voxel between them to calculate the GLCM matrices.</p>
+<p>By default <em>glcm_all</em> uses a distance of 1 to calculate the matrices in all directions. Using the <strong>distance</strong> parameter this can be set to any specific positive integer. A value of 2 would mean <code>RIA</code> looks not at the voxels right next to each other, but at one with one voxel between them to calculate the GLCM matrices. However <code>RIA</code> only looks in directions equivalent to the directions to the distance = 1 case, intermediate voxels are currently not supported in cases of bigger distances.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">DICOM =<span class="st"> </span><span class="kw">glcm_all</span>(DICOM, <span class="dt">use_type =</span> <span class="st">&quot;discretized&quot;</span>, <span class="dt">distance =</span> <span class="kw">c</span>(<span class="dv">1</span>:<span class="dv">3</span>))
 <span class="co">#&gt; GLCM WAS SUCCESSFULLY ADDED TO 'es_2_100' SLOT OF RIA_image$glcm</span>
 <span class="co">#&gt; GLCM WAS SUCCESSFULLY ADDED TO 'ep_2_100' SLOT OF RIA_image$glcm</span>
@@ -935,7 +936,7 @@ DICOM$glcm$ep_2
 </div>
 <div id="statistics-on-glcm-matrices" class="section level2">
 <h2>Statistics on GLCM matrices</h2>
-<p>The main purpose of calculating GLCMs, is to derive statistics from them. GLCM statistics can be calculated using the <em>glcm_stat</em> function. Overall, <code>RIA</code> can calculate 240 different GLCM statistics of which some contain more than one value. A detailed list and explanation of each statistic can be found in the supplementary material of: <a href="http://circimaging.ahajournals.org/content/10/12/e006843">Márton Kolossváry et al.</a></p>
+<p>The main purpose of calculating GLCMs, is to derive statistics from them. GLCM statistics can be calculated using the <em>glcm_stat</em> function. Overall, <code>RIA</code> can calculate 240 different GLCM statistics of which some contain more than one value. A detailed list and explanation of each statistic can be found in the supplementary material of: <a href="https://www.ncbi.nlm.nih.gov/pubmed/29233836">Márton Kolossváry et al.</a></p>
 <p>As previous functions, <em>glcm_stat</em> can process single or multiple GLCMs For single data processing, one can use the <strong>use_slot</strong> parameter to calculate GLCM statistics on a specific GLCM</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">DICOM =<span class="st"> </span><span class="kw">glcm_stat</span>(DICOM, <span class="dt">use_type =</span> <span class="st">&quot;single&quot;</span>, <span class="dt">use_slot =</span> <span class="st">&quot;glcm$ep_2_122&quot;</span>)
 <span class="co">#&gt; GLCM STATISTICS WAS SUCCESSFULLY ADDED TO 'ep_2_122' SLOT OF RIA_image$stat_glcm</span></code></pre></div>
@@ -1275,7 +1276,7 @@ DICOM$glcm$ep_2
 <li>off_down: positive values indicate to look to the right, negative values indicate to look to the left, while 0 indicates no offset in the Y plane</li>
 <li>off_z: positive values indicate to look to the right, negative values indicate to look to the left, while 0 indicates no offset in the Z plane</li>
 </ul>
-<p>For example: to calculate the GLRLM matrix of the last modified image stored in <code>DICOM$data$modif</code>, in the direction of right: 1; down: 0; z-plane: 1; you just have to write:</p>
+<p>For example: to calculate the GLRLM matrix of the last modified image stored in <code>RIA_image$data$modif</code>, in the direction of right: 1; down: 0; z-plane: 1; you just have to write:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">DICOM =<span class="st"> </span><span class="kw">glrlm</span>(<span class="dt">RIA_data_in =</span> DICOM, <span class="dt">off_right =</span> <span class="dv">1</span>, <span class="dt">off_down =</span> <span class="dv">0</span>, <span class="dt">off_z =</span> <span class="dv">1</span>)
 <span class="co">#&gt; GLRLM WAS SUCCESSFULLY ADDED TO 'ep_32_101' SLOT OF RIA_image$glrlm</span>
 <span class="kw">dim</span>(DICOM$glrlm$ep_32)
@@ -1728,13 +1729,20 @@ RIA:::<span class="kw">list_to_df</span>(DICOM$stat_geometry$es_2)
 </div>
 <div id="one-click-solution-to-calculate-all-radiomic-statistics" class="section level1">
 <h1>One click solution to calculate all radiomic statistics</h1>
-<p>Previous chapters showed each detail of the RIA package. However, many researchers just wish to calculate radiomic features without having to know exactly what is going on and do not wish to fine tune all functions by themselves. The <em>radiomics_all</em> function does all the work. With a simple line of code, you can calculate all the desired parameters without any hassle. After loading the DICOM images to <code>RIA</code> format, just type the following:</p>
+<p>Previous chapters showed each detail of the RIA package. However, many researchers just wish to calculate radiomic features without having to know exactly what is going on and do not wish to fine tune all functions by themselves. The <em>radiomics_all</em> function does all the work. With a simple line of code, you can calculate all the desired parameters without any hassle. After loading the radiological images to <code>RIA</code> format, just type the following:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">DICOM &lt;-<span class="st"> </span><span class="kw">radiomics_all</span>(DICOM, <span class="dt">equal_prob =</span> <span class="ot">FALSE</span>, <span class="dt">bins_in =</span> <span class="kw">c</span>(<span class="dv">2</span>,<span class="dv">8</span>,<span class="dv">32</span>,<span class="dv">128</span>), <span class="dt">distance =</span> <span class="kw">c</span>(<span class="dv">1</span>:<span class="dv">3</span>))</code></pre></div>
-<p>This simple line of code discretizes the image into 2, 8, 32 and 128 bins and calculates first-order statistics, GLCM based statistics averaged in all directions, GLRLM based statistics averaged in all directions and geometry based statistics on the original image. If you wish to calculate first-order statistics or geometry based statistics on discretized images as well, you can specify this by setting <strong>fo_discretized</strong> and <strong>geometry_discretized</strong> to <em>TRUE</em>.</p>
+<p>This simple line of code discretizes the image into 2, 8, 32 and 128 equally sized bins and calculates first-order statistics, GLCM based statistics averaged in all directions for distances 1, 2 and 3, GLRLM based statistics averaged in all directions and geometry based statistics on the original image. If you wish to calculate first-order statistics or geometry based statistics on discretized images as well, you can specify this by setting <strong>fo_discretized</strong> and <strong>geometry_discretized</strong> to <em>TRUE</em>.</p>
+<p>In the next section learn how to export all you calculated statistics just using one line of code.</p>
+</div>
+<div id="export-of-radiomic-statistics" class="section level1">
+<h1>Export of radiomic statistics</h1>
+<p>All saved radiomic metrics in the <code>RIA_image</code> can be conveniently saved using the <em>save_RIA</em> function. All you have to do is supply the folder where you wish to export the results to using the <strong>save_to</strong> parameter You may also set the name of the exported files using the <strong>save_name</strong> parameter. A grouping label specifying which class the case belongs to can also be set using the <strong>group_name</strong> parameter. A last but not least, you need to set which slots of statistics you wish to export, if you wish to export all of them, then set the <strong>stats</strong> as:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">save_RIA</span>(DICOM, <span class="dt">save_to =</span> <span class="st">&quot;C:/Test/&quot;</span>, <span class="dt">save_name =</span> <span class="st">&quot;My_first_radiomics&quot;</span>, <span class="dt">group_name =</span> <span class="st">&quot;Case&quot;</span>, <span class="dt">stats =</span> <span class="kw">c</span>(<span class="st">&quot;stat_fo&quot;</span>, <span class="st">&quot;stat_glcm_avg&quot;</span>, <span class="st">&quot;stat_glrlm_avg&quot;</span>, <span class="st">&quot;geometry&quot;</span>)</code></pre></div>
+<p>And that’s it! There you have your first radiomics analysis!</p>
 </div>
 <div id="conclsions" class="section level1">
 <h1>Conclsions</h1>
-<p><code>RIA</code> package for R is a fast, versatile and user-friendly way to calculate radiomic statistics using only a few lines of code. One can calculate several hundreds of different statistics on various versions of an image. <code>RIA</code> is regularly updated with new features that further help radiomic analyses.</p>
+<p><code>RIA</code> package for R is a fast, versatile and user-friendly way to calculate radiomic statistics on <em>DICOM</em>, <em>NIfTI</em> and <em>nrrd</em> images using only a few lines of code. One can calculate several hundreds of different statistics on various versions of an image. If you wish to better understand Radiomics, please read: <a href="https://www.ncbi.nlm.nih.gov/pubmed/28346329">“Cardiac Computed Tomography Radiomics: A Comprehensive Review on Radiomic Techniques”</a> and <a href="https://www.ncbi.nlm.nih.gov/pubmed/29233836">“Radiomic Features Are Superior to Conventional Quantitative Computed Tomographic Metrics to Identify Coronary Plaques With Napkin-Ring Sign”</a> which describes the calculation and each statistic in detail in the supplementary files.</p>
 </div>
 
 

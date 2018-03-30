@@ -1,4 +1,5 @@
-##General function to automatically assign subslot name
+# General function to automatically assign subslot name
+# (c): Márton Kolossváry, 2018
 
 automatic_name <- function(RIA_data_in, orig_in, use_slot)
 {

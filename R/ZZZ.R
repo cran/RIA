@@ -19,7 +19,7 @@ DOI: 10.1161/circimaging.117.006843
 
 M\U00E1rton KOLOSSV\U00C1RY et al.
 Cardiac Computed Tomography Radiomics: A Comprehensive Review on Radiomic Techniques.
-Journal of Thoracic Imaging (2017).
+Journal of Thoracic Imaging (2018).
 DOI: 10.1097/RTI.0000000000000268
 
 Please check for updates regularly for bug fixes and new functionalities!

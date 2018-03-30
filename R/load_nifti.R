@@ -1,21 +1,22 @@
-#' @title Loads DICOM images to RIA image format
+#' @title Loads NIfTI images to RIA image format
 #' @export
-#' @description  Loads DICOM images to a \emph{RIA_image} object.
+#' @description  Loads NIfTI images to a \emph{RIA_image} object.
 #' \emph{RIA_image} is a  list with three mandatory attributes.
 #' \itemize{
 #'  \item \bold{RIA_data} is a \emph{RIA_data} object, which has two potential slots.
-#'  \emph{$orig} contains the original image after loading and is a 3D array of integers
-#'  created with \code{\link[oro.dicom]{create3D}}.
+#'  \emph{$orig} contains the original image after loading
 #'  \emph{$modif} contains the image that has been modified using functions.
-#'  \item \bold{RIA_header} is a \emph{RIA_header} object, which is list of DICOM header information.
+#'  \item \bold{RIA_header} is a \emph{RIA_header} object, which is list of header information.
 #'  \item \bold{RIA_log} is a \emph{RIA_log} object, which is a list updated by RIA functions
 #'  and acts as a log and possible input for some functions.
 #'  }
 #'  Further attributes may also be added by RIA functions.
 #'
-#' @param filename string, file path to directory containing \emph{dcm} files.
+#' @param filename string, file path to directory containing \emph{NIfTI} file.
 #' 
-#' @param mask_filename string, file path to optional directory containing \emph{dcm} files
+#' @param image_dim integer, dimensions of the image.
+#' 
+#' @param mask_filename string, file path to optional directory containing \emph{NIfTI} file
 #' of mask image.
 #' 
 #' @param keep_mask_values integer vector, indicates which value or values of the mask image
@@ -45,43 +46,22 @@
 #'
 #' @param min_to integer, value to which data is shifted to if \emph{center_in} is TRUE.
 #'
-#' @param header_add dataframe, with three columns: Name, Group and Element containing the name,
-#' the group and the element code of the DICOM fields wished to be added to the\emph{RIA_header}.
-#'
-#' @param header_exclude dataframe, with three columns: Name, Group and Element containing the name,
-#' the group and the element code of the DICOM fields wished to be excluded
-#' from the default header elements present in \emph{DICOM_codes} rda file.
-#'
 #' @param verbose_in logical, indicating whether to print detailed information.
 #' Most prints can also be suppresed using the \code{\link{suppressMessages}} function.
 #'
-#' @param recursive_in \emph{recursive} parameter input of \code{\link[oro.dicom]{readDICOM}}.
+#' @param reorient_in \emph{reorient} parameter input of \code{\link[oro.nifti]{readNIfTI}}.
 #'
-#' @param exclude_in \emph{exclude} parameter input of \code{\link[oro.dicom]{readDICOM}}.
-#'
-#' @param mode_in \emph{mode} parameter input of \code{\link[oro.dicom]{create3D}}.
-#'
-#' @param transpose_in \emph{transpose} parameter input of \code{\link[oro.dicom]{create3D}}.
-#'
-#' @param pixelData_in \emph{pixelData} parameter input of \code{\link[oro.dicom]{create3D}}.
-#'
-#' @param mosaic_in \emph{mosaic} parameter input of \code{\link[oro.dicom]{create3D}}.
-#'
-#' @param mosaicXY_in \emph{mosaicXY} parameter input of \code{\link[oro.dicom]{create3D}}.
-#'
-#' @param sequence_in \emph{sequence} parameter input of \code{\link[oro.dicom]{create3D}}.
-#'
-#' @details \emph{load_dicom} is used to transform DICOM datasets into the RIA environment.
+#' @details \emph{load_nifti} is used to transform NIfTI datasets into the RIA environment.
 #' \emph{RIA_image} object was developed to facilitate and simplify radiomics calculations by keeping
 #' all necessary information in one place.
 #' \cr
 #' \cr
-#' \emph{RIA_data} stores the DICOM image that is converted to numerical 3D arrays using
-#' \code{\link[oro.dicom]{readDICOM}} and \code{\link[oro.dicom]{create3D}}.
+#' \emph{RIA_data} stores the image that is converted to numerical 3D arrays using
+#' \code{\link[oro.nifti]{readNIfTI}}.
 #' The function stores the original loaded image in  \emph{RIA_data$orig},
 #' while all modified images are stored in \emph{RIA_data$modif}.
 #' By default, the original image \emph{RIA_data$orig} is untouched by functions
-#' other than those operating in \emph{load_dicom}. While other functions
+#' other than those operating in \emph{load_nifti}. While other functions
 #' operate on the \emph{RIA_data$modif} image by default.
 #' \cr
 #' Due to memory concerns, there can only be one \emph{RIA_data$orig} and \emph{RIA_data$modif}
@@ -90,8 +70,8 @@
 #' into new slots of \emph{RIA_image}, for example the \code{\link[RIA]{discretize}} function can save
 #' discretized images to the \emph{discretized} slot of \emph{RIA_image}.
 #' \cr
-#' \emph{load_dicom} not only loads the DICOM image based on parameters that can be set for
-#' \code{\link[oro.dicom]{readDICOM}} and \code{\link[oro.dicom]{create3D}}, but also can perform
+#' \emph{load_nifti} not only loads the image based on parameters that can be set for
+#' \code{\link[oro.nifti]{readNIfTI}}, but also can perform
 #' minimal manipulations on the image itself.
 #' \cr
 #' \emph{crop_in} logical variable is used to indicate, whether to crop the image to the
@@ -113,9 +93,7 @@
 #' \cr
 #' \cr
 #' \emph{RIA_header} is a list containing the most basic patient and examination information
-#' needed for further analysis. The default DICOM set is present in \emph{DICOM_codes},
-#' which can be edited to anyones needs. But if we wish only to add of remove specific
-#' DICOM header rows, then the \emph{header_add} and \emph{header_exclude} can be used.
+#' present in the NIfTI file.
 #' \cr
 #' \cr
 #' \emph{RIA_log} is a list of variables, which give an overview of what has been done with the image.
@@ -126,7 +104,7 @@
 #' @return  Returns a \emph{RIA_image} object. \emph{RIA_image} is a list with three mandatory attributes.
 #' \itemize{
 #'  \item \bold{RIA_data} is a \emph{RIA_data} object containing the image in \emph{$orig} slot.
-#'  \item \bold{RIA_header} is a \emph{RIA_header} object, which is s list of DICOM information.
+#'  \item \bold{RIA_header} is a \emph{RIA_header} object, which is s list of meta information.
 #'  \item \bold{RIA_log} is a \emph{RIA_log} object, which is a list updated by RIA functions
 #'  and acts as a log and possible input for some functions.
 #'  }
@@ -134,7 +112,7 @@
 #' @examples \dontrun{
 #'  #Image will be croped to smallest bounding box, and smallest values will be changed to NA,
 #'  while 1024 will be substracted from all other data points.
-#'  RIA_image <- load_dicom("C://Users//Test//Documents//Radiomics//John_Smith//DICOM_folder//")
+#'  RIA_image <- load_nifti("C:/Users/Test/Documents/Radiomics/John_Smith/NIfTI_folder/sample.nii")
 #'  }
 #'  
 #' @references Márton KOLOSSVÁRY et al.
@@ -152,63 +130,52 @@
 #' @encoding UTF-8
 
 
-load_dicom <- function(filename, mask_filename = NULL, keep_mask_values = 1, switch_z = TRUE, 
-                       crop_in = TRUE, replace_in = TRUE, center_in = TRUE,  zero_value = NULL, min_to = -1024,
-                       header_add = NULL, header_exclude = NULL, verbose_in = TRUE,
-                       recursive_in = TRUE, exclude_in = "sql",
-                       mode_in = "integer", transpose_in = TRUE, pixelData_in = TRUE,
-                       mosaic_in = FALSE, mosaicXY_in = NULL, sequence_in = FALSE
-                       )
+load_nifti <- function(filename, image_dim = 3, mask_filename = NULL, keep_mask_values = 1, switch_z = TRUE, 
+                       crop_in = TRUE, replace_in = TRUE, center_in = FALSE,  zero_value = NULL, min_to = -1024,
+                       verbose_in = TRUE,
+                       reorient_in = TRUE
+)
 {
-  if(verbose_in) {message(paste0("LOADING DICOM FILES FROM: ", filename, "\n"))}
-
-  dcmImages <- oro.dicom::readDICOM(filename, recursive = recursive_in, exclude = exclude_in, verbose = verbose_in)
-
-
-  ###create 3D matrix - crop to smallest bounding box - change 0/-1024 values to NA - center around 0
-  if(length(dcmImages$img)==1) {
-  data  <- suppressWarnings(oro.dicom::create3D(dcmImages, mode = mode_in, transpose = transpose_in, pixelData = pixelData_in,
-                        mosaic = mosaic_in, mosaicXY = mosaicXY_in, sequence = sequence_in))
-  } else {
-  data  <- oro.dicom::create3D(dcmImages, mode = mode_in, transpose = transpose_in, pixelData = pixelData_in,
-                                 mosaic = mosaic_in, mosaicXY = mosaicXY_in, sequence = sequence_in)
-  }
+  if(verbose_in) {message(paste0("LOADING NIFTI FILES FROM: ", filename, "\n"))}
   
+  dcmImages <- oro.nifti::readNIfTI(filename, verbose = FALSE, reorient = reorient_in)
+  
+  
+  ###create 3D matrix - crop to smallest bounding box - change 0/-1024 values to NA - center around 0
+  dim_string <- paste0( c(rep(",", image_dim-1), rep(",1", (dcmImages@dim_)[1]-image_dim)), collapse="")
+  data  <- dcmImages@.Data
+  data <- eval(parse(text= paste0("data[", dim_string, "]")))
+                      
   ###create RIA_image structure
   RIA_image <- list(data = NULL, header = list(), log = list())
   if(length(dim(data)) == 3 | length(dim(data)) == 2) {class(RIA_image) <- append(class(RIA_image), "RIA_image")
-  } else {stop(paste0("DICOM LOADED IS ", length(dim(data)), " DIMENSIONAL. ONLY 2D AND 3D DATA ARE SUPPORTED!"))}
-
+  } else {stop(paste0("NIFTI LOADED IS ", length(dim(data)), " DIMENSIONAL. ONLY 2D AND 3D DATA ARE SUPPORTED!"))}
+  
   
   if(is.null(zero_value)) zero_value <- min(data, na.rm = TRUE)
   
   #mask image
   if(!is.null(mask_filename)) {
-      if(identical(filename, mask_filename)) {
-          if(verbose_in) {message(paste0("CANCELING OUT VALUES OTHER THAN THOSE SPECIFIED IN 'keep_mask_values' PARAMETER \n"))}
-          data[!data %in% keep_mask_values] <- zero_value
+    if(identical(filename, mask_filename)) {
+      if(verbose_in) {message(paste0("CANCELING OUT VALUES OTHER THAN THOSE SPECIFIED IN 'keep_mask_values' PARAMETER \n"))}
+      data[!data %in% keep_mask_values] <- zero_value
+    } else {
+      if(verbose_in) {message(paste0("LOADING NIFTI IMAGES OF MASK IMAGE FROM: ", mask_filename, "\n"))}
+      dcmImages_mask <- oro.nifti::readNIfTI(mask_filename, verbose = FALSE, reorient = reorient_in)
+      data_mask  <- dcmImages@.Data
+      data_mask <- eval(parse(text= paste0("data_mask[", dim_string, "]")))
+      
+      if(!all(dim(data) == dim(data_mask))) {
+        stop(paste0("DIMENSIONS OF THE IMAGE AND THE MASK ARE NOT EQUAL!\n",
+                    "DIMENSION OF IMAGE: ", dim(data)[1], " ",  dim(data)[2], " ", dim(data)[3], "\n",
+                    "DIMENSION OF MASK:  ", dim(data_mask)[1], " ", dim(data_mask)[2], " ", dim(data_mask)[3], "\n"))
       } else {
-          if(verbose_in) {message(paste0("LOADING DICOM IMAGES OF MASK IMAGE FROM: ", mask_filename, "\n"))}
-          dcmImages_mask <- oro.dicom::readDICOM(mask_filename, recursive = recursive_in, exclude = exclude_in, verbose = verbose_in)
-          if(length(dcmImages_mask$img)==1) {
-              data_mask  <- suppressWarnings(oro.dicom::create3D(dcmImages_mask, mode = mode_in, transpose = transpose_in, pixelData = pixelData_in,
-                                                            mosaic = mosaic_in, mosaicXY = mosaicXY_in, sequence = sequence_in))
-          } else {
-              data_mask  <- oro.dicom::create3D(dcmImages_mask, mode = mode_in, transpose = transpose_in, pixelData = pixelData_in,
-                                           mosaic = mosaic_in, mosaicXY = mosaicXY_in, sequence = sequence_in)
-          }
-          
-          if(!all(dim(data) == dim(data_mask))) {
-              stop(paste0("DIMENSIONS OF THE IMAGE AND THE MASK ARE NOT EQUAL!\n",
-                          "DIMENSION OF IMAGE: ", dim(data)[1], " ",  dim(data)[2], " ", dim(data)[3], "\n",
-                          "DIMENSION OF MASK:  ", dim(data_mask)[1], " ", dim(data_mask)[2], " ", dim(data_mask)[3], "\n"))
-          } else {
-              if(switch_z) {data_mask[,,dim(data_mask)[3]:1] <- data_mask
-              message("MASK IMAGE WAS TRANSFORMED TO ACHIEVE PROPER ORIENTATION OF THE ORIGINAL AND THE MASK IMAGE.\n")
-              }
-              data[!data_mask %in% keep_mask_values] <- zero_value
-          }
+        if(switch_z) {data_mask[,,dim(data_mask)[3]:1] <- data_mask
+        message("MASK IMAGE WAS TRANSFORMED TO ACHIEVE PROPER ORIENTATION OF THE ORIGINAL AND THE MASK IMAGE.\n")
+        }
+        data[!data_mask %in% keep_mask_values] <- zero_value
       }
+    }
   }
   
   
@@ -230,53 +197,52 @@ load_dicom <- function(filename, mask_filename = NULL, keep_mask_values = 1, swi
     }
   }
   
-
+  
   
   ###Crop data
   if(crop_in)
   {
     if(verbose_in) {message(paste0("SMALLEST VALUES IS ", zero_value, ", AND WILL BE CONSIDERED AS REFERENCE POINT TO IDENTIFY VOXELS WITHOUT ANY SIGNAL\n"))}
-    if(verbose_in & center_in == FALSE) message(paste0("MIGHT CONSIDER RESCALING, SINCE SMALLEST VALUE IS NOT -1024, AND THUS HU VALUES MIGHT NOT BE CORRECT\n"))
-
+    if(verbose_in & center_in == FALSE) message(paste0("MIGHT CONSIDER RESCALING, SINCE SMALLEST VALUE IS NOT -1024, AND THUS VOXEL VALUES MIGHT NOT BE CORRECT\n"))
+    
     RIA_image <- crop(RIA_image, zero_value, write_orig = TRUE, verbose_in = verbose_in)
   }
-
-
+  
+  
   ###Replace values
   if(replace_in)
   {
     if(verbose_in) {message(paste0("SMALLEST VALUES IS ", zero_value, ", AND WILL CHANGE TO NA\n"))}
-
+    
     RIA_image <- change_to(RIA_image, zero_value_in = zero_value, verbose_in = verbose_in)
   }
-
+  
   ###Shift to
   if(center_in & (min(data, na.rm = T) != min_to))
   {
     if(verbose_in) {message(paste0("SMALLEST VALUES IS not ", min_to, " THEREFORE SHIFTING VALUES TO ACHIVE THIS\n"))}
     RIA_image <- shift_to(RIA_image, to = min_to, min_value_in = zero_value, verbose_in = verbose_in)
   }
-
-  ###Create dataframe of standard or specific DICOM information
-  header <- create_header(filename, header_add, header_exclude)
+  
+  ###Create dataframe of standard or specific NIFTI information
+  header <- create_header_nifti(filename)
   RIA_image$header <- header
   #Add original volume of abnormality
-  space_loc <- regexpr(' ', RIA_image$header$PixelSpacing)[1]
-  xy_dim <- as.numeric(substr( RIA_image$header$PixelSpacing, 1, space_loc-1))
+  xy_dim <- as.numeric(RIA_image$header$PixelSpacing)
   z_dim <-  as.numeric(RIA_image$header$SpacingBetweenSlices)
   RIA_image$log$orig_vol_mm <- volume(RIA_image$data$orig, xy_dim = xy_dim, z_dim = z_dim)
   RIA_image$log$orig_surf_mm <- surface(RIA_image$data$orig, xy_dim = xy_dim, z_dim = z_dim)
   RIA_image$log$surface_volume_r <- ifelse(RIA_image$log$orig_vol_mm != 0, RIA_image$log$orig_surf_mm/RIA_image$log$orig_vol_mm, 0)
   RIA_image$log$orig_xy_dim <- xy_dim
   RIA_image$log$orig_z_dim  <- z_dim
-
-
-
-  if(verbose_in) {message(paste0("SUCCESSFULLY LOADED ", RIA_image$header$PatientsName, "'s DICOM IMAGES TO RIA IMAGE CLASS\n"))}
+  
+  
+  
+  if(verbose_in) {message(paste0("SUCCESSFULLY LOADED ", RIA_image$header$PatientsName, "'s NIFTI IMAGES TO RIA IMAGE CLASS\n"))}
   data_NA <- as.vector(RIA_image$data$orig)
   data_NA <- data_NA[!is.na(data_NA)]
-
+  
   if(length(data_NA) == 0) {message("WARNING: RIA_image$data DOES NOT CONTAIN ANY DATA!!!\n")}
-
+  
   return(RIA_image)
 }
