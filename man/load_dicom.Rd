@@ -11,7 +11,7 @@ load_dicom(filename, mask_filename = NULL, keep_mask_values = 1,
   header_exclude = NULL, verbose_in = TRUE, recursive_in = TRUE,
   exclude_in = "sql", mode_in = "integer", transpose_in = TRUE,
   pixelData_in = TRUE, mosaic_in = FALSE, mosaicXY_in = NULL,
-  sequence_in = FALSE)
+  sequence_in = FALSE, ...)
 }
 \arguments{
 \item{filename}{string, file path to directory containing \emph{dcm} files.}
@@ -71,6 +71,9 @@ Most prints can also be suppresed using the \code{\link{suppressMessages}} funct
 \item{mosaicXY_in}{\emph{mosaicXY} parameter input of \code{\link[oro.dicom]{create3D}}.}
 
 \item{sequence_in}{\emph{sequence} parameter input of \code{\link[oro.dicom]{create3D}}.}
+
+\item{...}{additional arguments to  \code{\link[oro.dicom]{readDICOM}},
+\code{\link[oro.dicom]{readDICOMFile}} and \code{\link[oro.dicom]{create3D}}.}
 }
 \value{
 Returns a \emph{RIA_image} object. \emph{RIA_image} is a list with three mandatory attributes.

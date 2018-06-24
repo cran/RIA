@@ -12,7 +12,7 @@
 
 <meta name="author" content="Márton Kolossváry" />
 
-<meta name="date" content="2018-03-30" />
+<meta name="date" content="2018-06-24" />
 
 <title>RIA package manual</title>
 
@@ -70,7 +70,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 
 <h1 class="title toc-ignore">RIA package manual</h1>
 <h4 class="author"><em>Márton Kolossváry</em></h4>
-<h4 class="date"><em>2018-03-30</em></h4>
+<h4 class="date"><em>2018-06-24</em></h4>
 
 
 
@@ -1737,7 +1737,7 @@ RIA:::<span class="kw">list_to_df</span>(DICOM$stat_geometry$es_2)
 <div id="export-of-radiomic-statistics" class="section level1">
 <h1>Export of radiomic statistics</h1>
 <p>All saved radiomic metrics in the <code>RIA_image</code> can be conveniently saved using the <em>save_RIA</em> function. All you have to do is supply the folder where you wish to export the results to using the <strong>save_to</strong> parameter You may also set the name of the exported files using the <strong>save_name</strong> parameter. A grouping label specifying which class the case belongs to can also be set using the <strong>group_name</strong> parameter. A last but not least, you need to set which slots of statistics you wish to export, if you wish to export all of them, then set the <strong>stats</strong> as:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">save_RIA</span>(DICOM, <span class="dt">save_to =</span> <span class="st">&quot;C:/Test/&quot;</span>, <span class="dt">save_name =</span> <span class="st">&quot;My_first_radiomics&quot;</span>, <span class="dt">group_name =</span> <span class="st">&quot;Case&quot;</span>, <span class="dt">stats =</span> <span class="kw">c</span>(<span class="st">&quot;stat_fo&quot;</span>, <span class="st">&quot;stat_glcm_avg&quot;</span>, <span class="st">&quot;stat_glrlm_avg&quot;</span>, <span class="st">&quot;geometry&quot;</span>)</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">save_RIA</span>(DICOM, <span class="dt">save_to =</span> <span class="st">&quot;C:/Test/&quot;</span>, <span class="dt">save_name =</span> <span class="st">&quot;My_first_radiomics&quot;</span>, <span class="dt">group_name =</span> <span class="st">&quot;Case&quot;</span>, <span class="dt">stats =</span> <span class="kw">c</span>(<span class="st">&quot;stat_fo&quot;</span>, <span class="st">&quot;stat_glcm_mean&quot;</span>,  <span class="st">&quot;stat_glrlm_mean&quot;</span>, <span class="st">&quot;stat_geometry&quot;</span>))</code></pre></div>
 <p>And that’s it! There you have your first radiomics analysis!</p>
 </div>
 <div id="conclsions" class="section level1">

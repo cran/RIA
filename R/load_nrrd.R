@@ -50,6 +50,9 @@
 #' @param origin_in \emph{origin} parameter input of \code{\link[nat]{read.nrrd}}.
 #' 
 #' @param ReadByteAsRaw_in \emph{origin} parameter input of \code{\link[nat]{read.nrrd}}.
+#' 
+#' @param ... additional arguments to  \code{\link[nat]{read.nrrd}},
+#' \code{\link[nat]{read.nrrd.header}}.
 #'
 #' @details \emph{load_nrrd} is used to transform nrrd datasets into the RIA environment.
 #' \emph{RIA_image} object was developed to facilitate and simplify radiomics calculations by keeping
@@ -112,7 +115,7 @@
 #' @examples \dontrun{
 #'  #Image will be croped to smallest bounding box, and smallest values will be changed to NA,
 #'  while 1024 will be substracted from all other data points.
-#'  RIA_image <- load_nrrd("C:/Users/Test/Documents/Radiomics/John_Smith/nrrd_folder/sample.nii")
+#'  RIA_image <- load_nrrd("C:/Users/Test/Documents/Radiomics/John_Smith/nrrd_folder/sample.nrrd")
 #'  }
 #'  
 #' @references Márton KOLOSSVÁRY et al.
@@ -133,7 +136,7 @@
 load_nrrd <- function(filename, mask_filename = NULL, keep_mask_values = 1, switch_z = TRUE, 
                        crop_in = TRUE, replace_in = TRUE, center_in = FALSE,  zero_value = NULL, min_to = -1024,
                        verbose_in = TRUE,
-                       origin_in = NULL, ReadByteAsRaw_in = "unsigned" 
+                       origin_in = NULL, ReadByteAsRaw_in = "unsigned", ... 
 )
 {
     if(verbose_in) {message(paste0("LOADING nrrd FILES FROM: ", filename, "\n"))}

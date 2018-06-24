@@ -76,8 +76,8 @@ crop <- function(RIA_data_in, zero_value = 0, use_orig = TRUE, write_orig = TRUE
   if(length(dim(data_in_mod)) == 2) {data_in_mod <- array(data_in_mod, dim = c(dim(data_in_mod),1))}
 
   if(verbose_in) { if(all(dim(data_in_mod) ==  dim(data_in))) {
-    message("CROPPING WAS NOT DONE, SINCE NO DATA WAS OBSERVED IN THE DICOM DATASET, THEREFORE ORIGINAL DATA IS COPIED TO MODIF SLOT OF RIA_image");
-  } else {message("CROPPING DOME IN ALL DIRECTIONS")}
+    message("\nCROPPING WAS NOT DONE, SINCE NO DATA WAS OBSERVED IN THE DICOM DATASET, THEREFORE ORIGINAL DATA IS COPIED TO MODIF SLOT OF RIA_image\n");
+  } else {message("\nCROPPING DOME IN ALL DIRECTIONS\n")}
   }
 
   if(any(class(RIA_data_in) == "RIA_image"))

@@ -1,8 +1,8 @@
 Package: RIA
 Type: Package
 Title: Radiomics Image Analysis Toolbox for Medial Images
-Version: 1.4.0
-Date: 2018-03-30
+Version: 1.4.1
+Date: 2018-06-24
 Authors@R: person("Marton", "Kolossvary", role = c("aut", "cre"), email = "marton.kolossvary@cirg.hu")
 Maintainer: Marton Kolossvary <marton.kolossvary@cirg.hu>
 Description: Radiomics image analysis toolbox for 2D and 3D radiological images. RIA supports DICOM, NIfTI and
@@ -20,7 +20,7 @@ Suggests: knitr, rmarkdown
 VignetteBuilder: knitr
 Encoding: UTF-8
 URL: https://www.ncbi.nlm.nih.gov/pubmed/29233836
-Packaged: 2018-03-30 10:45:45 UTC; Marci
+Packaged: 2018-06-24 16:23:54 UTC; Marci
 Author: Marton Kolossvary [aut, cre]
 Repository: CRAN
-Date/Publication: 2018-03-30 12:45:55 UTC
+Date/Publication: 2018-06-24 16:58:40 UTC

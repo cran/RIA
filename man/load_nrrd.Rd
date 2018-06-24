@@ -8,7 +8,7 @@
 load_nrrd(filename, mask_filename = NULL, keep_mask_values = 1,
   switch_z = TRUE, crop_in = TRUE, replace_in = TRUE, center_in = FALSE,
   zero_value = NULL, min_to = -1024, verbose_in = TRUE,
-  origin_in = NULL, ReadByteAsRaw_in = "unsigned")
+  origin_in = NULL, ReadByteAsRaw_in = "unsigned", ...)
 }
 \arguments{
 \item{filename}{string, file path to directory containing \emph{nrrd} file.}
@@ -49,6 +49,9 @@ Most prints can also be suppresed using the \code{\link{suppressMessages}} funct
 \item{origin_in}{\emph{origin} parameter input of \code{\link[nat]{read.nrrd}}.}
 
 \item{ReadByteAsRaw_in}{\emph{origin} parameter input of \code{\link[nat]{read.nrrd}}.}
+
+\item{...}{additional arguments to  \code{\link[nat]{read.nrrd}},
+\code{\link[nat]{read.nrrd.header}}.}
 }
 \value{
 Returns a \emph{RIA_image} object. \emph{RIA_image} is a list with three mandatory attributes.
@@ -127,7 +130,7 @@ information is also saved in the log, which might be needed for further analysis
 \dontrun{
  #Image will be croped to smallest bounding box, and smallest values will be changed to NA,
  while 1024 will be substracted from all other data points.
- RIA_image <- load_nrrd("C:/Users/Test/Documents/Radiomics/John_Smith/nrrd_folder/sample.nii")
+ RIA_image <- load_nrrd("C:/Users/Test/Documents/Radiomics/John_Smith/nrrd_folder/sample.nrrd")
  }
  
 }

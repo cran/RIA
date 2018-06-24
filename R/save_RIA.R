@@ -30,7 +30,7 @@
 #' \url{https://www.ncbi.nlm.nih.gov/pubmed/28346329}
 #' @encoding UTF-8
 
-save_RIA <- function(RIA_image, save_to = "C:/", save_name = "RIA_stat", group_name = "Case", stats = c("stat_fo", "stat_glcm_avg", "stat_glrlm_avg", "geometry")) {
+save_RIA <- function(RIA_image, save_to = "C:/", save_name = "RIA_stat", group_name = "Case", stats = c("stat_fo", "stat_glcm_mean", "stat_glrlm_mean", "stat_geometry")) {
 
   df_out <- data.frame(); df_out[1,1] <- group_name; colnames(df_out) <- "Group_name"
 

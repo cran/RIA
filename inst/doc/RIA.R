@@ -171,5 +171,5 @@ names(DICOM$stat_geometry)
 #  DICOM <- radiomics_all(DICOM, equal_prob = FALSE, bins_in = c(2,8,32,128), distance = c(1:3))
 
 ## ---- eval=FALSE---------------------------------------------------------
-#  save_RIA(DICOM, save_to = "C:/Test/", save_name = "My_first_radiomics", group_name = "Case", stats = c("stat_fo", "stat_glcm_avg", "stat_glrlm_avg", "geometry")
+#  save_RIA(DICOM, save_to = "C:/Test/", save_name = "My_first_radiomics", group_name = "Case", stats = c("stat_fo", "stat_glcm_mean",  "stat_glrlm_mean", "stat_geometry"))
 

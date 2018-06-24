@@ -50,6 +50,9 @@
 #' Most prints can also be suppresed using the \code{\link{suppressMessages}} function.
 #'
 #' @param reorient_in \emph{reorient} parameter input of \code{\link[oro.nifti]{readNIfTI}}.
+#' 
+#' @param ... additional arguments to  \code{\link[oro.nifti]{readNIfTI}},
+#' \code{\link[oro.nifti]{nifti_header}}.
 #'
 #' @details \emph{load_nifti} is used to transform NIfTI datasets into the RIA environment.
 #' \emph{RIA_image} object was developed to facilitate and simplify radiomics calculations by keeping
@@ -133,7 +136,7 @@
 load_nifti <- function(filename, image_dim = 3, mask_filename = NULL, keep_mask_values = 1, switch_z = TRUE, 
                        crop_in = TRUE, replace_in = TRUE, center_in = FALSE,  zero_value = NULL, min_to = -1024,
                        verbose_in = TRUE,
-                       reorient_in = TRUE
+                       reorient_in = TRUE, ...
 )
 {
   if(verbose_in) {message(paste0("LOADING NIFTI FILES FROM: ", filename, "\n"))}

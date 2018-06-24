@@ -8,7 +8,7 @@
 load_nifti(filename, image_dim = 3, mask_filename = NULL,
   keep_mask_values = 1, switch_z = TRUE, crop_in = TRUE,
   replace_in = TRUE, center_in = FALSE, zero_value = NULL,
-  min_to = -1024, verbose_in = TRUE, reorient_in = TRUE)
+  min_to = -1024, verbose_in = TRUE, reorient_in = TRUE, ...)
 }
 \arguments{
 \item{filename}{string, file path to directory containing \emph{NIfTI} file.}
@@ -49,6 +49,9 @@ then the smallest HU value in the image will be used, if \emph{replace_in} is TR
 Most prints can also be suppresed using the \code{\link{suppressMessages}} function.}
 
 \item{reorient_in}{\emph{reorient} parameter input of \code{\link[oro.nifti]{readNIfTI}}.}
+
+\item{...}{additional arguments to  \code{\link[oro.nifti]{readNIfTI}},
+\code{\link[oro.nifti]{nifti_header}}.}
 }
 \value{
 Returns a \emph{RIA_image} object. \emph{RIA_image} is a list with three mandatory attributes.

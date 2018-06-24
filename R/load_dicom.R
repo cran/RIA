@@ -70,6 +70,9 @@
 #' @param mosaicXY_in \emph{mosaicXY} parameter input of \code{\link[oro.dicom]{create3D}}.
 #'
 #' @param sequence_in \emph{sequence} parameter input of \code{\link[oro.dicom]{create3D}}.
+#' 
+#' @param ... additional arguments to  \code{\link[oro.dicom]{readDICOM}},
+#' \code{\link[oro.dicom]{readDICOMFile}} and \code{\link[oro.dicom]{create3D}}.
 #'
 #' @details \emph{load_dicom} is used to transform DICOM datasets into the RIA environment.
 #' \emph{RIA_image} object was developed to facilitate and simplify radiomics calculations by keeping
@@ -157,7 +160,7 @@ load_dicom <- function(filename, mask_filename = NULL, keep_mask_values = 1, swi
                        header_add = NULL, header_exclude = NULL, verbose_in = TRUE,
                        recursive_in = TRUE, exclude_in = "sql",
                        mode_in = "integer", transpose_in = TRUE, pixelData_in = TRUE,
-                       mosaic_in = FALSE, mosaicXY_in = NULL, sequence_in = FALSE
+                       mosaic_in = FALSE, mosaicXY_in = NULL, sequence_in = FALSE, ...
                        )
 {
   if(verbose_in) {message(paste0("LOADING DICOM FILES FROM: ", filename, "\n"))}

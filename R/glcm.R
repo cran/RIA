@@ -93,7 +93,7 @@ glcm <- function(RIA_data_in, off_right = 1, off_down = 0, off_z = 0, symmetric 
                                                                                 "NUMBER OF IMAGES: ", length(data_in_orig), "\n"))
   }
   
-
+  #cycle through all data
   for (k in 1: length(data_in_orig))
   {
   data_in <-  data_in_orig[[k]]
@@ -106,7 +106,6 @@ glcm <- function(RIA_data_in, off_right = 1, off_down = 0, off_z = 0, symmetric 
   dim_x <- dim(data_in)[1]
   dim_y <- dim(data_in)[2]
   dim_z <- ifelse(!is.na(dim(data_in)[3]), dim(data_in)[3], 1)
-
   dist <- max(abs(off_right), abs(off_down), abs(off_z))  ##maximum offset needed to increase matrix
 
   base_m <- array(NA, dim = c(dim_x+2*dist, dim_y+2*dist, dim_z+2*dist))
@@ -115,41 +114,39 @@ glcm <- function(RIA_data_in, off_right = 1, off_down = 0, off_z = 0, symmetric 
   shift_m <- array(NA, dim = c(dim_x+2*dist, dim_y+2*dist, dim_z+2*dist))
   shift_m[(1+(dist+off_down)):(dim_x+(dist+off_down)), (1+(dist-off_right)):(dim_y+(dist-off_right)), (1+(dist+off_z)):(dim_z+(dist+off_z))] <- data_in
 
-  diff_m <- base_m - shift_m ##differency matrix
-
-  adj_m <- base_m - diff_m ##matrix containing adjacency elements at given offset
-
-    #create gray level number, first by the name of the file, then the event log, then by the number of gray levels
-    num_ind <- unlist(gregexpr('[1-9]', list_names[k]))
-    num_txt <- substr(list_names[k], num_ind[1], num_ind[length(num_ind)])
-    gray_levels <- as.numeric(num_txt)
-    if(length(gray_levels) == 0) {
-        txt <- automatic_name(RIA_data_in, use_orig, use_slot)
-        num_ind <- unlist(gregexpr('[1-9]', txt))
-        num_txt <- substr(txt, num_ind[1], num_ind[length(num_ind)])
-        gray_levels <- as.numeric(num_txt)
-    } else {data_v <- as.vector(data_in); data_v <- data_v[!is.na(data_v)]; gray_levels <- length(unique(data_v))
-    }
+  #create gray level number, first by the name of the file, then the event log, then by the number of gray levels
+  num_ind <- unlist(gregexpr('[1-9]', list_names[k]))
+  num_txt <- substr(list_names[k], num_ind[1], num_ind[length(num_ind)])
+  gray_levels <- as.numeric(num_txt)
+  if (length(gray_levels) == 0) {
+      txt <- automatic_name(RIA_data_in, use_orig, use_slot)
+      num_ind <- unlist(gregexpr('[1-9]', txt))
+      num_txt <- substr(txt, num_ind[1], num_ind[length(num_ind)])
+      gray_levels <- as.numeric(num_txt)
+  } else {
+      data_v <- as.vector(data_in)
+      data_v <- data_v[!is.na(data_v)]
+      gray_levels <- length(unique(data_v))
+  }
   
-  
-  
+  #populate GLCM
   glcm <- matrix(NA, nrow = gray_levels, ncol = gray_levels)
-
   for (i in 1:gray_levels)
   {
     for (j in 1: gray_levels)
     {
-      glcm[i, j] <- sum(adj_m==i & base_m==j, na.rm = TRUE)
+      glcm[i, j] <- sum(shift_m==i & base_m==j, na.rm = TRUE)
     }
   }
+  
   if(symmetric) glcm <- (glcm + t(glcm))
   if(normalize) {
     if(sum(glcm) == 0) {
 
-    } else {glcm <- glcm/sum(glcm)} }
+    } else {glcm <- glcm/sum(glcm)}
+  }
 
-
-
+  #export based-on processing type
   if(use_type == "single") {
 
     if(any(class(RIA_data_in) == "RIA_image") )
@@ -185,7 +182,6 @@ glcm <- function(RIA_data_in, off_right = 1, off_down = 0, off_z = 0, symmetric 
   if(is.null(save_name)) {txt_name <- txt
   } else {txt_name <- save_name}
   if(verbose_in) {message(paste0("GLCM WAS SUCCESSFULLY ADDED TO '", txt_name, "' SLOT OF RIA_image$glcm\n"))}
-
   }
 
   if(any(class(RIA_data_in) == "RIA_image") ) return(RIA_data_in)

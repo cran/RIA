@@ -414,7 +414,7 @@ In the next section learn how to export all you calculated statistics just using
 #Export of radiomic statistics
 All saved radiomic metrics in the `RIA_image` can be conveniently saved using the *save_RIA* function. All you have to do is supply the folder where you wish to export the results to using the **save_to** parameter You may also set the name of the exported files using the **save_name** parameter. A grouping label specifying which class the case belongs to can also be set using the **group_name** parameter. A last but not least, you need to set which slots of statistics you wish to export, if you wish to export all of them, then set the **stats** as:
 ```{r, eval=FALSE}
-save_RIA(DICOM, save_to = "C:/Test/", save_name = "My_first_radiomics", group_name = "Case", stats = c("stat_fo", "stat_glcm_avg", "stat_glrlm_avg", "geometry")
+save_RIA(DICOM, save_to = "C:/Test/", save_name = "My_first_radiomics", group_name = "Case", stats = c("stat_fo", "stat_glcm_mean",  "stat_glrlm_mean", "stat_geometry"))
 ```
 And that's it! There you have your first radiomics analysis!
 
