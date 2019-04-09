@@ -13,7 +13,7 @@ RIA allows users to take control of each and every aspect of radiomic analysis u
 #Load the data by providing the location of the DICOM, NIfTI or nrrd file(s)
 DICOM <- load_dicom(filename = "C:/Image/")
 #Calculate first-order, GLCM, GLRLM and geometry based statistics
-DICOM <- radiomics_all(DICOM, equal_prob = FALSE, bins_in = c(2,8,32,128), distance = c(1:3), fo_discretized = FALSE, geometry_discretized = TRUE)
+DICOM <- radiomics_all(DICOM, equal_prob = FALSE, bins_in = c(8,16,32), distance = c(1:2), fo_discretized = FALSE, geometry_discretized = TRUE)
 save_RIA(DICOM, save_to = "C:/Test/", save_name = "My_first_radiomics", group_name = "Case")
 ```
 

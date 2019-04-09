@@ -6,7 +6,8 @@
 \title{Calculates geometry-based parameters of RIA image}
 \usage{
 geometry(RIA_data_in, xy_dim = RIA_data_in$log$orig_xy_dim,
-  z_dim = RIA_data_in$log$orig_z_dim, all_vol = RIA_data_in$log$orig_vol_mm,
+  z_dim = RIA_data_in$log$orig_z_dim,
+  all_vol = RIA_data_in$log$orig_vol_mm,
   all_surf = RIA_data_in$log$orig_surf_mm, calc_dist = FALSE,
   calc_sub = TRUE, use_type = "single", use_orig = FALSE,
   use_slot = NULL, save_name = NULL, verbose_in = TRUE)

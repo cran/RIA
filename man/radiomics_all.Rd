@@ -5,8 +5,8 @@
 \alias{radiomics_all}
 \title{Calculates all radiomic statistics on supplied RIA_image}
 \usage{
-radiomics_all(RIA_data_in, bins_in = c(2, 8, 32, 128), equal_prob = FALSE,
-  fo_discretized = FALSE, distance = c(1, 2, 3),
+radiomics_all(RIA_data_in, bins_in = c(2, 8, 32, 128),
+  equal_prob = FALSE, fo_discretized = FALSE, distance = c(1, 2, 3),
   statistic = "mean(X, na.rm = TRUE)", geometry_discretized = FALSE,
   verbose_in = TRUE)
 }

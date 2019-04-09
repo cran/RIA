@@ -5,8 +5,8 @@
 \alias{discretize}
 \title{Discretizes RIA image to a given number of bins}
 \usage{
-discretize(RIA_data_in, bins_in = 8, equal_prob = FALSE, use_orig = TRUE,
-  write_orig = FALSE, verbose_in = TRUE)
+discretize(RIA_data_in, bins_in = 8, equal_prob = FALSE,
+  use_orig = TRUE, write_orig = FALSE, verbose_in = TRUE)
 }
 \arguments{
 \item{RIA_data_in}{\emph{RIA_image}.}

@@ -1,10 +1,10 @@
 Package: RIA
 Type: Package
 Title: Radiomics Image Analysis Toolbox for Medial Images
-Version: 1.4.1
-Date: 2018-06-24
-Authors@R: person("Marton", "Kolossvary", role = c("aut", "cre"), email = "marton.kolossvary@cirg.hu")
-Maintainer: Marton Kolossvary <marton.kolossvary@cirg.hu>
+Version: 1.4.2
+Date: 2019-04-06
+Authors@R: person("Marton", "Kolossvary", role = c("aut", "cre"), email = "marton.kolossvary@gmail.com")
+Maintainer: Marton Kolossvary <marton.kolossvary@gmail.com>
 Description: Radiomics image analysis toolbox for 2D and 3D radiological images. RIA supports DICOM, NIfTI and
              nrrd file formats. RIA calculates first-order, gray level co-occurrence matrix,
              gray level run length matrix and geometry-based statistics. Almost all calculations are done
@@ -14,13 +14,13 @@ License: AGPL-3
 Depends: R (>= 3.3.0)
 Imports: oro.dicom (>= 0.5.0), oro.nifti (>= 0.9.1), nat (>= 1.8.11)
 LazyData: TRUE
-RoxygenNote: 6.0.1
+RoxygenNote: 6.1.1
 NeedsCompilation: no
 Suggests: knitr, rmarkdown
 VignetteBuilder: knitr
 Encoding: UTF-8
 URL: https://www.ncbi.nlm.nih.gov/pubmed/29233836
-Packaged: 2018-06-24 16:23:54 UTC; Marci
+Packaged: 2019-04-06 13:45:44 UTC; marci
 Author: Marton Kolossvary [aut, cre]
 Repository: CRAN
-Date/Publication: 2018-06-24 16:58:40 UTC
+Date/Publication: 2019-04-09 04:43:16 UTC
