@@ -32,7 +32,7 @@ DICOM = load_dicom(filename = "C:/DICOM/")
 
 1. Converts DICOM files to RIA_image class using the *readDICOM* function of the *oro.dicom* package. If *load_nifti* is used the image loading is done by the *readNIfTI* function of the *oro.nifti* package, while the function *read.nrrd* is used from the *nat* package in case *load_nrrd* is used.
 
-1. If **mask_filename** is provided, then the image is filtered one of two ways. If the **mask_filename** is the same as the **filename**, then the values in **keep_mask_values** indicate which voxels values to keep in the original image. This way the image can be segmented for a specific subset of voxels with given intensities. For example, if you would wish to only analyze low-density non-calcified voxels, you could set the **keep_mask_values** to **-100:30**. If a different folder is given to **mask_filename**, then *RIA* loads the mask image which needs to be the same image type as the original image. Using the **keep_mask_values**, you can select which values you consider to indicate which voxels to keep. By convention, the default is 1. However, multiple values may be given, which is convenient in cases when several regions of interest are provided in the mask image. Furthermore, some software after image manipulation reverse the order of the images in the Z axis, and therefore they need to be changed back. In this case **switch_z** needs to be set *TRUE*. Whenever using mask images to identify voxels to be analyzed, please always make sure, that the orientation of the mask image and of the original image is the same!
+1. If **mask_filename** is provided, then the image is filtered one of two ways. If the **mask_filename** is the same as the **filename**, then the values in **keep_mask_values** indicate which voxels values to keep in the original image. This way the image can be segmented for a specific subset of voxels with given intensities. For example, if you would wish to only analyze low-density non-calcified voxels, you could set the **keep_mask_values** to **-100:30**. If a different folder is given to **mask_filename**, then *RIA* loads the mask image which needs to be the same image type as the original image. **mask_filename** can also be a character vector containg paths to multiple mask files. If multiple are supplied, then those voxels are kept which have one of the values of **keep_mask_values** in any of the supplied masks. Using the **keep_mask_values**, you can select which values you consider to indicate which voxels to keep. By convention, the default is 1. However, multiple values may be given, which is convenient in cases when several regions of interest are provided in the mask image. Furthermore, some software after image manipulation reverse the order of the images in the Z axis, and therefore they need to be changed back. In this case **switch_z** needs to be set *TRUE*. Whenever using mask images to identify voxels to be analyzed, please always make sure, that the orientation of the mask image and of the original image is the same!
 
 1. The 2D or 3D image is croped to the smallest bounding box still containing the whole image. It is useful to minimize the size of the image to save memory. The **zero_value** supplied to the *load_dicom*, *load_nifti* or *load_nrrd* function is used to identify voxels not containing any data. If it is not supplied, then the smallest value present in the dataset is considered as indicating voxels without any data. If for some reason it is important that the RIA_image be the same size (same x,y,z dimensions) as the original supplied image, then this functionality can be turn off by:
 
@@ -163,7 +163,7 @@ names(DICOM$discretized)
 
 #First-order statistics
 First-order statistics are derived from the distribution of values and therefore discard all spatial information. Many of these metrics are commonly known (mean, median), however several metrics describing the heterogeneity of the values might be less known (energy, entropy). `RIA` can calculate 44 different first-order statistics using the *first_order* function. As with all statistical measures, it is saved in a separate slot of the *RIA_image*, and the name of the slot starts with *stat_* and since first-order, end with *fo*, resulting in the slot name of *stat_fo*.
-A detailed list and explanation of each statistic can be found in the supplementary material of: [Márton Kolossváry et al. ](https://www.ncbi.nlm.nih.gov/pubmed/29233836)
+A detailed list and explanation of each statistic can be found in the supplementary material of: [Márton Kolossváry et al. ](https://pubmed.ncbi.nlm.nih.gov/29233836/)
 
 By default, *first_order* calculates statistics on the image present in `RIA_image$data$orig`.
 ```{r}
@@ -281,7 +281,7 @@ names(DICOM$glcm)
 
 ##Statistics on GLCM matrices
 The main purpose of calculating GLCMs, is to derive statistics from them. GLCM statistics can be calculated using the *glcm_stat* function. Overall, `RIA` can calculate 240 different GLCM statistics of which some contain more than one value.
-A detailed list and explanation of each statistic can be found in the supplementary material of: [Márton Kolossváry et al. ](https://www.ncbi.nlm.nih.gov/pubmed/29233836)
+A detailed list and explanation of each statistic can be found in the supplementary material of: [Márton Kolossváry et al. ](https://pubmed.ncbi.nlm.nih.gov/29233836/)
 
 As previous functions, *glcm_stat* can process single or multiple GLCMs
 For single data processing, one can use the **use_slot** parameter to calculate GLCM statistics on a specific GLCM
@@ -404,9 +404,9 @@ names(DICOM$stat_geometry)
 #One click solution to calculate all radiomic statistics
 Previous chapters showed each detail of the RIA package. However, many researchers just wish to calculate radiomic features without having to know exactly what is going on and do not wish to fine tune all functions by themselves. The *radiomics_all* function does all the work. With a simple line of code, you can calculate all the desired parameters without any hassle. After loading the radiological images to `RIA` format, just type the following:
 ```{r, eval=FALSE}
-DICOM <- radiomics_all(DICOM, equal_prob = FALSE, bins_in = c(2,8,32,128), distance = c(1:3))
+DICOM <- radiomics_all(DICOM, equal_prob = "both")
 ```
-This simple line of code discretizes the image into 2, 8, 32 and 128 equally sized bins and calculates first-order statistics, GLCM based statistics averaged in all directions for distances 1, 2 and 3, GLRLM based statistics averaged in all directions and geometry based statistics on the original image. If you wish to calculate first-order statistics or geometry based statistics on discretized images as well, you can specify this by setting **fo_discretized** and **geometry_discretized** to *TRUE*.
+This simple line of code discretizes the image into 8, 16 and 32 equally sized and equal interval bins and calculates first-order statistics, GLCM based statistics averaged in all directions at distances 1, GLRLM based statistics averaged in all directions and geometry based statistics on the original and discretized images. Arguments of *radiomics_all* allows to modify defaults and calculate parameters as desired.
 
 In the next section learn how to export all you calculated statistics just using one line of code.
 
@@ -422,4 +422,4 @@ And that's it! There you have your first radiomics analysis!
 #Conclsions
 `RIA` package for R is a fast, versatile and user-friendly way to calculate radiomic statistics on *DICOM*, *NIfTI* and *nrrd* images using only a few lines of code. One can calculate several hundreds of different statistics on various versions of an image.
 If you wish to better understand Radiomics, please read:
-["Cardiac Computed Tomography Radiomics: A Comprehensive Review on Radiomic Techniques"](https://www.ncbi.nlm.nih.gov/pubmed/28346329) and ["Radiomic Features Are Superior to Conventional Quantitative Computed Tomographic Metrics to Identify Coronary Plaques With Napkin-Ring Sign"](https://www.ncbi.nlm.nih.gov/pubmed/29233836) which describes the calculation and each statistic in detail in the supplementary files.
+["Cardiac Computed Tomography Radiomics: A Comprehensive Review on Radiomic Techniques"](https://pubmed.ncbi.nlm.nih.gov/28346329/) and ["Radiomic Features Are Superior to Conventional Quantitative Computed Tomographic Metrics to Identify Coronary Plaques With Napkin-Ring Sign"](https://pubmed.ncbi.nlm.nih.gov/29233836/) which describes the calculation and each statistic in detail in the supplementary files.

@@ -13,8 +13,9 @@
 #' 
 #' @param bins_in integer vector, number of bins specified.
 #' 
-#' @param equal_prob logical, indicating to cut data into bins with equal relative frequencies.
-#' If FALSE, then equal interval bins will be used.
+#' @param equal_prob logical or string, indicating to cut data into bins with equal relative frequencies.
+#' If FALSE, then equal interval bins will be used. If \emph{"both"} is supplied, the both equally probable
+#' and equal interval bins will be created.
 #' 
 #' @param fo_discretized logical, indicating whether to calculate first-order statistics on 
 #' discretized images.
@@ -38,8 +39,7 @@
 #'
 #' @examples \dontrun{
 #' #Discretize loaded image and then calculate all radiomic statistics
-#' RIA_image <- radiomics_all(RIA_image, equal_prob = FALSE, bins_in= c(2,8,32,128), distance = c(1:3))
-#' RIA_image <- radiomics_all(RIA_image, equal_prob = TRUE, bins_in= c(2,8,32,128), distance = c(1:3))
+#' DICOM <- radiomics_all(DICOM, equal_prob = "both", bins_in= c(32,64), distance = c(1:2))
 #' }
 #' 
 #' @references Márton KOLOSSVÁRY et al.
@@ -47,22 +47,27 @@
 #' Metrics to Identify Coronary Plaques With Napkin-Ring Sign
 #' Circulation: Cardiovascular Imaging (2017).
 #' DOI: 10.1161/circimaging.117.006843
-#' \url{https://www.ncbi.nlm.nih.gov/pubmed/29233836}
+#' \url{https://pubmed.ncbi.nlm.nih.gov/29233836/}
 #' 
 #' Márton KOLOSSVÁRY et al.
 #' Cardiac Computed Tomography Radiomics: A Comprehensive Review on Radiomic Techniques.
 #' Journal of Thoracic Imaging (2018).
 #' DOI: 10.1097/RTI.0000000000000268
-#' \url{https://www.ncbi.nlm.nih.gov/pubmed/28346329}
+#' \url{https://pubmed.ncbi.nlm.nih.gov/28346329/}
 #' @encoding UTF-8
 
-radiomics_all <- function(RIA_data_in, bins_in=c(2,8,32,128), equal_prob = FALSE,
+radiomics_all <- function(RIA_data_in, bins_in=c(8, 16, 32), equal_prob = "both",
                           fo_discretized = FALSE,
-                          distance = c(1,2, 3), statistic = "mean(X, na.rm = TRUE)",
-                          geometry_discretized = FALSE,
+                          distance = c(1), statistic = "mean(X, na.rm = TRUE)",
+                          geometry_discretized = TRUE,
                           verbose_in = TRUE) {
   
-  RIA_data_in <- discretize(RIA_data_in, bins_in=bins_in, equal_prob = equal_prob, verbose_in = verbose_in)
+  if(equal_prob == "both") {
+    RIA_data_in <- discretize(RIA_data_in, bins_in=bins_in, equal_prob = TRUE, verbose_in = verbose_in)
+    RIA_data_in <- discretize(RIA_data_in, bins_in=bins_in, equal_prob = FALSE, verbose_in = verbose_in)
+  } else {
+    RIA_data_in <- discretize(RIA_data_in, bins_in=bins_in, equal_prob = equal_prob, verbose_in = verbose_in)
+  }
   
   RIA_data_in <- first_order(RIA_data_in, use_type = "single", use_orig = TRUE, verbose_in = verbose_in)
   if(fo_discretized) {RIA_data_in <- first_order(RIA_data_in, use_type = "discretized", verbose_in = verbose_in)}

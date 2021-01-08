@@ -15,8 +15,9 @@ load_nifti(filename, image_dim = 3, mask_filename = NULL,
 
 \item{image_dim}{integer, dimensions of the image.}
 
-\item{mask_filename}{string, file path to optional directory containing \emph{NIfTI} file
-of mask image.}
+\item{mask_filename}{string vector, file path to optional directory containing \emph{NIfTI} file
+of mask image. If multiple are supplied, then those voxels are kept which have one of the values of \emph{keep_mask_values}
+in any of the supplied masks.}
 
 \item{keep_mask_values}{integer vector, indicates which value or values of the mask image
 to use as indicator to identify voxels wished to be processed. Usually 1-s indicate voxels
@@ -130,7 +131,7 @@ information is also saved in the log, which might be needed for further analysis
 \dontrun{
  #Image will be croped to smallest bounding box, and smallest values will be changed to NA,
  while 1024 will be substracted from all other data points.
- RIA_image <- load_nifti("C:/Users/Test/Documents/Radiomics/John_Smith/NIfTI_folder/sample.nii")
+ RIA_image <- load_nifti("/Users/Test/Documents/Radiomics/John_Smith/NIfTI_folder/sample.nii")
  }
  
 }
@@ -140,11 +141,11 @@ Radiomic Features Are Superior to Conventional Quantitative Computed Tomographic
 Metrics to Identify Coronary Plaques With Napkin-Ring Sign
 Circulation: Cardiovascular Imaging (2017).
 DOI: 10.1161/circimaging.117.006843
-\url{https://www.ncbi.nlm.nih.gov/pubmed/29233836}
+\url{https://pubmed.ncbi.nlm.nih.gov/29233836/}
 
 Márton KOLOSSVÁRY et al.
 Cardiac Computed Tomography Radiomics: A Comprehensive Review on Radiomic Techniques.
 Journal of Thoracic Imaging (2018).
 DOI: 10.1097/RTI.0000000000000268
-\url{https://www.ncbi.nlm.nih.gov/pubmed/28346329}
+\url{https://pubmed.ncbi.nlm.nih.gov/28346329/}
 }

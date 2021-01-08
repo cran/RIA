@@ -21,13 +21,13 @@
 #' Metrics to Identify Coronary Plaques With Napkin-Ring Sign
 #' Circulation: Cardiovascular Imaging (2017).
 #' DOI: 10.1161/circimaging.117.006843
-#' \url{https://www.ncbi.nlm.nih.gov/pubmed/29233836}
+#' \url{https://pubmed.ncbi.nlm.nih.gov/29233836/}
 #' 
 #' Márton KOLOSSVÁRY et al.
 #' Cardiac Computed Tomography Radiomics: A Comprehensive Review on Radiomic Techniques.
 #' Journal of Thoracic Imaging (2018).
 #' DOI: 10.1097/RTI.0000000000000268
-#' \url{https://www.ncbi.nlm.nih.gov/pubmed/28346329}
+#' \url{https://pubmed.ncbi.nlm.nih.gov/28346329/}
 #' @encoding UTF-8
 
 save_RIA <- function(RIA_image, save_to = "C:/", save_name = "RIA_stat", group_name = "Case", stats = c("stat_fo", "stat_glcm_mean", "stat_glrlm_mean", "stat_geometry")) {

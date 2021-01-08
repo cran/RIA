@@ -15,8 +15,9 @@
 #'
 #' @param filename string, file path to directory containing \emph{dcm} files.
 #' 
-#' @param mask_filename string, file path to optional directory containing \emph{dcm} files
-#' of mask image.
+#' @param mask_filename string vector, file path to optional directory containing \emph{dcm} files
+#' of mask image. If multiple are supplied, then those voxels are kept which have one of the values of \emph{keep_mask_values}
+#' in any of the supplied masks.
 #' 
 #' @param keep_mask_values integer vector, indicates which value or values of the mask image
 #' to use as indicator to identify voxels wished to be processed. Usually 1-s indicate voxels
@@ -137,7 +138,7 @@
 #' @examples \dontrun{
 #'  #Image will be croped to smallest bounding box, and smallest values will be changed to NA,
 #'  while 1024 will be substracted from all other data points.
-#'  RIA_image <- load_dicom("C://Users//Test//Documents//Radiomics//John_Smith//DICOM_folder//")
+#'  RIA_image <- load_dicom("/Users/Test/Documents/Radiomics/John_Smith/DICOM_folder/")
 #'  }
 #'  
 #' @references Márton KOLOSSVÁRY et al.
@@ -145,13 +146,13 @@
 #' Metrics to Identify Coronary Plaques With Napkin-Ring Sign
 #' Circulation: Cardiovascular Imaging (2017).
 #' DOI: 10.1161/circimaging.117.006843
-#' \url{https://www.ncbi.nlm.nih.gov/pubmed/29233836}
+#' \url{https://pubmed.ncbi.nlm.nih.gov/29233836/}
 #' 
 #' Márton KOLOSSVÁRY et al.
 #' Cardiac Computed Tomography Radiomics: A Comprehensive Review on Radiomic Techniques.
 #' Journal of Thoracic Imaging (2018).
 #' DOI: 10.1097/RTI.0000000000000268
-#' \url{https://www.ncbi.nlm.nih.gov/pubmed/28346329}
+#' \url{https://pubmed.ncbi.nlm.nih.gov/28346329/}
 #' @encoding UTF-8
 
 
@@ -161,19 +162,19 @@ load_dicom <- function(filename, mask_filename = NULL, keep_mask_values = 1, swi
                        recursive_in = TRUE, exclude_in = "sql",
                        mode_in = "integer", transpose_in = TRUE, pixelData_in = TRUE,
                        mosaic_in = FALSE, mosaicXY_in = NULL, sequence_in = FALSE, ...
-                       )
+)
 {
   if(verbose_in) {message(paste0("LOADING DICOM FILES FROM: ", filename, "\n"))}
-
+  
   dcmImages <- oro.dicom::readDICOM(filename, recursive = recursive_in, exclude = exclude_in, verbose = verbose_in)
-
-
+  
+  
   ###create 3D matrix - crop to smallest bounding box - change 0/-1024 values to NA - center around 0
   if(length(dcmImages$img)==1) {
-  data  <- suppressWarnings(oro.dicom::create3D(dcmImages, mode = mode_in, transpose = transpose_in, pixelData = pixelData_in,
-                        mosaic = mosaic_in, mosaicXY = mosaicXY_in, sequence = sequence_in))
+    data  <- suppressWarnings(oro.dicom::create3D(dcmImages, mode = mode_in, transpose = transpose_in, pixelData = pixelData_in,
+                                                  mosaic = mosaic_in, mosaicXY = mosaicXY_in, sequence = sequence_in))
   } else {
-  data  <- oro.dicom::create3D(dcmImages, mode = mode_in, transpose = transpose_in, pixelData = pixelData_in,
+    data  <- oro.dicom::create3D(dcmImages, mode = mode_in, transpose = transpose_in, pixelData = pixelData_in,
                                  mosaic = mosaic_in, mosaicXY = mosaicXY_in, sequence = sequence_in)
   }
   
@@ -181,37 +182,48 @@ load_dicom <- function(filename, mask_filename = NULL, keep_mask_values = 1, swi
   RIA_image <- list(data = NULL, header = list(), log = list())
   if(length(dim(data)) == 3 | length(dim(data)) == 2) {class(RIA_image) <- append(class(RIA_image), "RIA_image")
   } else {stop(paste0("DICOM LOADED IS ", length(dim(data)), " DIMENSIONAL. ONLY 2D AND 3D DATA ARE SUPPORTED!"))}
-
+  
   
   if(is.null(zero_value)) zero_value <- min(data, na.rm = TRUE)
   
   #mask image
   if(!is.null(mask_filename)) {
-      if(identical(filename, mask_filename)) {
-          if(verbose_in) {message(paste0("CANCELING OUT VALUES OTHER THAN THOSE SPECIFIED IN 'keep_mask_values' PARAMETER \n"))}
-          data[!data %in% keep_mask_values] <- zero_value
-      } else {
-          if(verbose_in) {message(paste0("LOADING DICOM IMAGES OF MASK IMAGE FROM: ", mask_filename, "\n"))}
-          dcmImages_mask <- oro.dicom::readDICOM(mask_filename, recursive = recursive_in, exclude = exclude_in, verbose = verbose_in)
-          if(length(dcmImages_mask$img)==1) {
-              data_mask  <- suppressWarnings(oro.dicom::create3D(dcmImages_mask, mode = mode_in, transpose = transpose_in, pixelData = pixelData_in,
-                                                            mosaic = mosaic_in, mosaicXY = mosaicXY_in, sequence = sequence_in))
-          } else {
-              data_mask  <- oro.dicom::create3D(dcmImages_mask, mode = mode_in, transpose = transpose_in, pixelData = pixelData_in,
-                                           mosaic = mosaic_in, mosaicXY = mosaicXY_in, sequence = sequence_in)
+    if(identical(filename, mask_filename)) {
+      if(verbose_in) {message(paste0("CANCELING OUT VALUES OTHER THAN THOSE SPECIFIED IN 'keep_mask_values' PARAMETER \n"))}
+      data[!data %in% keep_mask_values] <- zero_value
+    } else {
+      for(i in 1:length(mask_filename)) {
+        mask_filename_i <- mask_filename[i]
+        
+        if(verbose_in) {message(paste0("LOADING DICOM IMAGES OF MASK IMAGE FROM: ", mask_filename_i, "\n"))}
+        dcmImages_mask <- oro.dicom::readDICOM(mask_filename_i, recursive = recursive_in, exclude = exclude_in, verbose = verbose_in)
+        if(length(dcmImages_mask$img)==1) {
+          data_mask  <- suppressWarnings(oro.dicom::create3D(dcmImages_mask, mode = mode_in, transpose = transpose_in, pixelData = pixelData_in,
+                                                             mosaic = mosaic_in, mosaicXY = mosaicXY_in, sequence = sequence_in))
+        } else {
+          data_mask  <- oro.dicom::create3D(dcmImages_mask, mode = mode_in, transpose = transpose_in, pixelData = pixelData_in,
+                                            mosaic = mosaic_in, mosaicXY = mosaicXY_in, sequence = sequence_in)
+        }
+        
+        if(!all(dim(data) == dim(data_mask))) {
+          stop(paste0("DIMENSIONS OF THE IMAGE AND THE MASK ARE NOT EQUAL!\n",
+                      "DIMENSION OF IMAGE: ", dim(data)[1], " ",  dim(data)[2], " ", dim(data)[3], "\n",
+                      "DIMENSION OF MASK:  ", dim(data_mask)[1], " ", dim(data_mask)[2], " ", dim(data_mask)[3], "\n"))
+        } else {
+          if(switch_z) {data_mask[,,dim(data_mask)[3]:1] <- data_mask
+          message("MASK IMAGE WAS TRANSFORMED TO ACHIEVE PROPER ORIENTATION OF THE ORIGINAL AND THE MASK IMAGE.\n")
           }
           
-          if(!all(dim(data) == dim(data_mask))) {
-              stop(paste0("DIMENSIONS OF THE IMAGE AND THE MASK ARE NOT EQUAL!\n",
-                          "DIMENSION OF IMAGE: ", dim(data)[1], " ",  dim(data)[2], " ", dim(data)[3], "\n",
-                          "DIMENSION OF MASK:  ", dim(data_mask)[1], " ", dim(data_mask)[2], " ", dim(data_mask)[3], "\n"))
-          } else {
-              if(switch_z) {data_mask[,,dim(data_mask)[3]:1] <- data_mask
-              message("MASK IMAGE WAS TRANSFORMED TO ACHIEVE PROPER ORIENTATION OF THE ORIGINAL AND THE MASK IMAGE.\n")
-              }
-              data[!data_mask %in% keep_mask_values] <- zero_value
+          data_mask[!(data_mask %in% keep_mask_values)] <- NA
+          if(i == 1) {
+            data_mask_all <- data_mask
+          }else {
+            data_mask_all[is.na(data_mask_all)] <- data_mask[is.na(data_mask_all)]
           }
+        }
       }
+      data[!(data_mask_all %in% keep_mask_values)] <- zero_value
+    }
   }
   
   
@@ -227,39 +239,39 @@ load_dicom <- function(filename, mask_filename = NULL, keep_mask_values = 1, swi
   
   if(!is.null(mask_filename)) {
     if(identical(filename, mask_filename)) {
-      RIA_image$log$events  <- "Filtered_using_"
+      RIA_image$log$events  <- paste0("Filtered_using_values_", paste0(keep_mask_values, collapse = "_"))
     } else {
-      RIA_image$log$events  <- "Filtered_using_mask_values_"
+      RIA_image$log$events  <- paste0("Filtered_using_mask_values_", paste0(keep_mask_values, collapse = "_"))
     }
   }
   
-
+  
   
   ###Crop data
   if(crop_in)
   {
     if(verbose_in) {message(paste0("SMALLEST VALUES IS ", zero_value, ", AND WILL BE CONSIDERED AS REFERENCE POINT TO IDENTIFY VOXELS WITHOUT ANY SIGNAL\n"))}
     if(verbose_in & center_in == FALSE) message(paste0("MIGHT CONSIDER RESCALING, SINCE SMALLEST VALUE IS NOT -1024, AND THUS HU VALUES MIGHT NOT BE CORRECT\n"))
-
+    
     RIA_image <- crop(RIA_image, zero_value, write_orig = TRUE, verbose_in = verbose_in)
   }
-
-
+  
+  
   ###Replace values
   if(replace_in)
   {
     if(verbose_in) {message(paste0("SMALLEST VALUES IS ", zero_value, ", AND WILL CHANGE TO NA\n"))}
-
+    
     RIA_image <- change_to(RIA_image, zero_value_in = zero_value, verbose_in = verbose_in)
   }
-
+  
   ###Shift to
   if(center_in & (min(data, na.rm = T) != min_to))
   {
     if(verbose_in) {message(paste0("SMALLEST VALUES IS not ", min_to, " THEREFORE SHIFTING VALUES TO ACHIVE THIS\n"))}
     RIA_image <- shift_to(RIA_image, to = min_to, min_value_in = zero_value, verbose_in = verbose_in)
   }
-
+  
   ###Create dataframe of standard or specific DICOM information
   header <- create_header(filename, header_add, header_exclude)
   RIA_image$header <- header
@@ -272,14 +284,14 @@ load_dicom <- function(filename, mask_filename = NULL, keep_mask_values = 1, swi
   RIA_image$log$surface_volume_r <- ifelse(RIA_image$log$orig_vol_mm != 0, RIA_image$log$orig_surf_mm/RIA_image$log$orig_vol_mm, 0)
   RIA_image$log$orig_xy_dim <- xy_dim
   RIA_image$log$orig_z_dim  <- z_dim
-
-
-
+  
+  
+  
   if(verbose_in) {message(paste0("SUCCESSFULLY LOADED ", RIA_image$header$PatientsName, "'s DICOM IMAGES TO RIA IMAGE CLASS\n"))}
   data_NA <- as.vector(RIA_image$data$orig)
   data_NA <- data_NA[!is.na(data_NA)]
-
+  
   if(length(data_NA) == 0) {message("WARNING: RIA_image$data DOES NOT CONTAIN ANY DATA!!!\n")}
-
+  
   return(RIA_image)
 }

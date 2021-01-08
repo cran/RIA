@@ -16,8 +16,9 @@
 #' 
 #' @param image_dim integer, dimensions of the image.
 #' 
-#' @param mask_filename string, file path to optional directory containing \emph{NIfTI} file
-#' of mask image.
+#' @param mask_filename string vector, file path to optional directory containing \emph{NIfTI} file
+#' of mask image. If multiple are supplied, then those voxels are kept which have one of the values of \emph{keep_mask_values}
+#' in any of the supplied masks. 
 #' 
 #' @param keep_mask_values integer vector, indicates which value or values of the mask image
 #' to use as indicator to identify voxels wished to be processed. Usually 1-s indicate voxels
@@ -115,7 +116,7 @@
 #' @examples \dontrun{
 #'  #Image will be croped to smallest bounding box, and smallest values will be changed to NA,
 #'  while 1024 will be substracted from all other data points.
-#'  RIA_image <- load_nifti("C:/Users/Test/Documents/Radiomics/John_Smith/NIfTI_folder/sample.nii")
+#'  RIA_image <- load_nifti("/Users/Test/Documents/Radiomics/John_Smith/NIfTI_folder/sample.nii")
 #'  }
 #'  
 #' @references Márton KOLOSSVÁRY et al.
@@ -123,13 +124,13 @@
 #' Metrics to Identify Coronary Plaques With Napkin-Ring Sign
 #' Circulation: Cardiovascular Imaging (2017).
 #' DOI: 10.1161/circimaging.117.006843
-#' \url{https://www.ncbi.nlm.nih.gov/pubmed/29233836}
+#' \url{https://pubmed.ncbi.nlm.nih.gov/29233836/}
 #' 
 #' Márton KOLOSSVÁRY et al.
 #' Cardiac Computed Tomography Radiomics: A Comprehensive Review on Radiomic Techniques.
 #' Journal of Thoracic Imaging (2018).
 #' DOI: 10.1097/RTI.0000000000000268
-#' \url{https://www.ncbi.nlm.nih.gov/pubmed/28346329}
+#' \url{https://pubmed.ncbi.nlm.nih.gov/28346329/}
 #' @encoding UTF-8
 
 
@@ -148,7 +149,7 @@ load_nifti <- function(filename, image_dim = 3, mask_filename = NULL, keep_mask_
   dim_string <- paste0( c(rep(",", image_dim-1), rep(",1", (dcmImages@dim_)[1]-image_dim)), collapse="")
   data  <- dcmImages@.Data
   data <- eval(parse(text= paste0("data[", dim_string, "]")))
-                      
+  
   ###create RIA_image structure
   RIA_image <- list(data = NULL, header = list(), log = list())
   if(length(dim(data)) == 3 | length(dim(data)) == 2) {class(RIA_image) <- append(class(RIA_image), "RIA_image")
@@ -163,21 +164,32 @@ load_nifti <- function(filename, image_dim = 3, mask_filename = NULL, keep_mask_
       if(verbose_in) {message(paste0("CANCELING OUT VALUES OTHER THAN THOSE SPECIFIED IN 'keep_mask_values' PARAMETER \n"))}
       data[!data %in% keep_mask_values] <- zero_value
     } else {
-      if(verbose_in) {message(paste0("LOADING NIFTI IMAGES OF MASK IMAGE FROM: ", mask_filename, "\n"))}
-      dcmImages_mask <- oro.nifti::readNIfTI(mask_filename, verbose = FALSE, reorient = reorient_in)
-      data_mask  <- dcmImages@.Data
-      data_mask <- eval(parse(text= paste0("data_mask[", dim_string, "]")))
-      
-      if(!all(dim(data) == dim(data_mask))) {
-        stop(paste0("DIMENSIONS OF THE IMAGE AND THE MASK ARE NOT EQUAL!\n",
-                    "DIMENSION OF IMAGE: ", dim(data)[1], " ",  dim(data)[2], " ", dim(data)[3], "\n",
-                    "DIMENSION OF MASK:  ", dim(data_mask)[1], " ", dim(data_mask)[2], " ", dim(data_mask)[3], "\n"))
-      } else {
-        if(switch_z) {data_mask[,,dim(data_mask)[3]:1] <- data_mask
-        message("MASK IMAGE WAS TRANSFORMED TO ACHIEVE PROPER ORIENTATION OF THE ORIGINAL AND THE MASK IMAGE.\n")
+      for(i in 1:length(mask_filename)) {
+        mask_filename_i <- mask_filename[i]
+        
+        if(verbose_in) {message(paste0("LOADING NIFTI IMAGES OF MASK IMAGE FROM: ", mask_filename, "\n"))}
+        dcmImages_mask <- oro.nifti::readNIfTI(mask_filename_i, verbose = FALSE, reorient = mask_filename_i)
+        data_mask  <- dcmImages@.Data
+        data_mask <- eval(parse(text= paste0("data_mask[", dim_string, "]")))
+        
+        if(!all(dim(data) == dim(data_mask))) {
+          stop(paste0("DIMENSIONS OF THE IMAGE AND THE MASK ARE NOT EQUAL!\n",
+                      "DIMENSION OF IMAGE: ", dim(data)[1], " ",  dim(data)[2], " ", dim(data)[3], "\n",
+                      "DIMENSION OF MASK:  ", dim(data_mask)[1], " ", dim(data_mask)[2], " ", dim(data_mask)[3], "\n"))
+        } else {
+          if(switch_z) {data_mask[,,dim(data_mask)[3]:1] <- data_mask
+          message("MASK IMAGE WAS TRANSFORMED TO ACHIEVE PROPER ORIENTATION OF THE ORIGINAL AND THE MASK IMAGE.\n")
+          }
+          
+          data_mask[!(data_mask %in% keep_mask_values)] <- NA
+          if(i == 1) {
+            data_mask_all <- data_mask
+          }else {
+            data_mask_all[is.na(data_mask_all)] <- data_mask[is.na(data_mask_all)]
+          }
         }
-        data[!data_mask %in% keep_mask_values] <- zero_value
       }
+      data[!(data_mask %in% keep_mask_values)] <- zero_value
     }
   }
   
@@ -194,9 +206,9 @@ load_nifti <- function(filename, image_dim = 3, mask_filename = NULL, keep_mask_
   
   if(!is.null(mask_filename)) {
     if(identical(filename, mask_filename)) {
-      RIA_image$log$events  <- "Filtered_using_"
+      RIA_image$log$events  <- paste0("Filtered_using_values_", paste0(keep_mask_values, collapse = "_"))
     } else {
-      RIA_image$log$events  <- "Filtered_using_mask_values_"
+      RIA_image$log$events  <- paste0("Filtered_using_mask_values_", paste0(keep_mask_values, collapse = "_"))
     }
   }
   

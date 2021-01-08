@@ -5,9 +5,9 @@
 \alias{radiomics_all}
 \title{Calculates all radiomic statistics on supplied RIA_image}
 \usage{
-radiomics_all(RIA_data_in, bins_in = c(2, 8, 32, 128),
-  equal_prob = FALSE, fo_discretized = FALSE, distance = c(1, 2, 3),
-  statistic = "mean(X, na.rm = TRUE)", geometry_discretized = FALSE,
+radiomics_all(RIA_data_in, bins_in = c(8, 16, 32), equal_prob = "both",
+  fo_discretized = FALSE, distance = c(1),
+  statistic = "mean(X, na.rm = TRUE)", geometry_discretized = TRUE,
   verbose_in = TRUE)
 }
 \arguments{
@@ -15,8 +15,9 @@ radiomics_all(RIA_data_in, bins_in = c(2, 8, 32, 128),
 
 \item{bins_in}{integer vector, number of bins specified.}
 
-\item{equal_prob}{logical, indicating to cut data into bins with equal relative frequencies.
-If FALSE, then equal interval bins will be used.}
+\item{equal_prob}{logical or string, indicating to cut data into bins with equal relative frequencies.
+If FALSE, then equal interval bins will be used. If \emph{"both"} is supplied, the both equally probable
+and equal interval bins will be created.}
 
 \item{fo_discretized}{logical, indicating whether to calculate first-order statistics on 
 discretized images.}
@@ -51,8 +52,7 @@ discretizations is requested.
 \examples{
 \dontrun{
 #Discretize loaded image and then calculate all radiomic statistics
-RIA_image <- radiomics_all(RIA_image, equal_prob = FALSE, bins_in= c(2,8,32,128), distance = c(1:3))
-RIA_image <- radiomics_all(RIA_image, equal_prob = TRUE, bins_in= c(2,8,32,128), distance = c(1:3))
+DICOM <- radiomics_all(DICOM, equal_prob = "both", bins_in= c(32,64), distance = c(1:2))
 }
 
 }
@@ -62,11 +62,11 @@ Radiomic Features Are Superior to Conventional Quantitative Computed Tomographic
 Metrics to Identify Coronary Plaques With Napkin-Ring Sign
 Circulation: Cardiovascular Imaging (2017).
 DOI: 10.1161/circimaging.117.006843
-\url{https://www.ncbi.nlm.nih.gov/pubmed/29233836}
+\url{https://pubmed.ncbi.nlm.nih.gov/29233836/}
 
 Márton KOLOSSVÁRY et al.
 Cardiac Computed Tomography Radiomics: A Comprehensive Review on Radiomic Techniques.
 Journal of Thoracic Imaging (2018).
 DOI: 10.1097/RTI.0000000000000268
-\url{https://www.ncbi.nlm.nih.gov/pubmed/28346329}
+\url{https://pubmed.ncbi.nlm.nih.gov/28346329/}
 }

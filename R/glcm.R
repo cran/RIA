@@ -66,20 +66,20 @@
 #' Textural Features for Image Classification.
 #' IEEE Transactions on Systems, Man, and Cybernetics. 1973; SMC-3:610-621.
 #' DOI: 10.1109/TSMC.1973.4309314
-#' \url{http://ieeexplore.ieee.org/document/4309314/}
+#' \url{https://ieeexplore.ieee.org/document/4309314/}
 #' 
 #' Márton KOLOSSVÁRY et al.
 #' Radiomic Features Are Superior to Conventional Quantitative Computed Tomographic
 #' Metrics to Identify Coronary Plaques With Napkin-Ring Sign
 #' Circulation: Cardiovascular Imaging (2017).
 #' DOI: 10.1161/circimaging.117.006843
-#' \url{https://www.ncbi.nlm.nih.gov/pubmed/29233836}
+#' \url{https://pubmed.ncbi.nlm.nih.gov/29233836/}
 #' 
 #' Márton KOLOSSVÁRY et al.
 #' Cardiac Computed Tomography Radiomics: A Comprehensive Review on Radiomic Techniques.
 #' Journal of Thoracic Imaging (2018).
 #' DOI: 10.1097/RTI.0000000000000268
-#' \url{https://www.ncbi.nlm.nih.gov/pubmed/28346329}
+#' \url{https://pubmed.ncbi.nlm.nih.gov/28346329/}
 #' @encoding UTF-8
 
 glcm <- function(RIA_data_in, off_right = 1, off_down = 0, off_z = 0, symmetric = TRUE, normalize = TRUE, use_type = "single", use_orig = FALSE, use_slot = NULL, save_name = NULL, verbose_in = TRUE)

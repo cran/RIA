@@ -174,7 +174,7 @@ fractal <- function(RIA_data_in)
     return(output)
   }
 
-  if(length(dim(data_in)) != 3) {stop(paste0("Data is not 3D, but ", length(dim(data_in))," dimentional! Only 3D data is supported by glcm_3D!"))}
+  if(length(dim(data_in)) != 3) {stop(paste0("Data is not 3D, but ", length(dim(data_in))," dimentional! Only 3D data is supported!"))}
 
   dim_x <- dim(data_in)[1]
   dim_y <- dim(data_in)[2]
