@@ -111,7 +111,7 @@ glrlm_all <- function(RIA_data_in, use_type = "discretized", use_orig = FALSE, u
     for (i in 1: dim(offsets)[1])
     {
         RIA_data_in <- glrlm(RIA_data_in, off_right = offsets[i,1], off_down = offsets[i,2], off_z = offsets[i,3],
-                            use_type = use_type, use_orig = use_orig, use_slot = use_slot, save_name = save_name[i], verbose_in = verbose_in)
+                             use_type = use_type, use_orig = use_orig, use_slot = use_slot, save_name = save_name[i], verbose_in = verbose_in)
     }
     
     return(RIA_data_in)

@@ -5,10 +5,21 @@
 \alias{load_nifti}
 \title{Loads NIfTI images to RIA image format}
 \usage{
-load_nifti(filename, image_dim = 3, mask_filename = NULL,
-  keep_mask_values = 1, switch_z = TRUE, crop_in = TRUE,
-  replace_in = TRUE, center_in = FALSE, zero_value = NULL,
-  min_to = -1024, verbose_in = TRUE, reorient_in = TRUE, ...)
+load_nifti(
+  filename,
+  image_dim = 3,
+  mask_filename = NULL,
+  keep_mask_values = 1,
+  switch_z = TRUE,
+  crop_in = TRUE,
+  replace_in = TRUE,
+  center_in = FALSE,
+  zero_value = NULL,
+  min_to = -1024,
+  verbose_in = TRUE,
+  reorient_in = TRUE,
+  ...
+)
 }
 \arguments{
 \item{filename}{string, file path to directory containing \emph{NIfTI} file.}

@@ -5,8 +5,11 @@
 \alias{glrlm_stat_all}
 \title{Aggregates GLRLM-based statistics based-on supplied function}
 \usage{
-glrlm_stat_all(RIA_data_in, statistic = "mean(X, na.rm = TRUE)",
-  verbose_in = TRUE)
+glrlm_stat_all(
+  RIA_data_in,
+  statistic = "mean(X, na.rm = TRUE)",
+  verbose_in = TRUE
+)
 }
 \arguments{
 \item{RIA_data_in}{\emph{RIA_image}.}

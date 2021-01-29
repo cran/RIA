@@ -5,8 +5,14 @@
 \alias{glrlm_all}
 \title{Creates gray-level run length matrix of all possible directions of a RIA image}
 \usage{
-glrlm_all(RIA_data_in, use_type = "discretized", use_orig = FALSE,
-  use_slot = NULL, save_name = NULL, verbose_in = TRUE)
+glrlm_all(
+  RIA_data_in,
+  use_type = "discretized",
+  use_orig = FALSE,
+  use_slot = NULL,
+  save_name = NULL,
+  verbose_in = TRUE
+)
 }
 \arguments{
 \item{RIA_data_in}{\emph{RIA_image}.}

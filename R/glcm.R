@@ -84,107 +84,100 @@
 
 glcm <- function(RIA_data_in, off_right = 1, off_down = 0, off_z = 0, symmetric = TRUE, normalize = TRUE, use_type = "single", use_orig = FALSE, use_slot = NULL, save_name = NULL, verbose_in = TRUE)
 {
-  data_in_orig <- check_data_in(RIA_data_in, use_type = use_type, use_orig = use_orig, verbose_in = verbose_in)
-
+  data_in_orig <- check_data_in(RIA_data_in, use_type = use_type, use_orig = use_orig, use_slot = use_slot, verbose_in = verbose_in)
+  
   if(any(class(data_in_orig) != "list")) data_in_orig <- list(data_in_orig)
   list_names <- names(data_in_orig)
   if(!is.null(save_name) & (length(data_in_orig) != length(save_name))) {stop(paste0("PLEASE PROVIDE THE SAME NUMBER OF NAMES AS THERE ARE IMAGES!\n",
-                                                                                "NUMBER OF NAMES:  ", length(save_name), "\n",
-                                                                                "NUMBER OF IMAGES: ", length(data_in_orig), "\n"))
+                                                                                     "NUMBER OF NAMES:  ", length(save_name), "\n",
+                                                                                     "NUMBER OF IMAGES: ", length(data_in_orig), "\n"))
   }
   
   #cycle through all data
   for (k in 1: length(data_in_orig))
   {
-  data_in <-  data_in_orig[[k]]
-
-  data_NA <- as.vector(data_in)
-  data_NA <- data_NA[!is.na(data_NA)]
-  if(length(data_NA) == 0) {stop("WARNING: SUPPLIED RIA_image DOES NOT CONTAIN ANY DATA!!!")}
-  if(length(dim(data_in)) < 2 | length(dim(data_in)) > 3) stop(paste0("DATA LOADED IS ", length(dim(data_in)), " DIMENSIONAL. ONLY 2D AND 3D DATA ARE SUPPORTED!"))
-
-  dim_x <- dim(data_in)[1]
-  dim_y <- dim(data_in)[2]
-  dim_z <- ifelse(!is.na(dim(data_in)[3]), dim(data_in)[3], 1)
-  dist <- max(abs(off_right), abs(off_down), abs(off_z))  ##maximum offset needed to increase matrix
-
-  base_m <- array(NA, dim = c(dim_x+2*dist, dim_y+2*dist, dim_z+2*dist))
-  base_m[(1+dist):(dim_x+dist), (1+dist):(dim_y+dist), (1+dist):(dim_z+dist)] <- data_in ##create base matrix containing data_in which is enlarged by dist in all directions
-
-  shift_m <- array(NA, dim = c(dim_x+2*dist, dim_y+2*dist, dim_z+2*dist))
-  shift_m[(1+(dist+off_down)):(dim_x+(dist+off_down)), (1+(dist-off_right)):(dim_y+(dist-off_right)), (1+(dist+off_z)):(dim_z+(dist+off_z))] <- data_in
-
-  #create gray level number, first by the name of the file, then the event log, then by the number of gray levels
-  num_ind <- unlist(gregexpr('[1-9]', list_names[k]))
-  num_txt <- substr(list_names[k], num_ind[1], num_ind[length(num_ind)])
-  gray_levels <- as.numeric(num_txt)
-  if (length(gray_levels) == 0) {
+    data_in <-  data_in_orig[[k]]
+    
+    data_NA <- as.vector(data_in)
+    data_NA <- data_NA[!is.na(data_NA)]
+    if(length(data_NA) == 0) {stop("WARNING: SUPPLIED RIA_image DOES NOT CONTAIN ANY DATA!!!")}
+    if(length(dim(data_in)) < 2 | length(dim(data_in)) > 3) stop(paste0("DATA LOADED IS ", length(dim(data_in)), " DIMENSIONAL. ONLY 2D AND 3D DATA ARE SUPPORTED!"))
+    
+    dim_x <- dim(data_in)[1]
+    dim_y <- dim(data_in)[2]
+    dim_z <- ifelse(!is.na(dim(data_in)[3]), dim(data_in)[3], 1)
+    dist <- max(abs(off_right), abs(off_down), abs(off_z))  ##maximum offset needed to increase matrix
+    
+    base_m <- array(NA, dim = c(dim_x+2*dist, dim_y+2*dist, dim_z+2*dist))
+    base_m[(1+dist):(dim_x+dist), (1+dist):(dim_y+dist), (1+dist):(dim_z+dist)] <- data_in ##create base matrix containing data_in which is enlarged by dist in all directions
+    
+    shift_m <- array(NA, dim = c(dim_x+2*dist, dim_y+2*dist, dim_z+2*dist))
+    shift_m[(1+(dist+off_down)):(dim_x+(dist+off_down)), (1+(dist-off_right)):(dim_y+(dist-off_right)), (1+(dist+off_z)):(dim_z+(dist+off_z))] <- data_in
+    
+    #create gray level number, first by the name of the file, then the event log
+    num_ind <- unlist(gregexpr('[1-9]', list_names[k]))
+    num_txt <- substr(list_names[k], num_ind[1], num_ind[length(num_ind)])
+    gray_levels <- as.numeric(num_txt)
+    if (length(gray_levels) == 0) {
       txt <- automatic_name(RIA_data_in, use_orig, use_slot)
       num_ind <- unlist(gregexpr('[1-9]', txt))
       num_txt <- substr(txt, num_ind[1], num_ind[length(num_ind)])
       gray_levels <- as.numeric(num_txt)
-  } else {
-      data_v <- as.vector(data_in)
-      data_v <- data_v[!is.na(data_v)]
-      gray_levels <- length(unique(data_v))
-  }
-  
-  #populate GLCM
-  glcm <- matrix(NA, nrow = gray_levels, ncol = gray_levels)
-  for (i in 1:gray_levels)
-  {
-    for (j in 1: gray_levels)
-    {
-      glcm[i, j] <- sum(shift_m==i & base_m==j, na.rm = TRUE)
     }
-  }
-  
-  if(symmetric) glcm <- (glcm + t(glcm))
-  if(normalize) {
-    if(sum(glcm) == 0) {
-
-    } else {glcm <- glcm/sum(glcm)}
-  }
-
-  #export based-on processing type
-  if(use_type == "single") {
-
-    if(any(class(RIA_data_in) == "RIA_image") )
-    {
-      if(is.null(save_name)) {
-        txt <- automatic_name(RIA_data_in, use_orig, use_slot)
-        txt <- paste0(txt, "_", off_right, off_down, off_z)
-
-        RIA_data_in$glcm[[txt]] <- glcm
-
-      }
-      if(!is.null(save_name)) {RIA_data_in$glcm[[save_name]] <- glcm
+    gray_levels_unique <- unique(data_NA)[order(unique(data_NA))] #optimize which gray values to run on
+    
+    #populate GLCM
+    glcm <- matrix(0, nrow = gray_levels, ncol = gray_levels)
+    for (i in gray_levels_unique) {
+      for (j in gray_levels_unique) {
+        glcm[i, j] <- sum(shift_m==i & base_m==j, na.rm = TRUE)
       }
     }
-  }
-  
-  if(use_type == "discretized") {
+    
+    if(symmetric) glcm <- (glcm + t(glcm))
+    if(normalize) {
+      if(sum(glcm) == 0) {
+      } else {glcm <- glcm/sum(glcm)}
+    }
+    
+    #export based-on processing type
+    if(use_type == "single") {
+      
+      if(any(class(RIA_data_in) == "RIA_image") )
+      {
+        if(is.null(save_name)) {
+          txt <- automatic_name(RIA_data_in, use_orig, use_slot)
+          txt <- paste0(txt, "_", off_right, off_down, off_z)
+          
+          RIA_data_in$glcm[[txt]] <- glcm
+          
+        }
+        if(!is.null(save_name)) {RIA_data_in$glcm[[save_name]] <- glcm
+        }
+      }
+    }
+    
+    if(use_type == "discretized") {
       if(any(class(RIA_data_in) == "RIA_image"))
       {
-          if(is.null(save_name[k])) {
-              txt <- list_names[k]
-              txt <- paste0(txt, "_", off_right, off_down, off_z)
-              
-              RIA_data_in$glcm[[txt]] <- glcm
-          }
-          if(!is.null(save_name[k])) {RIA_data_in$glcm[[save_name[k]]] <- glcm
-          }
+        if(is.null(save_name[k])) {
+          txt <- list_names[k]
+          txt <- paste0(txt, "_", off_right, off_down, off_z)
+          
+          RIA_data_in$glcm[[txt]] <- glcm
+        }
+        if(!is.null(save_name[k])) {RIA_data_in$glcm[[save_name[k]]] <- glcm
+        }
       }
+    }
+    
+    
+    if(is.null(save_name)) {txt_name <- txt
+    } else {txt_name <- save_name}
+    if(verbose_in) {message(paste0("GLCM WAS SUCCESSFULLY ADDED TO '", txt_name, "' SLOT OF RIA_image$glcm\n"))}
   }
-
-
-
-  if(is.null(save_name)) {txt_name <- txt
-  } else {txt_name <- save_name}
-  if(verbose_in) {message(paste0("GLCM WAS SUCCESSFULLY ADDED TO '", txt_name, "' SLOT OF RIA_image$glcm\n"))}
-  }
-
+  
   if(any(class(RIA_data_in) == "RIA_image") ) return(RIA_data_in)
   else return(glcm)
-
+  
 }

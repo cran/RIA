@@ -5,7 +5,9 @@
 \name{NRS}
 \alias{NRS}
 \title{\emph{RIA_image} object of a plaque with the napkin-ring sign}
-\format{RIA_image object}
+\format{
+RIA_image object
+}
 \usage{
 NRS
 }

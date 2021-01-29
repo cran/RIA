@@ -12,7 +12,7 @@ geo_mean <- function(data) {
   data_abs <- abs(data)
   data_abs[data_abs==0] <- 1
   data_log <- log2(data_abs)
-
+  
   output <- exp(mean(data_log))
   return(output)
 }
@@ -23,7 +23,7 @@ geo_mean2 <- function(data) {
   data_abs[data_abs==0] <- 1
   data_log <- log2(data_abs)
   data_log[data_boo] <- data_log[data_boo] * -1
-
+  
   output <- exp(mean(data_log))
   return(output)
 }

@@ -82,158 +82,162 @@
 
 glrlm <- function(RIA_data_in, off_right = 1, off_down = 0, off_z = 0, use_type = "single", use_orig = FALSE, use_slot = NULL, save_name = NULL, verbose_in = TRUE)
 {
-    data_in_orig <- check_data_in(RIA_data_in, use_type = use_type, use_orig = use_orig, verbose_in = verbose_in)
+  data_in_orig <- check_data_in(RIA_data_in, use_type = use_type, use_orig = use_orig, use_slot = use_slot, verbose_in = verbose_in)
+  
+  if(any(class(data_in_orig) != "list")) data_in_orig <- list(data_in_orig)
+  list_names <- names(data_in_orig)
+  if(!is.null(save_name) & (length(data_in_orig) != length(save_name))) {stop(paste0("PLEASE PROVIDE THE SAME NUMBER OF NAMES AS THERE ARE IMAGES!\n",
+                                                                                     "NUMBER OF NAMES:  ", length(save_name), "\n",
+                                                                                     "NUMBER OF IMAGES: ", length(data_in), "\n"))
+  }
+  
+  for (k in 1: length(data_in_orig))
+  {
+    data_in <-  data_in_orig[[k]]
     
-    if(any(class(data_in_orig) != "list")) data_in_orig <- list(data_in_orig)
-    list_names <- names(data_in_orig)
-    if(!is.null(save_name) & (length(data_in_orig) != length(save_name))) {stop(paste0("PLEASE PROVIDE THE SAME NUMBER OF NAMES AS THERE ARE IMAGES!\n",
-                                                                                       "NUMBER OF NAMES:  ", length(save_name), "\n",
-                                                                                       "NUMBER OF IMAGES: ", length(data_in), "\n"))
+    if(off_z & dim(data_in)[3] == 1) {{stop("WARNING: CANNOT ASSESS Z PLANE OFFSET IF DATA IS 2D!")}}
+    
+    data_NA <- as.vector(data_in)
+    data_NA <- data_NA[!is.na(data_NA)]
+    if(length(data_NA) == 0) {stop("WARNING: SUPPLIED RIA_image DOES NOT CONTAIN ANY DATA!!!")}
+    if(length(dim(data_in)) < 2 | length(dim(data_in)) > 3) stop(paste0("DATA LOADED IS ", length(dim(data_in)), " DIMENSIONAL. ONLY 2D AND 3D DATA ARE SUPPORTED!"))
+    
+    
+    dim_x <- dim(data_in)[1]
+    dim_y <- dim(data_in)[2]
+    dim_z <- ifelse(!is.na(dim(data_in)[3]), dim(data_in)[3], 1)
+    
+    if(off_right > 0) off_right = 1; if(off_right < 0) off_right = -1
+    if(off_down > 0) off_down = 1; if(off_down < 0) off_down = -1
+    if(off_z > 0) off_z = 1; if(off_z < 0) off_z = -1
+    
+    base_m <- array(NA, dim = c(dim_x+dim_x*abs(off_down), dim_y+dim_y*abs(off_right), dim_z+dim_z*abs(off_z)))
+    offset <- array(c(dim_x*off_down, dim_y*off_right, dim_z*off_z)); offset[offset == 0] <- NA; offset <- min(abs(offset), na.rm = TRUE)
+    
+    #Position data into correct possition
+    if(off_down > -1 & off_right > -1 & off_z > -1)          {base_m[1:dim_x, 1:dim_y, 1:dim_z] <- data_in
+    }else if(off_down == -1 & off_right > -1 & off_z > -1)   {base_m[(dim_x+1):(2*dim_x), 1:dim_y, 1:dim_z] <- data_in
+    }else if(off_down > -1 & off_right == -1 & off_z > -1)   {base_m[1:dim_x, (dim_y+1):(2*dim_y), 1:dim_z] <- data_in
+    }else if(off_down > -1 & off_right > -1 & off_z == -1)   {base_m[1:dim_x, 1:dim_y, (dim_z+1):(2*dim_z)] <- data_in
+    }else if(off_down == -1 & off_right == -1 & off_z > -1)  {base_m[(dim_x+1):(2*dim_x), (dim_y+1):(2*dim_y), 1:dim_z] <- data_in
+    }else if(off_down == -1 & off_right > -1 & off_z == -1)  {base_m[(dim_x+1):(2*dim_x), 1:dim_y, (dim_z+1):(2*dim_z)] <- data_in
+    }else if(off_down > -1 & off_right == -1 & off_z == -1)  {base_m[1:dim_x, (dim_y+1):(2*dim_y), (dim_z+1):(2*dim_z)] <- data_in
+    }else if(off_down == -1 & off_right == -1 & off_z == -1) {base_m[(dim_x+1):(2*dim_x), (dim_y+1):(2*dim_y), (dim_z+1):(2*dim_z)] <- data_in
+    }else {stop("WARNING: OFFSETS ARE NOT APPROPRIATE PLEASE SEE help(glrlm)!!!")
     }
     
-    for (k in 1: length(data_in_orig))
-    {
-        data_in <-  data_in_orig[[k]]
+    #create gray level number, first by the name of the file, then the event log
+    num_ind <- unlist(gregexpr('[1-9]', list_names[k]))
+    num_txt <- substr(list_names[k], num_ind[1], num_ind[length(num_ind)])
+    gray_levels <- as.numeric(num_txt)
+    if(length(gray_levels) == 0) {
+      txt <- automatic_name(RIA_data_in, use_orig, use_slot)
+      num_ind <- unlist(gregexpr('[1-9]', txt))
+      num_txt <- substr(txt, num_ind[1], num_ind[length(num_ind)])
+      gray_levels <- as.numeric(num_txt)
+    }
+    gray_levels_unique <- unique(data_NA)[order(unique(data_NA))] #optimize which gray values to run on
+    
+    glrlm <- array(0, c(gray_levels, offset))
+    
+    for (i in gray_levels_unique) {
+      
+      base_filt_m <- data_in; base_filt_m[base_filt_m != i] <- NA; base_filt_m[base_filt_m == i] <- 1
+      base_filt_change_m <- array(NA, dim = c(dim_x+dim_x*abs(off_down), dim_y+dim_y*abs(off_right), dim_z+dim_z*abs(off_z)))
+      
+      if(off_down > -1 & off_right > -1 & off_z > -1)           {base_filt_change_m[1:dim_x, 1:dim_y, 1:dim_z] <- base_filt_m
+      } else if(off_down == -1 & off_right > -1 & off_z > -1)   {base_filt_change_m[(dim_x+1):(2*dim_x), 1:dim_y, 1:dim_z] <- base_filt_m
+      } else if(off_down > -1 & off_right == -1 & off_z > -1)   {base_filt_change_m[1:dim_x, (dim_y+1):(2*dim_y), 1:dim_z] <- base_filt_m
+      } else if(off_down > -1 & off_right > -1 & off_z == -1)   {base_filt_change_m[1:dim_x, 1:dim_y, (dim_z+1):(2*dim_z)] <- base_filt_m
+      } else if(off_down == -1 & off_right == -1 & off_z > -1)  {base_filt_change_m[(dim_x+1):(2*dim_x), (dim_y+1):(2*dim_y), 1:dim_z] <- base_filt_m
+      } else if(off_down == -1 & off_right > -1 & off_z == -1)  {base_filt_change_m[(dim_x+1):(2*dim_x), 1:dim_y, (dim_z+1):(2*dim_z)] <- base_filt_m
+      } else if(off_down > -1 & off_right == -1 & off_z == -1)  {base_filt_change_m[1:dim_x, (dim_y+1):(2*dim_y), (dim_z+1):(2*dim_z)] <- base_filt_m
+      } else if(off_down == -1 & off_right == -1 & off_z == -1) {base_filt_change_m[(dim_x+1):(2*dim_x), (dim_y+1):(2*dim_y), (dim_z+1):(2*dim_z)] <- base_filt_m
+      } else {stop("WARNING: OFFSETS ARE NOT APPROPRIATE PLEASE SEE help(glrlm)!!!")
+      }
+      
+      for (j in 1: (offset-1)) {
+        shift_m <- array(NA, dim = c(dim_x+dim_x*abs(off_down), dim_y+dim_y*abs(off_right), dim_z+dim_z*abs(off_z)))
         
-        if(off_z & dim(data_in)[3] == 1) {{stop("WARNING: CANNOT ASSESS Z PLANE OFFSET IF DATA IS 2D!")}}
-        
-        data_NA <- as.vector(data_in)
-        data_NA <- data_NA[!is.na(data_NA)]
-        if(length(data_NA) == 0) {stop("WARNING: SUPPLIED RIA_image DOES NOT CONTAIN ANY DATA!!!")}
-        if(length(dim(data_in)) < 2 | length(dim(data_in)) > 3) stop(paste0("DATA LOADED IS ", length(dim(data_in)), " DIMENSIONAL. ONLY 2D AND 3D DATA ARE SUPPORTED!"))
-        
-        
-        dim_x <- dim(data_in)[1]
-        dim_y <- dim(data_in)[2]
-        dim_z <- ifelse(!is.na(dim(data_in)[3]), dim(data_in)[3], 1)
-        
-        if(off_right > 0) off_right = 1; if(off_right < 0) off_right = -1
-        if(off_down > 0) off_down = 1; if(off_down < 0) off_down = -1
-        if(off_z > 0) off_z = 1; if(off_z < 0) off_z = -1
-        
-        base_m <- array(NA, dim = c(dim_x+dim_x*abs(off_down), dim_y+dim_y*abs(off_right), dim_z+dim_z*abs(off_z)))
-        offset <- array(c(dim_x*off_down, dim_y*off_right, dim_z*off_z)); offset[offset == 0] <- NA; offset <- min(abs(offset), na.rm = TRUE)
-        
-        #Position data into correct possition
-        if(off_down > -1 & off_right > -1 & off_z > -1)          {base_m[1:dim_x, 1:dim_y, 1:dim_z] <- data_in
-        }else if(off_down == -1 & off_right > -1 & off_z > -1)   {base_m[(dim_x+1):(2*dim_x), 1:dim_y, 1:dim_z] <- data_in
-        }else if(off_down > -1 & off_right == -1 & off_z > -1)   {base_m[1:dim_x, (dim_y+1):(2*dim_y), 1:dim_z] <- data_in
-        }else if(off_down > -1 & off_right > -1 & off_z == -1)   {base_m[1:dim_x, 1:dim_y, (dim_z+1):(2*dim_z)] <- data_in
-        }else if(off_down == -1 & off_right == -1 & off_z > -1)  {base_m[(dim_x+1):(2*dim_x), (dim_y+1):(2*dim_y), 1:dim_z] <- data_in
-        }else if(off_down == -1 & off_right > -1 & off_z == -1)  {base_m[(dim_x+1):(2*dim_x), 1:dim_y, (dim_z+1):(2*dim_z)] <- data_in
-        }else if(off_down > -1 & off_right == -1 & off_z == -1)  {base_m[1:dim_x, (dim_y+1):(2*dim_y), (dim_z+1):(2*dim_z)] <- data_in
-        }else if(off_down == -1 & off_right == -1 & off_z == -1) {base_m[(dim_x+1):(2*dim_x), (dim_y+1):(2*dim_y), (dim_z+1):(2*dim_z)] <- data_in
-        }else {stop("WARNING: OFFSETS ARE NOT APPROPRIATE PLEASE SEE help(glrlm)!!!")
+        if(off_down > -1 & off_right > -1 & off_z > -1)           {shift_m[(1+j*off_down):(dim_x+j*off_down), (1+j*off_right):(dim_y+j*off_right), (1+j*off_z):(dim_z+j*off_z)] <- base_filt_m
+        } else if(off_down == -1 & off_right > -1 & off_z > -1)   {shift_m[((dim_x+1)+j*off_down):((2*dim_x)+j*off_down), (1+j*off_right):(dim_y+j*off_right), (1+j*off_z):(dim_z+j*off_z)] <- base_filt_m
+        } else if(off_down > -1 & off_right == -1 & off_z > -1)   {shift_m[(1+j*off_down):(dim_x+j*off_down), ((dim_y+1)+j*off_right):((2*dim_y)+j*off_right), (1+j*off_z):(dim_z+j*off_z)] <- base_filt_m
+        } else if(off_down > -1 & off_right > -1 & off_z == -1)   {shift_m[(1+j*off_down):(dim_x+j*off_down), (1+j*off_right):(dim_y+j*off_right), ((dim_z+1)+j*off_z):((2*dim_z)+j*off_z)] <- base_filt_m
+        } else if(off_down == -1 & off_right == -1 & off_z > -1)  {shift_m[((dim_x+1)+j*off_down):((2*dim_x)+j*off_down), ((dim_y+1)+j*off_right):((2*dim_y)+j*off_right), (1+j*off_z):(dim_z+j*off_z)] <- base_filt_m
+        } else if(off_down == -1 & off_right > -1 & off_z == -1)  {shift_m[((dim_x+1)+j*off_down):((2*dim_x)+j*off_down), (1+j*off_right):(dim_y+j*off_right), ((dim_z+1)+j*off_z):((2*dim_z)+j*off_z)] <- base_filt_m
+        } else if(off_down > -1 & off_right == -1 & off_z == -1)  {shift_m[(1+j*off_down):(dim_x+j*off_down), ((dim_y+1)+j*off_right):((2*dim_y)+j*off_right), ((dim_z+1)+j*off_z):((2*dim_z)+j*off_z)] <- base_filt_m
+        } else if(off_down == -1 & off_right == -1 & off_z == -1) {shift_m[((dim_x+1)+j*off_down):((2*dim_x)+j*off_down), ((dim_y+1)+j*off_right):((2*dim_y)+j*off_right), ((dim_z+1)+j*off_z):((2*dim_z)+j*off_z)] <- base_filt_m
+        } else {stop("WARNING: OFFSETS ARE NOT APPROPRIATE PLEASE SEE help(glrlm)!!!")
         }
         
-        #create gray level number, first by the name of the file, then the event log, then by the number of gray levels
-        num_ind <- unlist(gregexpr('[1-9]', list_names[k]))
-        num_txt <- substr(list_names[k], num_ind[1], num_ind[length(num_ind)])
-        gray_levels <- as.numeric(num_txt)
-        if(length(gray_levels) == 0) {
-            txt <- automatic_name(RIA_data_in, use_orig, use_slot)
-            num_ind <- unlist(gregexpr('[1-9]', txt))
-            num_txt <- substr(txt, num_ind[1], num_ind[length(num_ind)])
-            gray_levels <- as.numeric(num_txt)
-        } else {data_v <- as.vector(data_in); data_v <- data_v[!is.na(data_v)]; gray_levels <- length(unique(data_v))
+        diff_m <- base_filt_change_m - shift_m
+        count_diff <- length(diff_m[!is.na(diff_m)])
+        glrlm[i,(j+1)] <- count_diff
+        
+        base_filt_change_m <- diff_m
+      }
+      
+      count_gl <- base_filt_m; count_gl <- count_gl[!is.na(count_gl)]; count_gl <- sum(count_gl, na.rm = TRUE)
+      
+      #Count GLRLM runs by calculating the number of maximum runs and subtracting it from shorter runs. If longest possible run is 2, then no need.
+      if(dim(glrlm)[2] >= 3) {
+        for (p in seq(dim(glrlm)[2], 3, -1)) {
+          if(glrlm[i, p] > 0) {
+            
+            m = 2
+            for (q in seq((p-1), 2, -1)) {
+              glrlm[i, q] <- glrlm[i, q] - glrlm[i, p]*m
+              m = m+1
+            }
+          }
         }
-        
-        glrlm <- array(NA, c(gray_levels, offset))
-        
-        for (i in 1: gray_levels) {
-            
-            base_filt_m <- data_in; base_filt_m[base_filt_m != i] <- NA; base_filt_m[base_filt_m == i] <- 1
-            base_filt_change_m <- array(NA, dim = c(dim_x+dim_x*abs(off_down), dim_y+dim_y*abs(off_right), dim_z+dim_z*abs(off_z)))
-            
-            if(off_down > -1 & off_right > -1 & off_z > -1)           {base_filt_change_m[1:dim_x, 1:dim_y, 1:dim_z] <- base_filt_m
-            } else if(off_down == -1 & off_right > -1 & off_z > -1)   {base_filt_change_m[(dim_x+1):(2*dim_x), 1:dim_y, 1:dim_z] <- base_filt_m
-            } else if(off_down > -1 & off_right == -1 & off_z > -1)   {base_filt_change_m[1:dim_x, (dim_y+1):(2*dim_y), 1:dim_z] <- base_filt_m
-            } else if(off_down > -1 & off_right > -1 & off_z == -1)   {base_filt_change_m[1:dim_x, 1:dim_y, (dim_z+1):(2*dim_z)] <- base_filt_m
-            } else if(off_down == -1 & off_right == -1 & off_z > -1)  {base_filt_change_m[(dim_x+1):(2*dim_x), (dim_y+1):(2*dim_y), 1:dim_z] <- base_filt_m
-            } else if(off_down == -1 & off_right > -1 & off_z == -1)  {base_filt_change_m[(dim_x+1):(2*dim_x), 1:dim_y, (dim_z+1):(2*dim_z)] <- base_filt_m
-            } else if(off_down > -1 & off_right == -1 & off_z == -1)  {base_filt_change_m[1:dim_x, (dim_y+1):(2*dim_y), (dim_z+1):(2*dim_z)] <- base_filt_m
-            } else if(off_down == -1 & off_right == -1 & off_z == -1) {base_filt_change_m[(dim_x+1):(2*dim_x), (dim_y+1):(2*dim_y), (dim_z+1):(2*dim_z)] <- base_filt_m
-            } else {stop("WARNING: OFFSETS ARE NOT APPROPRIATE PLEASE SEE help(glrlm)!!!")
-            }
-            
-            for (j in 1: (offset-1)) {
-                shift_m <- array(NA, dim = c(dim_x+dim_x*abs(off_down), dim_y+dim_y*abs(off_right), dim_z+dim_z*abs(off_z)))
-                
-                if(off_down > -1 & off_right > -1 & off_z > -1)           {shift_m[(1+j*off_down):(dim_x+j*off_down), (1+j*off_right):(dim_y+j*off_right), (1+j*off_z):(dim_z+j*off_z)] <- base_filt_m
-                } else if(off_down == -1 & off_right > -1 & off_z > -1)   {shift_m[((dim_x+1)+j*off_down):((2*dim_x)+j*off_down), (1+j*off_right):(dim_y+j*off_right), (1+j*off_z):(dim_z+j*off_z)] <- base_filt_m
-                } else if(off_down > -1 & off_right == -1 & off_z > -1)   {shift_m[(1+j*off_down):(dim_x+j*off_down), ((dim_y+1)+j*off_right):((2*dim_y)+j*off_right), (1+j*off_z):(dim_z+j*off_z)] <- base_filt_m
-                } else if(off_down > -1 & off_right > -1 & off_z == -1)   {shift_m[(1+j*off_down):(dim_x+j*off_down), (1+j*off_right):(dim_y+j*off_right), ((dim_z+1)+j*off_z):((2*dim_z)+j*off_z)] <- base_filt_m
-                } else if(off_down == -1 & off_right == -1 & off_z > -1)  {shift_m[((dim_x+1)+j*off_down):((2*dim_x)+j*off_down), ((dim_y+1)+j*off_right):((2*dim_y)+j*off_right), (1+j*off_z):(dim_z+j*off_z)] <- base_filt_m
-                } else if(off_down == -1 & off_right > -1 & off_z == -1)  {shift_m[((dim_x+1)+j*off_down):((2*dim_x)+j*off_down), (1+j*off_right):(dim_y+j*off_right), ((dim_z+1)+j*off_z):((2*dim_z)+j*off_z)] <- base_filt_m
-                } else if(off_down > -1 & off_right == -1 & off_z == -1)  {shift_m[(1+j*off_down):(dim_x+j*off_down), ((dim_y+1)+j*off_right):((2*dim_y)+j*off_right), ((dim_z+1)+j*off_z):((2*dim_z)+j*off_z)] <- base_filt_m
-                } else if(off_down == -1 & off_right == -1 & off_z == -1) {shift_m[((dim_x+1)+j*off_down):((2*dim_x)+j*off_down), ((dim_y+1)+j*off_right):((2*dim_y)+j*off_right), ((dim_z+1)+j*off_z):((2*dim_z)+j*off_z)] <- base_filt_m
-                } else {stop("WARNING: OFFSETS ARE NOT APPROPRIATE PLEASE SEE help(glrlm)!!!")
-                }
-                
-                diff_m <- base_filt_change_m - shift_m
-                count_diff <- length(diff_m[!is.na(diff_m)])
-                glrlm[i,(j+1)] <- count_diff
-                
-                base_filt_change_m <- diff_m
-            }
-            
-            count_gl <- base_filt_m; count_gl <- count_gl[!is.na(count_gl)]; count_gl <- sum(count_gl, na.rm = TRUE)
-            
-            for (p in seq(dim(glrlm)[2], 3, -1)) {
-                if(glrlm[i, p] > 0) {
-                    
-                    m = 2
-                    for (q in seq((p-1), 2, -1)) {
-                        glrlm[i, q] <- glrlm[i, q] - glrlm[i, p]*m
-                        m = m+1
-                    }
-                }
-            }
-            
-            glrlm_r_sum <- sum(col(glrlm)[1,]*glrlm[i,], na.rm = TRUE)
-            if(glrlm_r_sum != count_gl) {glrlm[i,1] <- (count_gl-glrlm_r_sum)
-            } else {glrlm[i,1] <- 0}
-            
-        }
-        
-        if(use_type == "single") {
-            
-            if(any(class(RIA_data_in) == "RIA_image") )
-            {
-                if(is.null(save_name)) {
-                    txt <- automatic_name(RIA_data_in, use_orig, use_slot)
-                    txt <- paste0(txt, "_", as.numeric(off_right), as.numeric(off_down), as.numeric(off_z))
-                    
-                    RIA_data_in$glrlm[[txt]] <- glrlm
-                    
-                }
-                if(!is.null(save_name)) {RIA_data_in$glrlm[[save_name]] <- glrlm
-                }
-            }
-        }
-        
-        if(use_type == "discretized") {
-            if(any(class(RIA_data_in) == "RIA_image"))
-            {
-                if(is.null(save_name[k])) {
-                    txt <- list_names[k]
-                    txt <- paste0(txt, "_", as.numeric(off_right), as.numeric(off_down), as.numeric(off_z))
-                    
-                    RIA_data_in$glrlm[[txt]] <- glrlm
-                }
-                if(!is.null(save_name[k])) {RIA_data_in$glrlm[[save_name[k]]] <- glrlm
-                }
-            }
-        }
-        
-        if(is.null(save_name)) {txt_name <- txt
-        } else {txt_name <- save_name}
-        if(verbose_in) {message(paste0("GLRLM WAS SUCCESSFULLY ADDED TO '", txt_name, "' SLOT OF RIA_image$glrlm\n"))}
-        
-        
+      }
+      
+      #Remaining runs are equal to single occurrences
+      glrlm_r_sum <- sum(col(glrlm)[1,]*glrlm[i,], na.rm = TRUE)
+      if(glrlm_r_sum != count_gl) {glrlm[i,1] <- (count_gl-glrlm_r_sum)
+      } else {glrlm[i,1] <- 0}
+      
     }
     
-    if(any(class(RIA_data_in) == "RIA_image")) {return(RIA_data_in)
-    } else {return(glrlm)}
+    if(use_type == "single") {
+      
+      if(any(class(RIA_data_in) == "RIA_image") )
+      {
+        if(is.null(save_name)) {
+          txt <- automatic_name(RIA_data_in, use_orig, use_slot)
+          txt <- paste0(txt, "_", as.numeric(off_right), as.numeric(off_down), as.numeric(off_z))
+          
+          RIA_data_in$glrlm[[txt]] <- glrlm
+          
+        }
+        if(!is.null(save_name)) {RIA_data_in$glrlm[[save_name]] <- glrlm
+        }
+      }
+    }
     
+    if(use_type == "discretized") {
+      if(any(class(RIA_data_in) == "RIA_image"))
+      {
+        if(is.null(save_name[k])) {
+          txt <- list_names[k]
+          txt <- paste0(txt, "_", as.numeric(off_right), as.numeric(off_down), as.numeric(off_z))
+          
+          RIA_data_in$glrlm[[txt]] <- glrlm
+        }
+        if(!is.null(save_name[k])) {RIA_data_in$glrlm[[save_name[k]]] <- glrlm
+        }
+      }
+    }
+    
+    if(is.null(save_name)) {txt_name <- txt
+    } else {txt_name <- save_name}
+    if(verbose_in) {message(paste0("GLRLM WAS SUCCESSFULLY ADDED TO '", txt_name, "' SLOT OF RIA_image$glrlm\n"))}
+    
+    
+  }
+  
+  if(any(class(RIA_data_in) == "RIA_image")) {return(RIA_data_in)
+  } else {return(glrlm)}
+  
 }

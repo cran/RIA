@@ -5,8 +5,14 @@
 \alias{glcm_stat}
 \title{Calculates GLCM-based statistics}
 \usage{
-glcm_stat(RIA_data_in, use_type = "single", use_orig = FALSE,
-  use_slot = "glcm$es_8_111", save_name = NULL, verbose_in = TRUE)
+glcm_stat(
+  RIA_data_in,
+  use_type = "single",
+  use_orig = FALSE,
+  use_slot = "glcm$es_8_111",
+  save_name = NULL,
+  verbose_in = TRUE
+)
 }
 \arguments{
 \item{RIA_data_in}{\emph{RIA_image}.}

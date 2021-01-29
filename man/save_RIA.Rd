@@ -5,9 +5,13 @@
 \alias{save_RIA}
 \title{Export radiomics calculations of RIA image to csv}
 \usage{
-save_RIA(RIA_image, save_to = "C:/", save_name = "RIA_stat",
-  group_name = "Case", stats = c("stat_fo", "stat_glcm_mean",
-  "stat_glrlm_mean", "stat_geometry"))
+save_RIA(
+  RIA_image,
+  save_to = "C:/",
+  save_name = "RIA_stat",
+  group_name = "Case",
+  stats = c("stat_fo", "stat_glcm_mean", "stat_glrlm_mean", "stat_geometry")
+)
 }
 \arguments{
 \item{RIA_image}{\emph{RIA_image} with calculated statistics.}

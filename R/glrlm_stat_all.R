@@ -71,7 +71,7 @@ glrlm_stat_all <- function(RIA_data_in, statistic = "mean(X, na.rm = TRUE)", ver
   {
     for (j in 1: length(names_bin))
     {
-        names_out <- append(names_out, paste0(names_dcr[i], "_b", names_bin[j], "_", stat_abr))
+      names_out <- append(names_out, paste0(names_dcr[i], "_b", names_bin[j], "_", stat_abr))
     }
   }
   
@@ -110,17 +110,17 @@ glrlm_stat_all <- function(RIA_data_in, statistic = "mean(X, na.rm = TRUE)", ver
   {
     for (j in 1: length(names_bin))
     {
-        names_in_each <- NULL
-        if(length(dim(RIA_data_in$data$orig)) == 2) {offsets <- D2s
-        } else if (length(dim(RIA_data_in$data$orig)) == 3) {offsets <- D3s
-        } else {stop(paste0("DATA LOADED IS ", length(dim(RIA_data_in$data$orig)), " DIMENSIONAL. ONLY 2D AND 3D DATA ARE SUPPORTED!"))}
-        
-        for (l in 1: dim(offsets)[1])
-        {
-          names_in_each <- c(names_in_each, paste0(names_dcr[i], "_", names_bin[j], "_", offsets[l,1], offsets[l,2], offsets[l,3]))
-        }
-        names_in <- c(names_in, list(names_in_each))
-        
+      names_in_each <- NULL
+      if(length(dim(RIA_data_in$data$orig)) == 2) {offsets <- D2s
+      } else if (length(dim(RIA_data_in$data$orig)) == 3) {offsets <- D3s
+      } else {stop(paste0("DATA LOADED IS ", length(dim(RIA_data_in$data$orig)), " DIMENSIONAL. ONLY 2D AND 3D DATA ARE SUPPORTED!"))}
+      
+      for (l in 1: dim(offsets)[1])
+      {
+        names_in_each <- c(names_in_each, paste0(names_dcr[i], "_", names_bin[j], "_", offsets[l,1], offsets[l,2], offsets[l,3]))
+      }
+      names_in <- c(names_in, list(names_in_each))
+      
     }
   }
   

@@ -5,9 +5,17 @@
 \alias{glcm_all}
 \title{Creates gray-level co-occurrence matrix of all possible directions of a RIA image}
 \usage{
-glcm_all(RIA_data_in, distance = 1, symmetric = TRUE,
-  normalize = TRUE, use_type = "discretized", use_orig = FALSE,
-  use_slot = NULL, save_name = NULL, verbose_in = TRUE)
+glcm_all(
+  RIA_data_in,
+  distance = 1,
+  symmetric = TRUE,
+  normalize = TRUE,
+  use_type = "discretized",
+  use_orig = FALSE,
+  use_slot = NULL,
+  save_name = NULL,
+  verbose_in = TRUE
+)
 }
 \arguments{
 \item{RIA_data_in}{\emph{RIA_image}.}

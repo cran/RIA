@@ -85,7 +85,7 @@ glcm_stat_all <- function(RIA_data_in, statistic = "mean(X, na.rm = TRUE)", verb
       }
     }
   }
-
+  
   #identify stat names
   unq_dist <- unique(dist)
   m_number <- NULL
@@ -93,74 +93,74 @@ glcm_stat_all <- function(RIA_data_in, statistic = "mean(X, na.rm = TRUE)", verb
     m_number <- c(m_number, length(grep(names_dist[i], unq_dist)))
   }
   
-    D3 <-       matrix(c( 1, 0, 0,
-                         -1, 0, 0,
-                         0, 1, 0,
-                         0,-1, 0,
-                         1, 1, 0,
-                         -1,-1, 0,
-                         1,-1, 0,
-                         -1, 1, 0,
-                         
-                         1, 0, 1,
-                         -1, 0, 1,
-                         0, 1, 1,
-                         0,-1, 1,
-                         1, 1, 1,
-                         -1,-1, 1,
-                         1,-1, 1,
-                         -1, 1, 1,
-                         
-                         1, 0,-1,
-                         -1, 0,-1,
-                         0, 1,-1,
-                         0,-1,-1,
-                         1, 1,-1,
-                         -1,-1,-1,
-                         1,-1,-1,
-                         -1, 1,-1,
-                         
-                         0, 0, 1,
-                         0, 0,-1
-    ), nrow = 26, ncol = 3, byrow = TRUE)
-
-    D3s <-     matrix(c( 1, 0, 0,
-                         0, 1, 0,
-                         1, 1, 0,
-                         1,-1, 0,
-                         
-                         1, 0, 1,
-                         0, 1, 1,
-                         1, 1, 1,
-                         1,-1, 1,
-                         
-                         1, 0,-1,
-                         0, 1,-1,
-                         1, 1,-1,
-                         1,-1,-1,
-                         
-                         0, 0, 1
-    ), nrow = 13, ncol = 3, byrow = TRUE)
-
-    D2 <- matrix(c( 1, 0, 0,
-                         -1, 0, 0,
-                         0, 1, 0,
-                         0,-1, 0,
-                         1, 1, 0,
-                         -1,-1, 0,
-                         1,-1, 0,
-                         -1, 1, 0
-    ), nrow = 8, ncol = 3, byrow = TRUE)
-
-
-    D2s <- matrix(c(1, 0, 0,
+  D3 <-       matrix(c( 1, 0, 0,
+                        -1, 0, 0,
                         0, 1, 0,
+                        0,-1, 0,
                         1, 1, 0,
-                        1,-1, 0
-    ), nrow = 4, ncol = 3, byrow = TRUE)
-
-
-
+                        -1,-1, 0,
+                        1,-1, 0,
+                        -1, 1, 0,
+                        
+                        1, 0, 1,
+                        -1, 0, 1,
+                        0, 1, 1,
+                        0,-1, 1,
+                        1, 1, 1,
+                        -1,-1, 1,
+                        1,-1, 1,
+                        -1, 1, 1,
+                        
+                        1, 0,-1,
+                        -1, 0,-1,
+                        0, 1,-1,
+                        0,-1,-1,
+                        1, 1,-1,
+                        -1,-1,-1,
+                        1,-1,-1,
+                        -1, 1,-1,
+                        
+                        0, 0, 1,
+                        0, 0,-1
+  ), nrow = 26, ncol = 3, byrow = TRUE)
+  
+  D3s <-     matrix(c( 1, 0, 0,
+                       0, 1, 0,
+                       1, 1, 0,
+                       1,-1, 0,
+                       
+                       1, 0, 1,
+                       0, 1, 1,
+                       1, 1, 1,
+                       1,-1, 1,
+                       
+                       1, 0,-1,
+                       0, 1,-1,
+                       1, 1,-1,
+                       1,-1,-1,
+                       
+                       0, 0, 1
+  ), nrow = 13, ncol = 3, byrow = TRUE)
+  
+  D2 <- matrix(c( 1, 0, 0,
+                  -1, 0, 0,
+                  0, 1, 0,
+                  0,-1, 0,
+                  1, 1, 0,
+                  -1,-1, 0,
+                  1,-1, 0,
+                  -1, 1, 0
+  ), nrow = 8, ncol = 3, byrow = TRUE)
+  
+  
+  D2s <- matrix(c(1, 0, 0,
+                  0, 1, 0,
+                  1, 1, 0,
+                  1,-1, 0
+  ), nrow = 4, ncol = 3, byrow = TRUE)
+  
+  
+  
   names_in <- list()
   for (i in 1: length(names_dcr))
   {
@@ -184,16 +184,16 @@ glcm_stat_all <- function(RIA_data_in, statistic = "mean(X, na.rm = TRUE)", verb
       }
     }
   }
-
-
+  
+  
   #statistical names
   stat_names <- names(RIA_data_in$stat_glcm[[names_in[[1]][1]]])
   stat_abr_plus <- paste0("stat_glcm_", stat_abr)
   stat_abr_str <- gsub("X", "stat_data",statistic)
-
-
   
-
+  
+  
+  
   for (i in 1: length(names_out))
   {
     RIA_data_in[[stat_abr_plus]][[names_out[i]]] <- list()
@@ -216,7 +216,7 @@ glcm_stat_all <- function(RIA_data_in, statistic = "mean(X, na.rm = TRUE)", verb
     if (verbose_in == TRUE) {message(paste0("AGGREGATED STATISTICS WAS ADDED TO '", names_out[i], "' SLOT OF RIA_image$", stat_abr_plus, "\n"))}
     
   }
-
+  
   return (RIA_data_in)
-
+  
 }

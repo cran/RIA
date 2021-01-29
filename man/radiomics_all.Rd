@@ -5,10 +5,16 @@
 \alias{radiomics_all}
 \title{Calculates all radiomic statistics on supplied RIA_image}
 \usage{
-radiomics_all(RIA_data_in, bins_in = c(8, 16, 32), equal_prob = "both",
-  fo_discretized = FALSE, distance = c(1),
-  statistic = "mean(X, na.rm = TRUE)", geometry_discretized = TRUE,
-  verbose_in = TRUE)
+radiomics_all(
+  RIA_data_in,
+  bins_in = c(8, 16, 32),
+  equal_prob = "both",
+  fo_discretized = FALSE,
+  distance = c(1),
+  statistic = "mean(X, na.rm = TRUE)",
+  geometry_discretized = TRUE,
+  verbose_in = TRUE
+)
 }
 \arguments{
 \item{RIA_data_in}{\emph{RIA_image}.}

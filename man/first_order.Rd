@@ -5,8 +5,14 @@
 \alias{first_order}
 \title{Calculates first-order statistical metrics for RIA_image}
 \usage{
-first_order(RIA_data_in, use_type = "single", use_orig = TRUE,
-  use_slot = NULL, save_name = NULL, verbose_in = TRUE)
+first_order(
+  RIA_data_in,
+  use_type = "single",
+  use_orig = TRUE,
+  use_slot = NULL,
+  save_name = NULL,
+  verbose_in = TRUE
+)
 }
 \arguments{
 \item{RIA_data_in}{\emph{RIA_image}.}

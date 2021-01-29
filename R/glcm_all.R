@@ -87,35 +87,35 @@ glcm_all <- function(RIA_data_in, distance = 1, symmetric = TRUE, normalize = TR
     
     if(dim_image == 3 & symmetric == FALSE)  {
         offsets <- matrix(c( 1, 0, 0,
-                            -1, 0, 0,
+                             -1, 0, 0,
                              0, 1, 0,
                              0,-1, 0,
                              1, 1, 0,
-                            -1,-1, 0,
+                             -1,-1, 0,
                              1,-1, 0,
-                            -1, 1, 0,
-                            
+                             -1, 1, 0,
+                             
                              1, 0, 1,
-                            -1, 0, 1,
+                             -1, 0, 1,
                              0, 1, 1,
                              0,-1, 1,
                              1, 1, 1,
-                            -1,-1, 1,
+                             -1,-1, 1,
                              1,-1, 1,
-                            -1, 1, 1,
-                            
+                             -1, 1, 1,
+                             
                              1, 0,-1,
-                            -1, 0,-1,
+                             -1, 0,-1,
                              0, 1,-1,
                              0,-1,-1,
                              1, 1,-1,
-                            -1,-1,-1,
+                             -1,-1,-1,
                              1,-1,-1,
-                            -1, 1,-1,
-                            
+                             -1, 1,-1,
+                             
                              0, 0, 1,
                              0, 0,-1
-    ), nrow = 26, ncol = 3, byrow = TRUE)
+        ), nrow = 26, ncol = 3, byrow = TRUE)
     }
     
     if(dim_image == 3 & symmetric == TRUE)  {
@@ -123,30 +123,30 @@ glcm_all <- function(RIA_data_in, distance = 1, symmetric = TRUE, normalize = TR
                              0, 1, 0,
                              1, 1, 0,
                              1,-1, 0,
-
+                             
                              1, 0, 1,
                              0, 1, 1,
                              1, 1, 1,
                              1,-1, 1,
-
+                             
                              1, 0,-1,
                              0, 1,-1,
                              1, 1,-1,
                              1,-1,-1,
-
+                             
                              0, 0, 1
         ), nrow = 13, ncol = 3, byrow = TRUE)
     }
     
     if(dim_image == 2 & symmetric == FALSE)  {
         offsets <- matrix(c( 1, 0, 0,
-                            -1, 0, 0,
+                             -1, 0, 0,
                              0, 1, 0,
                              0,-1, 0,
                              1, 1, 0,
-                            -1,-1, 0,
+                             -1,-1, 0,
                              1,-1, 0,
-                            -1, 1, 0
+                             -1, 1, 0
         ), nrow = 8, ncol = 3, byrow = TRUE)
     }
     
@@ -161,9 +161,9 @@ glcm_all <- function(RIA_data_in, distance = 1, symmetric = TRUE, normalize = TR
     offsets <- offsets * distance
     
     if(!is.null(save_name) & (dim(offsets)[1] != length(save_name))) {stop(paste0("PLEASE PROVIDE THE SAME NUMBER OF NAMES AS THERE ARE IMAGES!\n",
-                                                                                       "NUMBER OF NAMES:  ", length(save_name), "\n",
-                                                                                       "NUMBER OF IMAGES: ", dim(offsets)[1], "\n"))
-        }
+                                                                                  "NUMBER OF NAMES:  ", length(save_name), "\n",
+                                                                                  "NUMBER OF IMAGES: ", dim(offsets)[1], "\n"))
+    }
     
     for (i in 1: dim(offsets)[1])
     {

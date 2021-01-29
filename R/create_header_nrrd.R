@@ -6,7 +6,7 @@
 
 create_header_nrrd <- function(directory)
 {
-
+  
   dcmHeader <- nat::read.nrrd(directory, Verbose = FALSE, ReadData = FALSE, AttachFullHeader = TRUE)
   dcm_capture <- attributes(dcmHeader)
   dcm_capture <- dcm_capture$header
@@ -18,12 +18,12 @@ create_header_nrrd <- function(directory)
   header_list[["case"]] <- dcm_capture$headertext[1]
   header_list[["file"]] <- dcm_capture$path
   for(i in 4:(length(var_names)+3)) {
-      
-  colon     <- gregexpr(':', dcm_capture$headertext[i])[[1]][1]
-  length_var <- nchar(dcm_capture$headertext[i])
-  val <- substr(dcm_capture$headertext[i], colon+2, length_var)
-  
-  header_list[[var_names[i-3]]] <- val
+    
+    colon     <- gregexpr(':', dcm_capture$headertext[i])[[1]][1]
+    length_var <- nchar(dcm_capture$headertext[i])
+    val <- substr(dcm_capture$headertext[i], colon+2, length_var)
+    
+    header_list[[var_names[i-3]]] <- val
   }
   
   dimentions <- nat::nrrd.voxdims(directory)
@@ -34,6 +34,6 @@ create_header_nrrd <- function(directory)
   header_list[["SpacingBetweenSlices"]] <- SpacingBetweenSlices
   
   if(!any(class(header_list) == "RIA_header")) class(header_list) <- append(class(header_list), "RIA_header")
-
+  
   return(header_list)
 }

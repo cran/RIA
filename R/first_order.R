@@ -66,176 +66,176 @@
 first_order <- function(RIA_data_in, use_type = "single", use_orig = TRUE, use_slot = NULL, save_name = NULL, verbose_in = TRUE)
 {
   data_in <- check_data_in(RIA_data_in, use_type = use_type, use_orig = use_orig, use_slot = use_slot, verbose_in = verbose_in)
-
-
+  
+  
   if(any(class(data_in) != "list")) data_in <- list(data_in)
-
+  
   list_names <- names(data_in)
   if(!is.null(save_name) & (length(data_in) != length(save_name))) {stop(paste0("PLEASE PROVIDE THE SAME NUMBER OF NAMES AS THERE ARE IMAGES!\n",
                                                                                 "NUMBER OF NAMES:  ", length(save_name), "\n",
                                                                                 "NUMBER OF IMAGES: ", length(data_in), "\n"))
-      }
-
-  for (i in 1: length(data_in))
-  {
-  data <- as.vector(data_in[[i]])
-  data <- data[!is.na(data)]
-
-  data_NA <- as.vector(data)
-  data_NA <- data_NA[!is.na(data_NA)]
-  if(length(data_NA) == 0) {stop("WARNING: SUPPLIED RIA_image DOES NOT CONTAIN ANY DATA!!!")}
-
-  Mean         <- base::mean(data)
-  Median       <- stats::median(data)
-  Mode         <- mode(data)[1]
-  Geo_mean     <- geo_mean(data)
-  Geo_mean2    <- geo_mean2(data)
-  Geo_mean3    <- geo_mean3(data)
-  Har_mean     <- har_mean(data)
-  Trim_mean_5  <- base::mean(data, trim = 0.025)
-  Trim_mean_10 <- base::mean(data, trim = 0.05)
-  Trim_mean_20 <- base::mean(data, trim = 0.1)
-  IQ_mean      <- base::mean(data, trim = 0.25)
-  Tri_mean     <- (as.numeric(stats::quantile(data, 0.25)) +2*as.numeric(stats::quantile(data, 0.50)) + as.numeric(stats::quantile(data, 0.25)))/4
-  Mn_AD_mn     <- mn_AD_mn(data)
-  Mn_AD_md     <- mn_AD_md(data)
-  Md_AD_mn     <- md_AD_mn(data)
-  Md_AD_md     <- md_AD_md(data)
-  MAD          <- stats::mad(data)
-  Max_AD_mn    <- max_AD_mn(data)
-  Max_AD_md    <- max_AD_md(data)
-  RMS          <- rms(data)
-  Min          <- base::min(data)
-  Max          <- base::max(data)
-  Quartiles    <- stats::quantile(data, seq(0.25, 0.75, 0.50))
-  IQR          <- stats::IQR(data)
-  Low_notch    <- as.numeric(Quartiles[1])-1.5*IQR
-  High_notch   <- as.numeric(Quartiles[1])+1.5*IQR
-  Range        <- abs(abs(base::range(data)[2] - base::range(data)[1]))
-  Deciles      <- stats::quantile(data, seq(0.1, 0.9, 0.1))
-
-  Variance     <- ifelse(length(data)>1, stats::var(data), 0)
-  SD           <- ifelse(length(data)>1, stats::sd(data), 0)
-  Skew         <- ifelse(length(data)>1, skew(data), 0)
-  Kurtosis     <- ifelse(length(data)>1, kurtosis(data), 0)
-
-  Energy       <- energy(data)
-  Uniformity   <- uniformity(data)
-  Entropy      <- entropy(data, 2)
-
-  metrics <- list(
-                    Mean         <- Mean,
-                    Median       <- Median,
-                    Mode         <- Mode,
-                    Geo_mean     <- Geo_mean,
-                    Geo_mean2    <- Geo_mean2,
-                    Geo_mean3    <- Geo_mean3,
-                    Har_mean     <- Har_mean,
-                    Trim_mean_5  <- Trim_mean_5,
-                    Trim_mean_10 <- Trim_mean_10,
-                    Trim_mean_20 <- Trim_mean_20,
-                    IQ_mean      <- IQ_mean,
-                    Tri_mean     <- Tri_mean,
-                    Mn_AD_mn     <- Mn_AD_mn,
-                    Mn_AD_md     <- Mn_AD_md,
-                    Md_AD_mn     <- Md_AD_mn,
-                    Md_AD_md     <- Md_AD_md,
-                    MAD          <- MAD,
-                    Max_AD_mn    <- Max_AD_mn,
-                    Max_AD_md    <- Max_AD_md,
-                    RMS          <- RMS,
-                    Min          <- Min,
-                    Max          <- Max,
-                    Quartiles    <- Quartiles,
-                    IQR          <- IQR,
-                    Low_notch    <- Low_notch,
-                    High_notch   <- High_notch,
-                    Range        <- Range,
-                    Deciles      <- Deciles,
-
-                    Variance     <- Variance,
-                    SD           <- SD,
-                    Skew         <- Skew,
-                    Kurtosis     <- Kurtosis,
-
-                    Energy       <- Energy,
-                    Uniformity   <- Uniformity,
-                    Entropy      <- Entropy
-                  )
-
-  names(metrics) <- c("Mean",
-                      "Median",
-                      "Mode",
-                      "Geo_mean",
-                      "Geo_mean2",
-                      "Geo_mean3",
-                      "Har_mean",
-                      "Trim_mean_5",
-                      "Trim_mean_10",
-                      "Trim_mean_20",
-                      "IQ_mean",
-                      "Tri_mean",
-                      "Mn_AD_mn",
-                      "Mn_AD_md",
-                      "Md_AD_mn",
-                      "Md_AD_md",
-                      "MAD",
-                      "Max_AD_mn",
-                      "Max_AD_md",
-                      "RMS",
-                      "Min",
-                      "Max",
-                      "Quartiles",
-                      "IQR",
-                      "Low_notch",
-                      "High_notch",
-                      "Range",
-                      "Deciles",
-
-                      "Variance",
-                      "SD",
-                      "Skew",
-                      "Kurtosis",
-
-                      "Energy",
-                      "Uniformity",
-                      "Entropy")
-
-
-  if(use_type == "single") {
-    if(any(class(RIA_data_in) == "RIA_image"))
-    {
-      if(is.null(save_name)) {
-        txt <- automatic_name(RIA_data_in, use_orig, use_slot)
-        RIA_data_in$stat_fo[[txt]] <- metrics
-
-      }
-      if(!is.null(save_name)) {RIA_data_in$stat_fo[[save_name]] <- metrics
-      }
-    }
   }
   
-  if(use_type == "discretized") {
+  for (i in 1: length(data_in))
+  {
+    data <- as.vector(data_in[[i]])
+    data <- data[!is.na(data)]
+    
+    data_NA <- as.vector(data)
+    data_NA <- data_NA[!is.na(data_NA)]
+    if(length(data_NA) == 0) {stop("WARNING: SUPPLIED RIA_image DOES NOT CONTAIN ANY DATA!!!")}
+    
+    Mean         <- base::mean(data)
+    Median       <- stats::median(data)
+    Mode         <- mode(data)[1]
+    Geo_mean     <- geo_mean(data)
+    Geo_mean2    <- geo_mean2(data)
+    Geo_mean3    <- geo_mean3(data)
+    Har_mean     <- har_mean(data)
+    Trim_mean_5  <- base::mean(data, trim = 0.025)
+    Trim_mean_10 <- base::mean(data, trim = 0.05)
+    Trim_mean_20 <- base::mean(data, trim = 0.1)
+    IQ_mean      <- base::mean(data, trim = 0.25)
+    Tri_mean     <- (as.numeric(stats::quantile(data, 0.25)) +2*as.numeric(stats::quantile(data, 0.50)) + as.numeric(stats::quantile(data, 0.25)))/4
+    Mn_AD_mn     <- mn_AD_mn(data)
+    Mn_AD_md     <- mn_AD_md(data)
+    Md_AD_mn     <- md_AD_mn(data)
+    Md_AD_md     <- md_AD_md(data)
+    MAD          <- stats::mad(data)
+    Max_AD_mn    <- max_AD_mn(data)
+    Max_AD_md    <- max_AD_md(data)
+    RMS          <- rms(data)
+    Min          <- base::min(data)
+    Max          <- base::max(data)
+    Quartiles    <- stats::quantile(data, seq(0.25, 0.75, 0.50))
+    IQR          <- stats::IQR(data)
+    Low_notch    <- as.numeric(Quartiles[1])-1.5*IQR
+    High_notch   <- as.numeric(Quartiles[1])+1.5*IQR
+    Range        <- abs(abs(base::range(data)[2] - base::range(data)[1]))
+    Deciles      <- stats::quantile(data, seq(0.1, 0.9, 0.1))
+    
+    Variance     <- ifelse(length(data)>1, stats::var(data), 0)
+    SD           <- ifelse(length(data)>1, stats::sd(data), 0)
+    Skew         <- ifelse(length(data)>1, skew(data), 0)
+    Kurtosis     <- ifelse(length(data)>1, kurtosis(data), 0)
+    
+    Energy       <- energy(data)
+    Uniformity   <- uniformity(data)
+    Entropy      <- entropy(data, 2)
+    
+    metrics <- list(
+      Mean         <- Mean,
+      Median       <- Median,
+      Mode         <- Mode,
+      Geo_mean     <- Geo_mean,
+      Geo_mean2    <- Geo_mean2,
+      Geo_mean3    <- Geo_mean3,
+      Har_mean     <- Har_mean,
+      Trim_mean_5  <- Trim_mean_5,
+      Trim_mean_10 <- Trim_mean_10,
+      Trim_mean_20 <- Trim_mean_20,
+      IQ_mean      <- IQ_mean,
+      Tri_mean     <- Tri_mean,
+      Mn_AD_mn     <- Mn_AD_mn,
+      Mn_AD_md     <- Mn_AD_md,
+      Md_AD_mn     <- Md_AD_mn,
+      Md_AD_md     <- Md_AD_md,
+      MAD          <- MAD,
+      Max_AD_mn    <- Max_AD_mn,
+      Max_AD_md    <- Max_AD_md,
+      RMS          <- RMS,
+      Min          <- Min,
+      Max          <- Max,
+      Quartiles    <- Quartiles,
+      IQR          <- IQR,
+      Low_notch    <- Low_notch,
+      High_notch   <- High_notch,
+      Range        <- Range,
+      Deciles      <- Deciles,
+      
+      Variance     <- Variance,
+      SD           <- SD,
+      Skew         <- Skew,
+      Kurtosis     <- Kurtosis,
+      
+      Energy       <- Energy,
+      Uniformity   <- Uniformity,
+      Entropy      <- Entropy
+    )
+    
+    names(metrics) <- c("Mean",
+                        "Median",
+                        "Mode",
+                        "Geo_mean",
+                        "Geo_mean2",
+                        "Geo_mean3",
+                        "Har_mean",
+                        "Trim_mean_5",
+                        "Trim_mean_10",
+                        "Trim_mean_20",
+                        "IQ_mean",
+                        "Tri_mean",
+                        "Mn_AD_mn",
+                        "Mn_AD_md",
+                        "Md_AD_mn",
+                        "Md_AD_md",
+                        "MAD",
+                        "Max_AD_mn",
+                        "Max_AD_md",
+                        "RMS",
+                        "Min",
+                        "Max",
+                        "Quartiles",
+                        "IQR",
+                        "Low_notch",
+                        "High_notch",
+                        "Range",
+                        "Deciles",
+                        
+                        "Variance",
+                        "SD",
+                        "Skew",
+                        "Kurtosis",
+                        
+                        "Energy",
+                        "Uniformity",
+                        "Entropy")
+    
+    
+    if(use_type == "single") {
       if(any(class(RIA_data_in) == "RIA_image"))
       {
-          if(is.null(save_name[i])) {
-              txt <- list_names[i]
-              RIA_data_in$stat_fo[[txt]] <- metrics
-          }
-          if(!is.null(save_name[i])) {RIA_data_in$stat_fo[[save_name[i]]] <- metrics
+        if(is.null(save_name)) {
+          txt <- automatic_name(RIA_data_in, use_orig, use_slot)
+          RIA_data_in$stat_fo[[txt]] <- metrics
           
-          }
+        }
+        if(!is.null(save_name)) {RIA_data_in$stat_fo[[save_name]] <- metrics
+        }
       }
+    }
+    
+    if(use_type == "discretized") {
+      if(any(class(RIA_data_in) == "RIA_image"))
+      {
+        if(is.null(save_name[i])) {
+          txt <- list_names[i]
+          RIA_data_in$stat_fo[[txt]] <- metrics
+        }
+        if(!is.null(save_name[i])) {RIA_data_in$stat_fo[[save_name[i]]] <- metrics
+        
+        }
+      }
+    }
+    
+    
+    
+    if(is.null(save_name)) {txt_name <- txt
+    } else {txt_name <- save_name[i]}
+    if(verbose_in) {message(paste0("FIRST-ORDER STATISTICS WAS SUCCESSFULLY ADDED TO '", txt_name, "' SLOT OF RIA_image$stat_fo\n")) }
+    
   }
-
-
-
-  if(is.null(save_name)) {txt_name <- txt
-  } else {txt_name <- save_name[i]}
-  if(verbose_in) {message(paste0("FIRST-ORDER STATISTICS WAS SUCCESSFULLY ADDED TO '", txt_name, "' SLOT OF RIA_image$stat_fo\n")) }
-
-  }
-
+  
   if(any(class(RIA_data_in) == "RIA_image") ) return(RIA_data_in)
   else return(metrics)
 }

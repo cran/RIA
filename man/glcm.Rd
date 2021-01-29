@@ -5,10 +5,19 @@
 \alias{glcm}
 \title{Creates gray-level co-occurrence matrix of RIA image}
 \usage{
-glcm(RIA_data_in, off_right = 1, off_down = 0, off_z = 0,
-  symmetric = TRUE, normalize = TRUE, use_type = "single",
-  use_orig = FALSE, use_slot = NULL, save_name = NULL,
-  verbose_in = TRUE)
+glcm(
+  RIA_data_in,
+  off_right = 1,
+  off_down = 0,
+  off_z = 0,
+  symmetric = TRUE,
+  normalize = TRUE,
+  use_type = "single",
+  use_orig = FALSE,
+  use_slot = NULL,
+  save_name = NULL,
+  verbose_in = TRUE
+)
 }
 \arguments{
 \item{RIA_data_in}{\emph{RIA_image}.}

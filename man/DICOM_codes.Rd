@@ -5,7 +5,9 @@
 \name{DICOM_codes}
 \alias{DICOM_codes}
 \title{rda containing DICOM header codes to include in \emph{RIA_image} object}
-\format{Each row is a DICOM header input}
+\format{
+Each row is a DICOM header input
+}
 \usage{
 DICOM_codes
 }

@@ -73,7 +73,7 @@ radiomics_all <- function(RIA_data_in, bins_in=c(8, 16, 32), equal_prob = "both"
   if(fo_discretized) {RIA_data_in <- first_order(RIA_data_in, use_type = "discretized", verbose_in = verbose_in)}
   
   for (i in 1: length(distance)) {
-  RIA_data_in <- glcm_all(RIA_data_in, use_type = "discretized", distance = distance[i], verbose_in = verbose_in)
+    RIA_data_in <- glcm_all(RIA_data_in, use_type = "discretized", distance = distance[i], verbose_in = verbose_in)
   }
   RIA_data_in <- glcm_stat(RIA_data_in, use_type = "glcm", verbose_in = verbose_in)
   RIA_data_in <- glcm_stat_all(RIA_data_in, statistic = statistic, verbose_in = verbose_in)

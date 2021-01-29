@@ -79,33 +79,29 @@
 geometry<- function(RIA_data_in, xy_dim = RIA_data_in$log$orig_xy_dim, z_dim = RIA_data_in$log$orig_z_dim, all_vol = RIA_data_in$log$orig_vol_mm, all_surf = RIA_data_in$log$orig_surf_mm,
                     calc_dist = FALSE, calc_sub = TRUE, use_type = "single", use_orig = FALSE,
                     use_slot = NULL, save_name = NULL, verbose_in = TRUE) {
-
+  
   data_in_orig <- check_data_in(RIA_data_in, use_type = use_type, use_orig = use_orig, use_slot = use_slot, verbose_in = verbose_in)
-
+  
   if(any(class(data_in_orig) != "list")) data_in_orig <- list(data_in_orig)
   list_names <- names(data_in_orig)
   if(!is.null(save_name) & (length(data_in_orig) != length(save_name))) {stop(paste0("PLEASE PROVIDE THE SAME NUMBER OF NAMES AS THERE ARE IMAGES!\n",
-                                                                                "NUMBER OF NAMES:  ", length(save_name), "\n",
-                                                                                "NUMBER OF IMAGES: ", length(data_in), "\n"))
+                                                                                     "NUMBER OF NAMES:  ", length(save_name), "\n",
+                                                                                     "NUMBER OF IMAGES: ", length(data_in), "\n"))
   }
   
-
+  
   for (k in 1: length(data_in_orig))
   {
     data_in <-  data_in_orig[[k]]
-
+    
     data_NA <- as.vector(data_in)
     data_NA <- data_NA[!is.na(data_NA)]
     if(length(data_NA) == 0) {message("WARNING: SUPPLIED RIA_image DOES NOT CONTAIN ANY DATA!!!")}
     if(length(dim(data_in)) < 2 | length(dim(data_in)) > 3) stop(paste0("DATA LOADED IS ", length(dim(data_in)), " DIMENSIONAL. ONLY 2D AND 3D DATA ARE SUPPORTED!"))
-
-    # if(!calc_sub) {data_in[!is.na(data_in)] <- 1; data_NA <- 1}
-    # values <- as.numeric(names(table(data_NA)))
     
-    #create gray level number, first by the name of the file, then the event log, then by the number of gray levels
+    #create gray level number, first by the name of the file, then the event log
     if(!calc_sub) {
-      data_in[!is.na(data_in)] <- 1; data_NA <- 1
-      gray_levels <- as.numeric(names(table(data_NA)))
+      data_in[!is.na(data_in)] <- 1; data_NA <- 1; gray_levels <- 1
     } else {
       num_ind <- unlist(gregexpr('[1-9]', list_names[k]))
       num_txt <- substr(list_names[k], num_ind[1], num_ind[length(num_ind)])
@@ -116,9 +112,10 @@ geometry<- function(RIA_data_in, xy_dim = RIA_data_in$log$orig_xy_dim, z_dim = R
         num_txt <- substr(txt, num_ind[1], num_ind[length(num_ind)])
         gray_levels <- as.numeric(num_txt)
       }
+      gray_levels_unique <- unique(data_NA)[order(unique(data_NA))] #optimize which gray values to run on
     }
-
-
+    
+    
     #volume
     calc_v  <- list();    calc_vr <- list()
     #surface
@@ -131,42 +128,61 @@ geometry<- function(RIA_data_in, xy_dim = RIA_data_in$log$orig_xy_dim, z_dim = R
     if(calc_dist) calc_d <- list()
     #Fractal
     calc_bc_d <- list();    calc_i_d  <- list();    calc_c_d  <- list()
-
-
+    
+    
     for(j in 1:gray_levels) {
       mod_dichot_data <- data_in
       mod_dichot_data[mod_dichot_data != j] <- NA
-
-      vol <- volume(mod_dichot_data, xy_dim = xy_dim, z_dim = z_dim)
-      calc_v[[as.character(j)]] <- vol
-      calc_vr[[as.character(j)]] <- ifelse(all_vol > 0, vol/all_vol, 0)
-
-
-      surf <- surface(mod_dichot_data, xy_dim = xy_dim, z_dim = z_dim)
-      calc_s[[as.character(j)]] <- surf
-      calc_sr[[as.character(j)]]  <- ifelse(all_surf > 0, surf/all_surf, 0)
-      calc_sv[[as.character(j)]] <- ifelse(vol > 0, surf/vol, 0)
-
-      compact1 <- compactness1(vol = vol, surf = surf)
-      compact2 <- compactness2(vol = vol, surf = surf)
-      calc_c1[[as.character(j)]]  <- compact1
-      calc_c2[[as.character(j)]]  <- compact2
-
-      spher_dis <- spherical_dis(vol = vol, surf = surf)
-      spher <- sphericity(vol = vol, surf = surf)
-      calc_sd[[as.character(j)]]  <- spher_dis
-      calc_sh[[as.character(j)]]  <- spher
-
-      if(calc_dist) dist <- surface_dis(mod_dichot_data, xy_dim = xy_dim, z_dim = z_dim); if(calc_dist) calc_d[[as.character(j)]]  <- dist
-
-      fractal_d <- fractal(mod_dichot_data)
-      calc_bc_d[[as.character(j)]] <- as.numeric(fractal_d[1])
-      calc_i_d[[as.character(j)]]  <- as.numeric(fractal_d[2])
-      calc_c_d[[as.character(j)]]  <- as.numeric(fractal_d[3])
+      
+      if(all(is.na(mod_dichot_data))) {
+        calc_v[[as.character(j)]]    <- 0
+        calc_vr[[as.character(j)]]   <- 0
+        
+        calc_s[[as.character(j)]]    <- 0
+        calc_sr[[as.character(j)]]   <- 0
+        calc_sv[[as.character(j)]]   <- 0
+        
+        calc_c1[[as.character(j)]]   <- 0
+        calc_c2[[as.character(j)]]   <- 0
+        
+        calc_sd[[as.character(j)]]   <- 0
+        calc_sh[[as.character(j)]]   <- 0
+        
+        calc_bc_d[[as.character(j)]] <- 0
+        calc_i_d[[as.character(j)]]  <- 0
+        calc_c_d[[as.character(j)]]   <- 0
+        
+      } else {
+        vol <- volume(mod_dichot_data, xy_dim = xy_dim, z_dim = z_dim)
+        calc_v[[as.character(j)]]  <- vol
+        calc_vr[[as.character(j)]] <- ifelse(all_vol > 0, vol/all_vol, 0)
+        
+        surf <- surface(mod_dichot_data, xy_dim = xy_dim, z_dim = z_dim)
+        calc_s[[as.character(j)]] <- surf
+        calc_sr[[as.character(j)]]  <- ifelse(all_surf > 0, surf/all_surf, 0)
+        calc_sv[[as.character(j)]]  <- ifelse(vol > 0, surf/vol, 0)
+        
+        compact1 <- compactness1(vol = vol, surf = surf)
+        compact2 <- compactness2(vol = vol, surf = surf)
+        calc_c1[[as.character(j)]]  <- compact1
+        calc_c2[[as.character(j)]]  <- compact2
+        
+        spher_dis <- spherical_dis(vol = vol, surf = surf)
+        spher <- sphericity(vol = vol, surf = surf)
+        calc_sd[[as.character(j)]]  <- spher_dis
+        calc_sh[[as.character(j)]]  <- spher
+        
+        if(calc_dist) dist <- surface_dis(mod_dichot_data, xy_dim = xy_dim, z_dim = z_dim); if(calc_dist) calc_d[[as.character(j)]]  <- dist
+        
+        fractal_d <- fractal(mod_dichot_data)
+        calc_bc_d[[as.character(j)]] <- as.numeric(fractal_d[1])
+        calc_i_d[[as.character(j)]]  <- as.numeric(fractal_d[2])
+        calc_c_d[[as.character(j)]]  <- as.numeric(fractal_d[3])
+      }
     }
-
+    
     if(use_type == "single") {
-
+      
       if(any(class(RIA_data_in) == "RIA_image") )
       {
         if(is.null(save_name)) {
@@ -178,39 +194,39 @@ geometry<- function(RIA_data_in, xy_dim = RIA_data_in$log$orig_xy_dim, z_dim = R
     }
     
     if(use_type == "discretized") {
-        if(any(class(RIA_data_in) == "RIA_image"))
-        {
-            if(is.null(save_name[k])) {
-                txt_name <- list_names[k]
-            }
-            if(!is.null(save_name[k])) {txt_name <- list_names[k]
-            }
+      if(any(class(RIA_data_in) == "RIA_image"))
+      {
+        if(is.null(save_name[k])) {
+          txt_name <- list_names[k]
         }
+        if(!is.null(save_name[k])) {txt_name <- list_names[k]
+        }
+      }
     }
-
+    
     RIA_data_in$stat_geometry[[txt_name]][["volume"]] <- calc_v
     RIA_data_in$stat_geometry[[txt_name]][["v_ratio_to_all"]]  <- calc_vr
-
+    
     RIA_data_in$stat_geometry[[txt_name]][["surface"]] <- calc_s
     RIA_data_in$stat_geometry[[txt_name]][["s_ratio_to_all"]]  <- calc_sr
     RIA_data_in$stat_geometry[[txt_name]][["surface_volume_r"]]  <- calc_sv
-
+    
     RIA_data_in$stat_geometry[[txt_name]][["compactness1"]] <- calc_c1
     RIA_data_in$stat_geometry[[txt_name]][["compactness2"]]  <- calc_c2
-
+    
     RIA_data_in$stat_geometry[[txt_name]][["spher_dis"]]  <- calc_sd
     RIA_data_in$stat_geometry[[txt_name]][["spher"]]  <- calc_sh
-
+    
     if(calc_dist) RIA_data_in[[txt_name]][["max_distance"]]  <- calc_d
-
+    
     RIA_data_in$stat_geometry[[txt_name]][["fractal_bc_d"]]  <- calc_bc_d
     RIA_data_in$stat_geometry[[txt_name]][["fractal_i_d"]]   <- calc_i_d
     RIA_data_in$stat_geometry[[txt_name]][["fractal_c_d"]]   <- calc_c_d
-
+    
     if(verbose_in) {message(paste0("GEOMETRY-BASED STATISTICS WAS SUCCESSFULLY ADDED TO '", txt_name, "' SLOT OF RIA_image$stat_geometry\n"))}
   }
-
-
+  
+  
   if(any(class(RIA_data_in) == "RIA_image") ) return(RIA_data_in)
   else return(RIA_data_in)
 }

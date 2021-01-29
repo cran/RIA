@@ -5,11 +5,21 @@
 \alias{load_nrrd}
 \title{Loads nrrd images to RIA image format}
 \usage{
-load_nrrd(filename, mask_filename = NULL, keep_mask_values = 1,
-  switch_z = TRUE, crop_in = TRUE, replace_in = TRUE,
-  center_in = FALSE, zero_value = NULL, min_to = -1024,
-  verbose_in = TRUE, origin_in = NULL, ReadByteAsRaw_in = "unsigned",
-  ...)
+load_nrrd(
+  filename,
+  mask_filename = NULL,
+  keep_mask_values = 1,
+  switch_z = TRUE,
+  crop_in = TRUE,
+  replace_in = TRUE,
+  center_in = FALSE,
+  zero_value = NULL,
+  min_to = -1024,
+  verbose_in = TRUE,
+  origin_in = NULL,
+  ReadByteAsRaw_in = "unsigned",
+  ...
+)
 }
 \arguments{
 \item{filename}{string, file path to directory containing \emph{nrrd} file.}

@@ -5,7 +5,9 @@
 \name{Non_NRS}
 \alias{Non_NRS}
 \title{\emph{RIA_image} object of a plaque without the napkin-ring sign}
-\format{RIA_image object}
+\format{
+RIA_image object
+}
 \usage{
 NRS
 }

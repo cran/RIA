@@ -5,9 +5,17 @@
 \alias{glrlm}
 \title{Creates gray-level run length matrix from RIA image}
 \usage{
-glrlm(RIA_data_in, off_right = 1, off_down = 0, off_z = 0,
-  use_type = "single", use_orig = FALSE, use_slot = NULL,
-  save_name = NULL, verbose_in = TRUE)
+glrlm(
+  RIA_data_in,
+  off_right = 1,
+  off_down = 0,
+  off_z = 0,
+  use_type = "single",
+  use_orig = FALSE,
+  use_slot = NULL,
+  save_name = NULL,
+  verbose_in = TRUE
+)
 }
 \arguments{
 \item{RIA_data_in}{\emph{RIA_image}.}
