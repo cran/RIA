@@ -168,7 +168,7 @@ load_nifti <- function(filename, image_dim = 3, mask_filename = NULL, keep_mask_
         mask_filename_i <- mask_filename[i]
         
         if(verbose_in) {message(paste0("LOADING NIFTI IMAGES OF MASK IMAGE FROM: ", mask_filename, "\n"))}
-        dcmImages_mask <- oro.nifti::readNIfTI(mask_filename_i, verbose = FALSE, reorient = mask_filename_i)
+        dcmImages_mask <- oro.nifti::readNIfTI(mask_filename_i, verbose = FALSE, reorient = reorient_in)
         data_mask  <- dcmImages@.Data
         data_mask <- eval(parse(text= paste0("data_mask[", dim_string, "]")))
         
