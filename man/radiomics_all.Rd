@@ -48,10 +48,10 @@ Most prints can also be suppressed using the \code{\link{suppressMessages}} func
 }
 \description{
 Calculates specified radiomic statistics on \emph{RIA_image}. Parameters of
-radiomic functions may be set. By default the the images are discretized to 2, 8, 32 and 128 bins
-using equally sized binning. First-order statistics are calculated on the
+radiomic functions may be set. By default the the images are discretized to 8, 16 and 32 bins
+using equally sized and probable binning. First-order statistics are calculated on the
 original image and if asked then on all discretizations. Symmetric GLCMs are calculated for all directions
-at a distance of 1, 2 and 3 for all discretizations. GLRLMs are also calculated for all
+at a distance of 1 for all discretizations. GLRLMs are also calculated for all
 discretizations. Geometry-based statistics are calculated for the original image as well as all
 discretizations is requested.
 }

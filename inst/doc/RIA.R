@@ -171,7 +171,7 @@ names(DICOM$stat_geometry)
 #  DICOM <- radiomics_all(DICOM, bins_in = c(8, 16, 32), equal_prob = "both")
 
 ## ---- eval=FALSE--------------------------------------------------------------
-#  save_RIA(DICOM, save_to = "C:/Test/", save_name = "My_first_radiomics", group_name = "Case", stats = c("stat_fo", "stat_glcm_mean",  "stat_glrlm_mean", "stat_geometry"))
+#  save_RIA(DICOM, save_to = "C:/Test/", save_name = "My_first_radiomics", group_name = "Case")
 
 ## ---- eval=FALSE--------------------------------------------------------------
 #  folder <- "/Images/" #Location of folder containing individual folders per patient which contain nrrd files for the image and mask
@@ -186,7 +186,6 @@ names(DICOM$stat_geometry)
 #  #Use parallelized for cycle to cycle through all the patients
 #  data_out_paral <- foreach (i = 1:length(patients), .combine="rbind", .inorder=FALSE,
 #                             .packages=c('RIA'), .errorhandling = c("pass"), .verbose=FALSE) %dopar% {
-#  
 #  
 #                               files <- list.files(patients_full[i]) #Names of the files in the current patient folder
 #                               image <- grep("heart", files, ignore.case = T, value = T) #Full name of the image file

@@ -1,7 +1,7 @@
-#' @title Loads nrrd images to RIA image format
+#' @title Loads npy files to RIA image format
 #' @export
-#' @description  Loads nrrd images to a \emph{RIA_image} object.
-#' \emph{RIA_image} is a  list with three mandatory attributes.
+#' @description  Loads numpy arrays to a \emph{RIA_image} object using \emph{reticulate}.
+#' \emph{RIA_image} is a list with three mandatory attributes.
 #' \itemize{
 #'  \item \bold{RIA_data} is a \emph{RIA_data} object, which has two potential slots.
 #'  \emph{$orig} contains the original image after loading
@@ -12,9 +12,9 @@
 #'  }
 #'  Further attributes may also be added by RIA functions.
 #'
-#' @param filename string, file path to directory containing \emph{nrrd} file.
+#' @param filename string, file path to \emph{npy} file.
 #' 
-#' @param mask_filename string vector, file path to optional directory containing \emph{nrrd} file
+#' @param mask_filename string vector, file path to \emph{npy} file
 #' of mask image. If multiple are supplied, then those voxels are kept which have one of the values of \emph{keep_mask_values}
 #' in any of the supplied masks.
 #' 
@@ -26,7 +26,7 @@
 #' to specify which voxel values to analyze. This way the provided image can be segmented to specific
 #' components. For example, if you wish to analyze only the low-density non-calcified component
 #' of coronary plaques, then \emph{keep_mask_values} can specify this by setting it to: -100:30.
-#' If  a single string is provided, then each element of the mask will be examined against the statement in the string.
+#' If a single string is provided, then each element of the mask will be examined against the statement in the string.
 #' For example, if \emph{'>0.5'} is provided i.e. the mask is probabilities after a DL algorithm, then all
 #' voxels with values >0.5 in the mask image will be kept. This can be a complex logical expression.
 #' The data on which the expression is executed is called \emph{data} or \emph{data_mask}, depending on whether
@@ -37,7 +37,7 @@
 #' 
 #' @param switch_z logical, indicating whether to change the orientation of the images in the Z axis. Some
 #' software reverse the order of the manipulated image in the Z axis, and therefore the images of the mask
-#' image need to be reveresed.
+#' image need to be reversed.
 #'
 #' @param crop_in logical, indicating whether to crop \emph{RIA_image} to smallest bounding box.
 #'
@@ -52,28 +52,26 @@
 #' then the smallest HU value in the image will be used, if \emph{replace_in} is TRUE.
 #'
 #' @param min_to integer, value to which data is shifted to if \emph{center_in} is TRUE.
+#' 
+#' @param PixelSpacing numerical, Pixel spacing value of image.
+#' 
+#' @param SpacingBetweenSlices numerical, Spacing between the slices value of the image.
 #'
 #' @param verbose_in logical, indicating whether to print detailed information.
-#' Most prints can also be suppresed using the \code{\link{suppressMessages}} function.
-#'
-#' @param origin_in \emph{origin} parameter input of \code{\link[nat]{read.nrrd}}.
+#' Most prints can also be suppressed using the \code{\link{suppressMessages}} function.
 #' 
-#' @param ReadByteAsRaw_in \emph{origin} parameter input of \code{\link[nat]{read.nrrd}}.
+#' @param ..., additional arguments to \emph{numpy.load}.
 #' 
-#' @param ... additional arguments to  \code{\link[nat]{read.nrrd}},
-#' \code{\link[nat]{read.nrrd.header}}.
-#'
-#' @details \emph{load_nrrd} is used to transform nrrd datasets into the RIA environment.
+#' @details \emph{load_npy} is used to transform numpy array datasets into the RIA environment.
 #' \emph{RIA_image} object was developed to facilitate and simplify radiomics calculations by keeping
 #' all necessary information in one place.
 #' \cr
 #' \cr
-#' \emph{RIA_data} stores the nrrd image that is converted to numerical 3D arrays using
-#' \code{\link[nat]{read.nrrd}}.
+#' \emph{RIA_data} stores the numpy image that is converted to numerical 3D arrays using the reticulate package.
 #' The function stores the original loaded image in  \emph{RIA_data$orig},
 #' while all modified images are stored in \emph{RIA_data$modif}.
 #' By default, the original image \emph{RIA_data$orig} is untouched by functions
-#' other than those operating in \emph{load_nrrd}. While other functions
+#' other than those operating in \emph{load_npy}. While other functions
 #' operate on the \emph{RIA_data$modif} image by default.
 #' \cr
 #' Due to memory concerns, there can only be one \emph{RIA_data$orig} and \emph{RIA_data$modif}
@@ -82,8 +80,7 @@
 #' into new slots of \emph{RIA_image}, for example the \code{\link[RIA]{discretize}} function can save
 #' discretized images to the \emph{discretized} slot of \emph{RIA_image}.
 #' \cr
-#' \emph{load_nrrd} not only loads the image based on parameters that can be set for
-#' \code{\link[nat]{read.nrrd}}, but also can perform
+#' \emph{load_npy} not only loads the image, but also can perform
 #' minimal manipulations on the image itself.
 #' \cr
 #' \emph{crop_in} logical variable is used to indicate, whether to crop the image to the
@@ -105,7 +102,7 @@
 #' \cr
 #' \cr
 #' \emph{RIA_header} is a list containing the most basic patient and examination information
-#' present in the nrrd file.
+#' present in the npy file. Data is limited to the pixel spacing and spacing between the slices information.
 #' \cr
 #' \cr
 #' \emph{RIA_log} is a list of variables, which give an overview of what has been done with the image.
@@ -116,15 +113,14 @@
 #' @return  Returns a \emph{RIA_image} object. \emph{RIA_image} is a list with three mandatory attributes.
 #' \itemize{
 #'  \item \bold{RIA_data} is a \emph{RIA_data} object containing the image in \emph{$orig} slot.
-#'  \item \bold{RIA_header} is a \emph{RIA_header} object, which is s list of nrrd information.
+#'  \item \bold{RIA_header} is a \emph{RIA_header} object, which is s list of header information.
 #'  \item \bold{RIA_log} is a \emph{RIA_log} object, which is a list updated by RIA functions
 #'  and acts as a log and possible input for some functions.
 #'  }
 #'
 #' @examples \dontrun{
-#'  #Image will be croped to smallest bounding box, and smallest values will be changed to NA,
-#'  while 1024 will be substracted from all other data points.
-#'  RIA_image <- load_nrrd("/Users/Test/Documents/Radiomics/John_Smith/nrrd_folder/sample.nrrd")
+#'  #Image will be croped to smallest bounding box, and smallest values will be changed to NA
+#'  RIA_image <- load_npy("/Users/Test/Documents/Radiomics/John_Smith/npy_folder/sample.npy")
 #'  }
 #'  
 #' @references Márton KOLOSSVÁRY et al.
@@ -142,15 +138,14 @@
 #' @encoding UTF-8
 
 
-load_nrrd <- function(filename, mask_filename = NULL, keep_mask_values = 1, switch_z = TRUE, 
-                      crop_in = TRUE, replace_in = TRUE, center_in = FALSE,  zero_value = NULL, min_to = -1024,
-                      verbose_in = TRUE,
-                      origin_in = NULL, ReadByteAsRaw_in = "unsigned", ... 
-)
-{
-  if(verbose_in) {message(paste0("LOADING nrrd FILES FROM: ", filename, "\n"))}
+load_npy <- function(filename, mask_filename = NULL, keep_mask_values = 1, switch_z = FALSE, 
+                     crop_in = TRUE, replace_in = TRUE, center_in = FALSE, zero_value = NULL, min_to = -1024,
+                     PixelSpacing = 1, SpacingBetweenSlices = 1, verbose_in = TRUE,
+                     ... ) {
+  if(verbose_in) {message(paste0("LOADING npy FILE FROM: ", filename, "\n"))}
   
-  dcmImages <- nat::read.nrrd(filename, Verbose = verbose_in, origin = origin_in, ReadByteAsRaw = ReadByteAsRaw_in, AttachFullHeader = FALSE)
+  np <- reticulate::import("numpy")
+  dcmImages <- np$load(filename)
   
   ###create 3D matrix - crop to smallest bounding box - change 0/-1024 values to NA - center around 0
   data  <- dcmImages
@@ -159,7 +154,7 @@ load_nrrd <- function(filename, mask_filename = NULL, keep_mask_values = 1, swit
   ###create RIA_image structure
   RIA_image <- list(data = NULL, header = list(), log = list())
   if(length(dim(data)) == 3 | length(dim(data)) == 2) {class(RIA_image) <- append(class(RIA_image), "RIA_image")
-  } else {stop(paste0("nrrd LOADED IS ", length(dim(data)), " DIMENSIONAL. ONLY 2D AND 3D DATA ARE SUPPORTED!"))}
+  } else {stop(paste0("npy LOADED IS ", length(dim(data)), " DIMENSIONAL. ONLY 2D AND 3D DATA ARE SUPPORTED!"))}
   
   
   if(is.null(zero_value)) zero_value <- min(data, na.rm = TRUE)
@@ -179,8 +174,8 @@ load_nrrd <- function(filename, mask_filename = NULL, keep_mask_values = 1, swit
       for(i in 1:length(mask_filename)) {
         mask_filename_i <- mask_filename[i]
         
-        if(verbose_in) {message(paste0("LOADING nrrd IMAGES OF MASK IMAGE FROM: ", mask_filename_i, "\n"))}
-        dcmImages_mask <- nat::read.nrrd(mask_filename_i, Verbose = verbose_in, origin = origin_in, ReadByteAsRaw = ReadByteAsRaw_in, AttachFullHeader = FALSE)
+        if(verbose_in) {message(paste0("LOADING npy IMAGES OF MASK IMAGE FROM: ", mask_filename_i, "\n"))}
+        dcmImages_mask <- np$load(mask_filename_i)
         data_mask  <- dcmImages_mask
         
         
@@ -211,16 +206,14 @@ load_nrrd <- function(filename, mask_filename = NULL, keep_mask_values = 1, swit
     }
   }
   
-  
   RIA_image$data$orig  <- data
   RIA_image$data$modif <- NULL
   class(RIA_image$header) <- append(class(RIA_image$header), "RIA_header")
-  class(RIA_image$data) <- append(class(RIA_image$data), "RIA_data")
-  class(RIA_image$log) <- append(class(RIA_image$log), "RIA_log")
-  RIA_image$log$events  <- "Created"
+  class(RIA_image$data)   <- append(class(RIA_image$data), "RIA_data")
+  class(RIA_image$log)    <- append(class(RIA_image$log), "RIA_log")
+  RIA_image$log$events    <- "Created"
   RIA_image$log$orig_dim  <- dim(data)
   RIA_image$log$directory  <- filename
-  
   
   if(!is.null(mask_filename)) {
     if(identical(filename, mask_filename)) {
@@ -229,7 +222,6 @@ load_nrrd <- function(filename, mask_filename = NULL, keep_mask_values = 1, swit
       RIA_image$log$events  <- paste0("Filtered_using_mask_values_", paste0(keep_mask_values, collapse = "_"))
     }
   }
-  
   
   
   ###Crop data
@@ -246,7 +238,6 @@ load_nrrd <- function(filename, mask_filename = NULL, keep_mask_values = 1, swit
   if(replace_in)
   {
     if(verbose_in) {message(paste0("SMALLEST VALUES IS ", zero_value, ", AND WILL CHANGE TO NA\n"))}
-    
     RIA_image <- change_to(RIA_image, zero_value_in = zero_value, verbose_in = verbose_in)
   }
   
@@ -257,12 +248,12 @@ load_nrrd <- function(filename, mask_filename = NULL, keep_mask_values = 1, swit
     RIA_image <- shift_to(RIA_image, to = min_to, min_value_in = zero_value, verbose_in = verbose_in)
   }
   
-  ###Create dataframe of standard or specific nrrd information
-  header <- create_header_nrrd(filename)
+  ###Create dataframe of standard or specific npy information
+  header <- create_header_npy(filename, PixelSpacing, SpacingBetweenSlices)
   RIA_image$header <- header
   #Add original volume of abnormality
   xy_dim <- as.numeric(RIA_image$header$PixelSpacing)
-  z_dim <-  as.numeric(RIA_image$header$SpacingBetweenSlices)
+  z_dim  <- as.numeric(RIA_image$header$SpacingBetweenSlices)
   RIA_image$log$orig_vol_mm <- volume(RIA_image$data$orig, xy_dim = xy_dim, z_dim = z_dim)
   RIA_image$log$orig_surf_mm <- surface(RIA_image$data$orig, xy_dim = xy_dim, z_dim = z_dim)
   RIA_image$log$surface_volume_r <- ifelse(RIA_image$log$orig_vol_mm != 0, RIA_image$log$orig_surf_mm/RIA_image$log$orig_vol_mm, 0)
@@ -270,8 +261,7 @@ load_nrrd <- function(filename, mask_filename = NULL, keep_mask_values = 1, swit
   RIA_image$log$orig_z_dim  <- z_dim
   
   
-  
-  if(verbose_in) {message(paste0("SUCCESSFULLY LOADED ", RIA_image$header$PatientsName, "'s nrrd IMAGES TO RIA IMAGE CLASS\n"))}
+  if(verbose_in) {message(paste0("SUCCESSFULLY LOADED ", RIA_image$header$PatientsName, "'s npy IMAGES TO RIA IMAGE CLASS\n"))}
   data_NA <- as.vector(RIA_image$data$orig)
   data_NA <- data_NA[!is.na(data_NA)]
   

@@ -30,14 +30,22 @@ load_nifti(
 of mask image. If multiple are supplied, then those voxels are kept which have one of the values of \emph{keep_mask_values}
 in any of the supplied masks.}
 
-\item{keep_mask_values}{integer vector, indicates which value or values of the mask image
+\item{keep_mask_values}{integer vector or string, indicates which value or values of the mask image
 to use as indicator to identify voxels wished to be processed. Usually 1-s indicate voxels
 wished to be processed. However, one mask image might contain several segmentations, in which
-case supplying several integers is allowed. Furthermore, if the same string is supplyied to
+case supplying several integers is allowed. Furthermore, if the same string is supplied to
 \emph{filename} and \emph{mask_filename}, then the integers in \emph{keep_mask_values} are used
 to specify which voxel values to analyze. This way the provided image can be segmented to specific
-compontents. For example, if you wish to analyze only the low-density non-calcified component
-of coronary plaques, then \emph{keep_mask_values} can specify this by setting it to: -100:30}
+components. For example, if you wish to analyze only the low-density non-calcified component
+of coronary plaques, then \emph{keep_mask_values} can specify this by setting it to: -100:30.
+If  a single string is provided, then each element of the mask will be examined against the statement in the string.
+For example, if \emph{'>0.5'} is provided i.e. the mask is probabilities after a DL algorithm, then all
+voxels with values >0.5 in the mask image will be kept. This can be a complex logical expression.
+The data on which the expression is executed is called \emph{data} or \emph{data_mask}, depending on whether
+you wish to filter the original image, that is the original image is supplied as a mask, or if you have
+unique mask files respectively. Therefore for complex logical expressions you can define for example:
+\emph{'>-100 & data<30'} to consider data values between -100 and 30, or \emph{'>0.5 & data_mask<0.75'}
+to select voxels based-on mask values between 0.5 and 0.75 for example if they represent a probability mask.}
 
 \item{switch_z}{logical, indicating whether to change the orientation of the images in the Z axis. Some
 software reverse the order of the manipulated image in the Z axis, and therefore the images of the mask

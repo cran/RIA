@@ -20,7 +20,7 @@ knitr::opts_chunk$set(collapse = TRUE, comment = "#>")
 
 # RIA - Radiomics Image Analysis
 
-Radiomics Image Analysis (RIA) package was developed to facilitate radiomic analysis of medical images. `RIA` can calculate hundreds of different statistics on both 2D and 3D images. `RIA` supports analysis of `DICOM`, `NIfTI` and `nrrd` images. Almost all calculations are vectorized and therefore are super-efficient. The package is developed by Márton Kolossváry a medical doctor not an engineer, therefore all functionalities of the software package are developed in a way that can be learnt by non-professionals. `RIA` is constantly updated with new functionalities and wrap-around functions to make the calculation of radiomic metrics even simpler.
+Radiomics Image Analysis (RIA) package was developed to facilitate radiomic analysis of medical images. `RIA` can calculate hundreds of different statistics on both 2D and 3D images. `RIA` supports analysis of `DICOM`, `NIfTI`, `nrrd` and `npy` (numpy arrays saved in python) iamges. Almost all calculations are vectorized and therefore are super-efficient. The package is developed by Márton Kolossváry a medical doctor not an engineer, therefore all functionalities of the software package are developed in a way that can be learnt by non-professionals. `RIA` is constantly updated with new functionalities and wrap-around functions to make the calculation of radiomic metrics even simpler.
 
 If you do not wish to understand all the details of each function and just wish to start calculating right away, please read the chapter "Converting medical images to RIA_image" and then jump right to "One click solution to calculate all radiomic parameters".
 
@@ -34,7 +34,7 @@ library(RIA)
 
 ### Converting medical images to RIA_image
 
-Medical images can be converted to RIA_image class using the *load_dicom*, *load_nifti* and the *load_nrrd* functions. All you have to do is give the location of the file or files as a string. Current examples are given for *load_dicom*, however *load_nifti* and *load_nrrd* work the same, but please be aware of subtle differences explained in help of these functions and in specific sections of the user manual!
+Medical images can be converted to RIA_image class using the *load_dicom*, *load_nifti*, *load_nrrd* and the *load_npy* functions. All you have to do is give the location of the file or files as a string. Current examples are given for *load_dicom*, however *load_nifti*, *load_nrrd* and *load_npy* work the same, but please be aware of subtle differences explained in help of these functions and in specific sections of the user manual!
 
 ```{r, eval=FALSE}
 DICOM = load_dicom(filename = "C:/DICOM/")
@@ -44,7 +44,10 @@ DICOM = load_dicom(filename = "C:/DICOM/")
 
 -   Converts DICOM files to RIA_image class using the *readDICOM* function of the *oro.dicom* package. If *load_nifti* is used the image loading is done by the *readNIfTI* function of the *oro.nifti* package, while the function *read.nrrd* is used from the *nat* package in case *load_nrrd* is used.
 
--   If **mask_filename** is provided, then the image is filtered one of two ways. If the **mask_filename** is the same as the **filename**, then the values in **keep_mask_values** indicate which voxels values to keep in the original image. This way the image can be segmented for a specific subset of voxels with given intensities. For example, if you would wish to only analyze low-density non-calcified voxels, you could set the **keep_mask_values** to **-100:30**. If a different folder is given to **mask_filename**, then *RIA* loads the mask image which needs to be the same image type as the original image. **mask_filename** can also be a character vector containg paths to multiple mask files. If multiple are supplied, then those voxels are kept which have one of the values of **keep_mask_values** in any of the supplied masks. Using the **keep_mask_values**, you can select which values you consider to indicate which voxels to keep. By convention, the default is 1. However, multiple values may be given, which is convenient in cases when several regions of interest are provided in the mask image. Furthermore, some software after image manipulation reverse the order of the images in the Z axis, and therefore they need to be changed back. In this case **switch_z** needs to be set *TRUE*. Whenever using mask images to identify voxels to be analyzed, please always make sure, that the orientation of the mask image and of the original image is the same!
+-   If **mask_filename** is provided, then the image is filtered one of two ways. If the **mask_filename** is the same as the **filename**, then the values in **keep_mask_values** indicate which voxels values to keep in the original image. This way the image can be segmented for a specific subset of voxels with given intensities. For example, if you would wish to only analyze low-density non-calcified voxels, you could set the **keep_mask_values** to **-100:30**. If a different folder is given to **mask_filename**, then *RIA* loads the mask image which needs to be the same image type as the original image. **mask_filename** can also be a character vector containing paths to multiple mask files. If multiple are supplied, then those voxels are kept which have one of the values of **keep_mask_values** in any of the supplied masks.
+Using the **keep_mask_values**, you can select which values you consider to indicate which voxels to keep. By convention, the default is 1. However, multiple values may be given, which is convenient in cases when several regions of interest are provided in the mask image. If a single string is provided, then each element of the mask will be examined against the statement in the string. For example, if **'>0.5'** is provided i.e. the mask is probabilities after a DL algorithm, then all voxels with values >0.5 in the mask image will be kept. This can be a complex logical expression. The data on which the expression is executed is called data or data_mask, depending on whether you wish to filter the original image, that is the original image is supplied as a mask, or if you have unique mask files respectively. Therefore, for complex logical expressions you can define for example:
+**'>-100 & data<30'** to consider data values between -100 and 30, or **'>0.5 & data_mask<0.75'** to select voxels based-on mask values between 0.5 and 0.75 for example if they represent a probability mask.
+Furthermore, some software after image manipulation reverse the order of the images in the Z axis, and therefore they need to be changed back. In this case **switch_z** needs to be set *TRUE*. Whenever using mask images to identify voxels to be analyzed, please always make sure, that the orientation of the mask image and of the original image is the same!
 
 -   The 2D or 3D image is cropped to the smallest bounding box still containing the whole image. It is useful to minimize the size of the image to save memory. The **zero_value** supplied to the *load_dicom*, *load_nifti* or *load_nrrd* function is used to identify voxels not containing any data. If it is not supplied, then the smallest value present in the dataset is considered as indicating voxels without any data. If for some reason it is important that the RIA_image be the same size (same x,y,z dimensions) as the original supplied image, then this functionality can be turn off by:
 
@@ -95,7 +98,7 @@ exclude <- as.data.frame(DICOM_codes[3:6,])
 DICOM = load_dicom(filename = "C:/DICOM/", header_exclude = exclude)
 ```
 
--   **`RIA_image$log`** which contains information regarding the original image and ran processes on the *RIA_image*. The log is constantly updated by the functions, and some functions use it for inputs. *load_dicom*, *load_nifti* and *load_nrrd* adds the following to the log if possible:
+-   **`RIA_image$log`** which contains information regarding the original image and ran processes on the *RIA_image*. The log is constantly updated by the functions, and some functions use it for inputs. *load_dicom*, *load_nifti*, *load_nrrd* and *load_npy* adds the following to the log if possible:
 
     -   `DICOM$log$events` is a vector containing the ran processes.
 
@@ -497,10 +500,10 @@ In the next section learn how to export all you calculated statistics just using
 
 ## Export of radiomic statistics
 
-All saved radiomic metrics in the `RIA_image` can be conveniently saved using the *save_RIA* function. All you have to do is supply the folder where you wish to export the results to using the **save_to** parameter You may also set the name of the exported files using the **save_name** parameter. A grouping label specifying which class the case belongs to can also be set using the **group_name** parameter. A last but not least, you need to set which slots of statistics you wish to export, if you wish to export all of them, then set the **stats** as:
+All saved radiomic metrics in the `RIA_image` can be conveniently saved using the *save_RIA* function. All you have to do is supply the folder where you wish to export the results to using the **save_to** parameter You may also set the name of the exported files using the **save_name** parameter. A grouping label specifying which class the case belongs to can also be set using the **group_name** parameter. A last but not least, you may set which slots of statistics you wish to export. By default all of them are exported:
 
 ```{r, eval=FALSE}
-save_RIA(DICOM, save_to = "C:/Test/", save_name = "My_first_radiomics", group_name = "Case", stats = c("stat_fo", "stat_glcm_mean",  "stat_glrlm_mean", "stat_geometry"))
+save_RIA(DICOM, save_to = "C:/Test/", save_name = "My_first_radiomics", group_name = "Case")
 ```
 
 And that's it! There you have your first radiomics analysis!
@@ -523,7 +526,6 @@ doParallel::registerDoParallel(7) #Define how many threads to use, usually use t
 data_out_paral <- foreach (i = 1:length(patients), .combine="rbind", .inorder=FALSE,
                            .packages=c('RIA'), .errorhandling = c("pass"), .verbose=FALSE) %dopar% {
                              
-                             
                              files <- list.files(patients_full[i]) #Names of the files in the current patient folder
                              image <- grep("heart", files, ignore.case = T, value = T) #Full name of the image file
                              masks <- grep("plaque", files, ignore.case = T, value = T) #Full name of the mask files
@@ -540,4 +542,4 @@ The disadvantage of parallelizing the for cycle rather then the core functions i
 
 ## Conclusions
 
-**RIA** package for R is a fast, versatile and user-friendly way to calculate radiomic statistics on *DICOM*, *NIfTI* and *nrrd* images using only a few lines of code. One can calculate several hundreds of different statistics on various versions of an image. If you wish to better understand Radiomics, please read: ["Cardiac Computed Tomography Radiomics: A Comprehensive Review on Radiomic Techniques"](https://pubmed.ncbi.nlm.nih.gov/28346329/) and ["Radiomic Features Are Superior to Conventional Quantitative Computed Tomographic Metrics to Identify Coronary Plaques With Napkin-Ring Sign"](https://pubmed.ncbi.nlm.nih.gov/29233836/) which describes the calculation and each statistic in detail in the supplementary files.
+**RIA** package for R is a fast, versatile and user-friendly way to calculate radiomic statistics on *DICOM*, *NIfTI*, *nrrd* and *npy* images using only a few lines of code. One can calculate several hundreds of different statistics on various versions of an image. If you wish to better understand Radiomics, please read: ["Cardiac Computed Tomography Radiomics: A Comprehensive Review on Radiomic Techniques"](https://pubmed.ncbi.nlm.nih.gov/28346329/) and ["Radiomic Features Are Superior to Conventional Quantitative Computed Tomographic Metrics to Identify Coronary Plaques With Napkin-Ring Sign"](https://pubmed.ncbi.nlm.nih.gov/29233836/) which describes the calculation and each statistic in detail in the supplementary files.
