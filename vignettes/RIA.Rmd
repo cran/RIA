@@ -13,14 +13,16 @@ vignette: >
 knitr::opts_chunk$set(collapse = TRUE, comment = "#>")
 ```
 
-
+<!-- badges: start -->
 [![](https://cranlogs.r-pkg.org/badges/last-day/RIA?color=4B8F8C)](https://CRAN.R-project.org/package=RIA) [![](https://cranlogs.r-pkg.org/badges/last-week/RIA?color=E28413)](https://CRAN.R-project.org/package=RIA) [![](https://cranlogs.r-pkg.org/badges/last-month/RIA?color=CC76A1)](https://CRAN.R-project.org/package=RIA)
 [![](https://cranlogs.r-pkg.org/badges/grand-total/RIA?color=ABE188)](https://CRAN.R-project.org/package=RIA)
-
+[![Lifecycle: stable](https://img.shields.io/badge/lifecycle-stable-brightgreen.svg)](https://lifecycle.r-lib.org/articles/stages.html#stable)
+[![CRAN status](https://www.r-pkg.org/badges/version/RIA)](https://CRAN.R-project.org/package=RIA)
+<!-- badges: end -->
 
 # RIA - Radiomics Image Analysis
 
-Radiomics Image Analysis (RIA) package was developed to facilitate radiomic analysis of medical images. `RIA` can calculate hundreds of different statistics on both 2D and 3D images. `RIA` supports analysis of `DICOM`, `NIfTI`, `nrrd` and `npy` (numpy arrays saved in python) iamges. Almost all calculations are vectorized and therefore are super-efficient. The package is developed by Márton Kolossváry a medical doctor not an engineer, therefore all functionalities of the software package are developed in a way that can be learnt by non-professionals. `RIA` is constantly updated with new functionalities and wrap-around functions to make the calculation of radiomic metrics even simpler.
+Radiomics Image Analysis (RIA) package was developed to facilitate radiomic analysis of medical images. `RIA` can calculate hundreds of different statistics on both 2D and 3D images. `RIA` supports analysis of `DICOM`, `NIfTI`, `nrrd` and `npy` (numpy arrays saved in python) images. Almost all calculations are vectorized and therefore are super-efficient. The package is developed by Márton Kolossváry a medical doctor not an engineer, therefore all functionalities of the software package are developed in a way that can be learnt by non-professionals. `RIA` is constantly updated with new functionalities and wrap-around functions to make the calculation of radiomic metrics even simpler.
 
 If you do not wish to understand all the details of each function and just wish to start calculating right away, please read the chapter "Converting medical images to RIA_image" and then jump right to "One click solution to calculate all radiomic parameters".
 
@@ -42,14 +44,14 @@ DICOM = load_dicom(filename = "C:/DICOM/")
 
 *load_dicom* does several things:
 
--   Converts DICOM files to RIA_image class using the *readDICOM* function of the *oro.dicom* package. If *load_nifti* is used the image loading is done by the *readNIfTI* function of the *oro.nifti* package, while the function *read.nrrd* is used from the *nat* package in case *load_nrrd* is used.
+-   Converts DICOM files to RIA_image class using the *readDICOM* function of the *oro.dicom* package. If *load_nifti* is used the image loading is done by the *readNIfTI* function of the *oro.nifti* package, while the function *read.nrrd* is used from the *nat* package in case *load_nrrd* is used. For images saved in numpy arrays, one can use the *load_npy* function. Be aware that, reticulate needs to be installed with a working [python](https://www.python.org) and [numpy](https://numpy.org) distribution. Also, as the numpy array contains no meta-information, pixel spacing and spacing between the slices arguments need to be supplied during the loading of the image.
 
 -   If **mask_filename** is provided, then the image is filtered one of two ways. If the **mask_filename** is the same as the **filename**, then the values in **keep_mask_values** indicate which voxels values to keep in the original image. This way the image can be segmented for a specific subset of voxels with given intensities. For example, if you would wish to only analyze low-density non-calcified voxels, you could set the **keep_mask_values** to **-100:30**. If a different folder is given to **mask_filename**, then *RIA* loads the mask image which needs to be the same image type as the original image. **mask_filename** can also be a character vector containing paths to multiple mask files. If multiple are supplied, then those voxels are kept which have one of the values of **keep_mask_values** in any of the supplied masks.
 Using the **keep_mask_values**, you can select which values you consider to indicate which voxels to keep. By convention, the default is 1. However, multiple values may be given, which is convenient in cases when several regions of interest are provided in the mask image. If a single string is provided, then each element of the mask will be examined against the statement in the string. For example, if **'>0.5'** is provided i.e. the mask is probabilities after a DL algorithm, then all voxels with values >0.5 in the mask image will be kept. This can be a complex logical expression. The data on which the expression is executed is called data or data_mask, depending on whether you wish to filter the original image, that is the original image is supplied as a mask, or if you have unique mask files respectively. Therefore, for complex logical expressions you can define for example:
 **'>-100 & data<30'** to consider data values between -100 and 30, or **'>0.5 & data_mask<0.75'** to select voxels based-on mask values between 0.5 and 0.75 for example if they represent a probability mask.
 Furthermore, some software after image manipulation reverse the order of the images in the Z axis, and therefore they need to be changed back. In this case **switch_z** needs to be set *TRUE*. Whenever using mask images to identify voxels to be analyzed, please always make sure, that the orientation of the mask image and of the original image is the same!
 
--   The 2D or 3D image is cropped to the smallest bounding box still containing the whole image. It is useful to minimize the size of the image to save memory. The **zero_value** supplied to the *load_dicom*, *load_nifti* or *load_nrrd* function is used to identify voxels not containing any data. If it is not supplied, then the smallest value present in the dataset is considered as indicating voxels without any data. If for some reason it is important that the RIA_image be the same size (same x,y,z dimensions) as the original supplied image, then this functionality can be turn off by:
+-   The 2D or 3D image is cropped to the smallest bounding box still containing the whole image. It is useful to minimize the size of the image to save memory. The **zero_value** supplied to the *load_dicom*, *load_nifti*, *load_nrrd* or *load_npy* function is used to identify voxels not containing any data. If it is not supplied, then the smallest value present in the dataset is considered as indicating voxels without any data. If for some reason it is important that the RIA_image be the same size (same x,y,z dimensions) as the original supplied image, then this functionality can be turn off by:
 
 ```{r, eval=FALSE}
 DICOM = load_dicom(filename = "C:/DICOM/", crop_in = FALSE)
@@ -67,11 +69,11 @@ DICOM = load_dicom(filename = "C:/DICOM/", replace_in = FALSE)
 DICOM = load_dicom(filename = "C:/DICOM/", center_in = FALSE)
 ```
 
-By default **center_in** is set to *FALSE* for *load_nifti* and *load_nrrd*, since these images are often preprocessed and therefore contain the proper values for analysis. But please be aware, that in all cases, the load images should be inspected to see in the values are reasonable, for example if the minimum and maximum values are in the range that would be expected!
+By default **center_in** is set to *FALSE* for *load_nifti*,*load_nrrd* and *load_npy*, since these images are often preprocessed and therefore contain the proper values for analysis. But please be aware, that in all cases, the load images should be inspected to see in the values are reasonable, for example if the minimum and maximum values are in the range that would be expected!
 
--   Finally, *load_dicom*, *load_nifti* or *load_nrrd* adds basic information regarding the original image and ran processes into the *header* (if available) and *log* slot of *RIA_image*.
+-   Finally, *load_dicom*, *load_nifti*, *load_nrrd* and *load_npy* adds basic information regarding the original image and ran processes into the *header* (if available) and *log* slot of *RIA_image*.
 
-All above mentioned settings can be combined as wished to achieve proper conversion of the DICOM image. Furthermore, all parameters of the *readDICOM*, *readNIfTI* and *read.nrrd* function of the *oro.dicom* *oro.nifti* and *nat* packages can be set in the *load_dicom*, *load_nifti* and *load_nrrd* functions.
+All above mentioned settings can be combined as wished to achieve proper conversion of the DICOM image. Furthermore, all parameters of the *readDICOM*, *readNIfTI*, *read.nrrd* *np.load* function of the *oro.dicom* *oro.nifti*, *nat* and *numpy (python)* packages can be set in the *load_dicom*, *load_nifti*, *load_nrrd* and *load_npy* functions.
 
 As a result the *RIA_image* object will have three slots:
 

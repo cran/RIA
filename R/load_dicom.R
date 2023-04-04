@@ -164,7 +164,7 @@
 #' @encoding UTF-8
 
 
-load_dicom <- function(filename, mask_filename = NULL, keep_mask_values = 1, switch_z = TRUE, 
+load_dicom <- function(filename, mask_filename = NULL, keep_mask_values = 1, switch_z = FALSE, 
                        crop_in = TRUE, replace_in = TRUE, center_in = TRUE,  zero_value = NULL, min_to = -1024,
                        header_add = NULL, header_exclude = NULL, verbose_in = TRUE,
                        recursive_in = TRUE, exclude_in = "sql",

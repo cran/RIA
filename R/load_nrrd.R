@@ -142,7 +142,7 @@
 #' @encoding UTF-8
 
 
-load_nrrd <- function(filename, mask_filename = NULL, keep_mask_values = 1, switch_z = TRUE, 
+load_nrrd <- function(filename, mask_filename = NULL, keep_mask_values = 1, switch_z = FALSE, 
                       crop_in = TRUE, replace_in = TRUE, center_in = FALSE,  zero_value = NULL, min_to = -1024,
                       verbose_in = TRUE,
                       origin_in = NULL, ReadByteAsRaw_in = "unsigned", ... 

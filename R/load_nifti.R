@@ -142,7 +142,7 @@
 #' @encoding UTF-8
 
 
-load_nifti <- function(filename, image_dim = 3, mask_filename = NULL, keep_mask_values = 1, switch_z = TRUE, 
+load_nifti <- function(filename, image_dim = 3, mask_filename = NULL, keep_mask_values = 1, switch_z = FALSE, 
                        crop_in = TRUE, replace_in = TRUE, center_in = FALSE,  zero_value = NULL, min_to = -1024,
                        verbose_in = TRUE,
                        reorient_in = TRUE, ...
@@ -183,7 +183,7 @@ load_nifti <- function(filename, image_dim = 3, mask_filename = NULL, keep_mask_
         
         if(verbose_in) {message(paste0("LOADING NIFTI IMAGES OF MASK IMAGE FROM: ", mask_filename, "\n"))}
         dcmImages_mask <- oro.nifti::readNIfTI(mask_filename_i, verbose = FALSE, reorient = reorient_in)
-        data_mask  <- dcmImages@.Data
+        data_mask  <- dcmImages_mask@.Data
         data_mask <- eval(parse(text= paste0("data_mask[", dim_string, "]")))
         
         if(!all(dim(data) == dim(data_mask))) {

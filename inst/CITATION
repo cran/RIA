@@ -1,7 +1,8 @@
 citHeader("To cite package 'RIA' in publications use:")
 
-citEntry(entry="article",
-	title = paste("Radiomic Features Are Superior to Conventional Quantitative Computed Tomographic Metrics to Identify Coronary Plaques With Napkin-Ring Sign"),
+bibentry(
+  bibtype  = "Article",
+	title = "Radiomic Features Are Superior to Conventional Quantitative Computed Tomographic Metrics to Identify Coronary Plaques With Napkin-Ring Sign",
 
   author= c(
     person("M\U00E1rton", "Kolossv\U00E1ry"),
@@ -25,8 +26,9 @@ citEntry(entry="article",
 		  "DOI:10.1161/circimaging.117.006843")
 )
 
-citEntry(entry="article",
-	title = paste("Cardiac Computed Tomography Radiomics: A Comprehensive Review on Radiomic Techniques."),
+bibentry(
+  bibtype  = "Article",
+	title = "Cardiac Computed Tomography Radiomics: A Comprehensive Review on Radiomic Techniques.",
 
   author= c(
     person("M\U00E1rton", "Kolossv\U00E1ry"),

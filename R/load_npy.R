@@ -1,6 +1,7 @@
 #' @title Loads npy files to RIA image format
 #' @export
-#' @description  Loads numpy arrays to a \emph{RIA_image} object using \emph{reticulate}.
+#' @description  Loads numpy arrays from python to a \emph{RIA_image} object using the \emph{reticulate} package.
+#' Requires \href{https://www.python.org}{python} and \href{https://numpy.org}{numpy} to be installed!
 #' \emph{RIA_image} is a list with three mandatory attributes.
 #' \itemize{
 #'  \item \bold{RIA_data} is a \emph{RIA_data} object, which has two potential slots.

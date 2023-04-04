@@ -1,16 +1,22 @@
 <!-- README.md is generated from README.Rmd. Please edit that file -->
+<!-- badges: start -->
 
 [![](https://cranlogs.r-pkg.org/badges/last-day/RIA?color=4B8F8C)](https://CRAN.R-project.org/package=RIA)
 [![](https://cranlogs.r-pkg.org/badges/last-week/RIA?color=E28413)](https://CRAN.R-project.org/package=RIA)
 [![](https://cranlogs.r-pkg.org/badges/last-month/RIA?color=CC76A1)](https://CRAN.R-project.org/package=RIA)
 [![](https://cranlogs.r-pkg.org/badges/grand-total/RIA?color=ABE188)](https://CRAN.R-project.org/package=RIA)
+[![Lifecycle:
+stable](https://img.shields.io/badge/lifecycle-stable-brightgreen.svg)](https://lifecycle.r-lib.org/articles/stages.html#stable)
+[![CRAN
+status](https://www.r-pkg.org/badges/version/RIA)](https://CRAN.R-project.org/package=RIA)
+<!-- badges: end -->
 
 # Radiomics Image Analysis (RIA)
 
 Radiomics Image Analysis (RIA) package was developed to facilitate
 radiomic analysis of medical images. `RIA` can calculate hundreds of
 different statistics on both 2D and 3D images. `RIA` supports analysis
-of `DICOM`, `NIfTI`, `nrrd` and `npy` (numpy arrays save in python)
+of `DICOM`, `NIfTI`, `nrrd` and `npy` (numpy arrays saved in python)
 images. Almost all calculations are vectorized and therefore are
 super-efficient. The package is developed by Márton Kolossváry a medical
 doctor not an engineer, therefore all functionalities of the software

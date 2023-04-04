@@ -9,7 +9,7 @@ load_nrrd(
   filename,
   mask_filename = NULL,
   keep_mask_values = 1,
-  switch_z = TRUE,
+  switch_z = FALSE,
   crop_in = TRUE,
   replace_in = TRUE,
   center_in = FALSE,

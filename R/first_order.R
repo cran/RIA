@@ -2,7 +2,7 @@
 #' @export
 #'
 #' @description  Calculates first-order statistical metrics of \emph{RIA_image}.
-#' First-order metrics discard all spatial information. By default the \emph{$modif}
+#' First-order metrics discard all spatial information. By default the \emph{$orig}
 #' image will be used to calculate statistics. If \emph{use_slot} is given, then the data
 #' present in \emph{RIA_image$use_slot} will be used for calculations.
 #' Results will be saved into the \emph{$stat_fo} slot. The name of the subslot is determined
