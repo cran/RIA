@@ -39,7 +39,7 @@
 #'
 #' @examples \dontrun{
 #' #Discretize loaded image and then calculate all radiomic statistics
-#' DICOM <- radiomics_all(DICOM, equal_prob = "both", bins_in= c(32,64), distance = c(1:2))
+#' RIA_image <- radiomics_all(RIA_image, equal_prob = "both", bins_in= c(32,64), distance = c(1:2))
 #' }
 #' 
 #' @references Márton KOLOSSVÁRY et al.

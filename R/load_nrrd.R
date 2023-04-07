@@ -13,11 +13,9 @@
 #'  Further attributes may also be added by RIA functions.
 #'
 #' @param filename string, file path to directory containing \emph{nrrd} file.
-#' 
 #' @param mask_filename string vector, file path to optional directory containing \emph{nrrd} file
 #' of mask image. If multiple are supplied, then those voxels are kept which have one of the values of \emph{keep_mask_values}
 #' in any of the supplied masks.
-#' 
 #' @param keep_mask_values integer vector or string, indicates which value or values of the mask image
 #' to use as indicator to identify voxels wished to be processed. Usually 1-s indicate voxels
 #' wished to be processed. However, one mask image might contain several segmentations, in which
@@ -34,32 +32,22 @@
 #' unique mask files respectively. Therefore for complex logical expressions you can define for example:
 #' \emph{'>-100 & data<30'} to consider data values between -100 and 30, or \emph{'>0.5 & data_mask<0.75'}
 #' to select voxels based-on mask values between 0.5 and 0.75 for example if they represent a probability mask.
-#' 
 #' @param switch_z logical, indicating whether to change the orientation of the images in the Z axis. Some
 #' software reverse the order of the manipulated image in the Z axis, and therefore the images of the mask
-#' image need to be reveresed.
-#'
+#' image need to be reversed.
 #' @param crop_in logical, indicating whether to crop \emph{RIA_image} to smallest bounding box.
-#'
 #' @param replace_in logical, whether to replace smallest values indicated by \emph{zero_value},
 #' which are considered to indicate no signal, to NA.
-#'
 #' @param center_in logical, whether to shift data so smallest value
 #' is equal to \emph{min_to} input parameter.
-#'
 #' @param zero_value integer, indicating voxels values which are considered
 #' not to have any information. If left empty,
 #' then the smallest HU value in the image will be used, if \emph{replace_in} is TRUE.
-#'
 #' @param min_to integer, value to which data is shifted to if \emph{center_in} is TRUE.
-#'
 #' @param verbose_in logical, indicating whether to print detailed information.
 #' Most prints can also be suppresed using the \code{\link{suppressMessages}} function.
-#'
 #' @param origin_in \emph{origin} parameter input of \code{\link[nat]{read.nrrd}}.
-#' 
 #' @param ReadByteAsRaw_in \emph{origin} parameter input of \code{\link[nat]{read.nrrd}}.
-#' 
 #' @param ... additional arguments to  \code{\link[nat]{read.nrrd}},
 #' \code{\link[nat]{read.nrrd.header}}.
 #'
@@ -79,8 +67,7 @@
 #' Due to memory concerns, there can only be one \emph{RIA_data$orig} and \emph{RIA_data$modif}
 #' image present at one time in a \emph{RIA_image}. Therefore, if image manipulations are performed,
 #' then the \emph{RIA_data$modif} will be overwritten. However, functions can save images
-#' into new slots of \emph{RIA_image}, for example the \code{\link[RIA]{discretize}} function can save
-#' discretized images to the \emph{discretized} slot of \emph{RIA_image}.
+#' into new slots of \emph{RIA_image}, for example discretized images can be saved to the \emph{discretized} slot of \emph{RIA_image}.
 #' \cr
 #' \emph{load_nrrd} not only loads the image based on parameters that can be set for
 #' \code{\link[nat]{read.nrrd}}, but also can perform

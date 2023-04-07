@@ -20,7 +20,11 @@ crop <- function(RIA_data_in, zero_value = 0, use_orig = TRUE, write_orig = TRUE
     flat = data_in[i, 1:dim(data_in)[2], 1:dim(data_in)[3]]
     ref = matrix(zero_value, dim(data_in)[2], dim(data_in)[3])
     
-    if(max(abs(flat- ref)) != 0) {logic_x[i] = 1}
+    if(is.na(zero_value)) {
+      if(sum(!is.na(flat))>0) {logic_x[i] = 1}
+    } else {
+      if(max(abs(flat- ref)) != 0) {logic_x[i] = 1}
+    }
     
     if(verbose_in) utils::setTxtProgressBar(tpb, i); if(i == dim(data_in)[1]) {close(tpb)}
   }
@@ -36,7 +40,11 @@ crop <- function(RIA_data_in, zero_value = 0, use_orig = TRUE, write_orig = TRUE
     flat = data_in[1:dim(data_in)[1], i, 1:dim(data_in)[3]]
     ref = matrix(zero_value, dim(data_in)[1], dim(data_in)[3])
     
-    if(max(abs(flat- ref)) != 0) {logic_y[i] = 1}
+    if(is.na(zero_value)) {
+      if(sum(!is.na(flat))>0) {logic_y[i] = 1}
+    } else {
+      if(max(abs(flat- ref)) != 0) {logic_y[i] = 1}
+    }
     
     if(verbose_in) utils::setTxtProgressBar(tpb, i); if(i == dim(data_in)[1]) {close(tpb)}
   }
@@ -55,7 +63,11 @@ crop <- function(RIA_data_in, zero_value = 0, use_orig = TRUE, write_orig = TRUE
       flat = data_in[1:dim(data_in)[1], 1:dim(data_in)[2], i]
       ref = matrix(zero_value, dim(data_in)[1], dim(data_in)[2])
       
-      if(max(abs(flat- ref)) != 0) {logic_z[i] = 1}
+      if(is.na(zero_value)) {
+        if(sum(!is.na(flat))>0) {logic_z[i] = 1}
+      } else {
+        if(max(abs(flat- ref)) != 0) {logic_z[i] = 1}
+      }
       
       if(verbose_in) utils::setTxtProgressBar(tpb, i); if(i == dim(data_in)[1]) {close(tpb)}
     }
@@ -76,7 +88,7 @@ crop <- function(RIA_data_in, zero_value = 0, use_orig = TRUE, write_orig = TRUE
   if(length(dim(data_in_mod)) == 2) {data_in_mod <- array(data_in_mod, dim = c(dim(data_in_mod),1))}
   
   if(verbose_in) { if(all(dim(data_in_mod) ==  dim(data_in))) {
-    message("\nCROPPING WAS NOT DONE, SINCE NO DATA WAS OBSERVED IN THE DICOM DATASET, THEREFORE ORIGINAL DATA IS COPIED TO MODIF SLOT OF RIA_image\n");
+    message("\nCROPPING WAS NOT DONE, SINCE NO DATA WAS OBSERVED IN THE RIA IMAGE DATASET, THEREFORE ORIGINAL DATA IS COPIED TO MODIF SLOT OF RIA_image\n");
   } else {message("\nCROPPING DOME IN ALL DIRECTIONS\n")}
   }
   

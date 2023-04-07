@@ -3,8 +3,8 @@
 # addition dataframe with three columns: Name Group Element containing the name,
 # the group and the element code of the DICOM fields wished to be added to the predefined set
 # exclusion dataframe with three columns: Name Group Element containing the name,
-# the group and the element code of the DICOM fields wished to be excluded from the predefined set
-# reuturn Returns a RIA_header object contining the DICOM header information as a list
+# the group and the element code of the DICOM fields wished to be excluded from the predefined set.
+# Returns a RIA_header object containing the DICOM header information as a list
 # (c): Márton Kolossváry, 2018
 
 create_header <- function(directory, addition = NULL, exclusion = NULL)

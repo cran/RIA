@@ -1,57 +1,56 @@
-#' @title Calculates GLCM-based statistics
-#' @export
-#'
-#' @description Calculates GLCM-based statistics for given GLCM matrix.
-#'
-#' @param RIA_data_in \emph{RIA_image}.
-#'
-#' @param use_type string, can be \emph{"single"} which runs the function on a single image,
-#' which is determined using \emph{"use_orig"} or \emph{"use_slot"}. \emph{"glcm"}
-#' takes all datasets in the \emph{RIA_image$glcm} slot and runs the analysis on them.
-#'
-#' @param use_orig logical, indicating to use image present in \emph{RIA_data$orig}.
-#' If FALSE, the modified image will be used stored in \emph{RIA_data$modif}. However, GLCM matrices
-#' are usually not present in either slots, therefore giving the slot name using \emph{use_slot} is advised.
-#'
-#' @param use_slot string, name of slot where data wished to be used is. Use if the desired image
-#' is not in the \emph{data$orig} or \emph{data$modif} slot of the \emph{RIA_image}. For example,
-#' ig the desired dataset is in \emph{RIA_image$glcm$ep_4_111}, then \emph{use_slot} should be
-#' \emph{glcm$ep_4_111}. The results are automatically saved. If the results are not saved to
-#' the desired slot, then please use \emph{save_name} parameter. If the string contains "-" characters
-#' use "`" before the last slot name, for example: \emph{glcm$`ep_4_-1-1-1`}
-#'
-#' @param save_name string, indicating the name of subslot of \emph{$glcm} to save results to.
-#' If left empty, then it will be automatically determined.
-#'
-#' @param verbose_in logical, indicating whether to print detailed information.
-#' Most prints can also be suppressed using the \code{\link{suppressMessages}} function.
-#'
-#' @return \emph{RIA_image} containing the statistical information.
-#'
-#' @examples \dontrun{
-#' #Discretize loaded image and then calculate GLCM statistics
-#' RIA_image <- discretize(RIA_image, bins_in = 8, equal_prob = TRUE)
-#' RIA_image <- glcm(RIA_image, use_orig = FALSE, use_slot = "discretized$ep_8",
-#' off_right = 0, off_down = 1, off_z = 0)
-#' RIA_image <- glcm_stat(RIA_image, use_orig = FALSE, use_slot = "glcm$ep_8_010")
-#' 
-#' #Batch calculation of GLCM-based statistics on all calculated GLCMs
-#' RIA_image <- glcm_stat(RIA_image, use_type = "discretized")
-#' }
-#'
-#' @references Márton KOLOSSVÁRY et al.
-#' Radiomic Features Are Superior to Conventional Quantitative Computed Tomographic
-#' Metrics to Identify Coronary Plaques With Napkin-Ring Sign
-#' Circulation: Cardiovascular Imaging (2017).
-#' DOI: 10.1161/circimaging.117.006843
-#' \url{https://pubmed.ncbi.nlm.nih.gov/29233836/}
-#' 
-#' Márton KOLOSSVÁRY et al.
-#' Cardiac Computed Tomography Radiomics: A Comprehensive Review on Radiomic Techniques.
-#' Journal of Thoracic Imaging (2018).
-#' DOI: 10.1097/RTI.0000000000000268
-#' \url{https://pubmed.ncbi.nlm.nih.gov/28346329/}
-#' @encoding UTF-8
+# #' @title Calculates GLCM-based statistics
+# #'
+# #' @description Calculates GLCM-based statistics for given GLCM matrix.
+# #'
+# #' @param RIA_data_in \emph{RIA_image}.
+# #'
+# #' @param use_type string, can be \emph{"single"} which runs the function on a single image,
+# #' which is determined using \emph{"use_orig"} or \emph{"use_slot"}. \emph{"glcm"}
+# #' takes all datasets in the \emph{RIA_image$glcm} slot and runs the analysis on them.
+# #'
+# #' @param use_orig logical, indicating to use image present in \emph{RIA_data$orig}.
+# #' If FALSE, the modified image will be used stored in \emph{RIA_data$modif}. However, GLCM matrices
+# #' are usually not present in either slots, therefore giving the slot name using \emph{use_slot} is advised.
+# #'
+# #' @param use_slot string, name of slot where data wished to be used is. Use if the desired image
+# #' is not in the \emph{data$orig} or \emph{data$modif} slot of the \emph{RIA_image}. For example,
+# #' the desired dataset is in \emph{RIA_image$glcm$ep_4_111}, then \emph{use_slot} should be
+# #' \emph{glcm$ep_4_111}. The results are automatically saved. If the results are not saved to
+# #' the desired slot, then please use \emph{save_name} parameter. If the string contains "-" characters
+# #' use "`" before the last slot name, for example: \emph{glcm$`ep_4_-1-1-1`}
+# #'
+# #' @param save_name string, indicating the name of subslot of \emph{$glcm} to save results to.
+# #' If left empty, then it will be automatically determined.
+# #'
+# #' @param verbose_in logical, indicating whether to print detailed information.
+# #' Most prints can also be suppressed using the \code{\link{suppressMessages}} function.
+# #'
+# #' @return \emph{RIA_image} containing the statistical information.
+# #'
+# #' @examples \dontrun{
+# #' #Discretize loaded image and then calculate GLCM statistics
+# #' RIA_image <- discretize(RIA_image, bins_in = 8, equal_prob = TRUE)
+# #' RIA_image <- glcm(RIA_image, use_orig = FALSE, use_slot = "discretized$ep_8",
+# #' off_right = 0, off_down = 1, off_z = 0)
+# #' RIA_image <- glcm_stat(RIA_image, use_orig = FALSE, use_slot = "glcm$ep_8_010")
+# #' 
+# #' #Batch calculation of GLCM-based statistics on all calculated GLCMs
+# #' RIA_image <- glcm_stat(RIA_image, use_type = "discretized")
+# #' }
+# #'
+# #' @references Márton KOLOSSVÁRY et al.
+# #' Radiomic Features Are Superior to Conventional Quantitative Computed Tomographic
+# #' Metrics to Identify Coronary Plaques With Napkin-Ring Sign
+# #' Circulation: Cardiovascular Imaging (2017).
+# #' DOI: 10.1161/circimaging.117.006843
+# #' \url{https://pubmed.ncbi.nlm.nih.gov/29233836/}
+# #' 
+# #' Márton KOLOSSVÁRY et al.
+# #' Cardiac Computed Tomography Radiomics: A Comprehensive Review on Radiomic Techniques.
+# #' Journal of Thoracic Imaging (2018).
+# #' DOI: 10.1097/RTI.0000000000000268
+# #' \url{https://pubmed.ncbi.nlm.nih.gov/28346329/}
+# #' @encoding UTF-8
 
 
 

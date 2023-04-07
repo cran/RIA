@@ -3,7 +3,7 @@
 
 check_data_in <- function(RIA_data_in, use_type = "single", use_orig = TRUE, use_slot = NULL, verbose_in = TRUE)
 {
-    if(!any(class(RIA_data_in) == "RIA_image")) {message("PROCESSING OF RIA_image OBJECTS ARE SUPPORTED, OTHER CLASSES MIGHT CAUSE PROBLEMS! PLEASE LOAD DATA USING load_dicom")}
+    if(!any(class(RIA_data_in) == "RIA_image")) {message("PROCESSING OF RIA_image OBJECTS ARE SUPPORTED, OTHER CLASSES MIGHT CAUSE PROBLEMS! PLEASE LOAD DATA USING RIA load_ FUNCTIONS")}
     
     if(use_type == "single") {
         if(!is.null(use_slot)) {data_in <- eval(parse(text = paste0("RIA_data_in$", use_slot)))

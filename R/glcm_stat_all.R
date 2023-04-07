@@ -1,53 +1,52 @@
-#' @title Aggregates GLCM-based statistics based-on supplied function
-#' @export
-#'
-#' @description Calculates aggregated statistics of GLCM matrix statistics calculated on
-#' GCLM matrices evaluated in all different directions.
-#' 
-#' @param RIA_data_in \emph{RIA_image}, created by \code{\link[RIA]{load_dicom}}.
-#' 
-#' @param statistic string, defining the statistic to be calculated on the array of GLCM statistics.
-#' By default, statistic is set to \emph{"mean"}, however any function may be provided. The proper
-#' syntax is: function(X, attributes). The supplied string must contain a "X", which will be replaced
-#' with the array of the GLCM statistics value. Further attributes of the function may also be given.
-#' For example, if you wish to calculate the median of all GLCMs calculated in different directions,
-#' then it must be supplied as: \emph{median(X, na.rm = TRUE)}.
-#'
-#' @param verbose_in logical, indicating whether to print detailed information.
-#' Most prints can also be suppressed using the \code{\link{suppressMessages}} function.
-#'
-#' @return \emph{RIA_image} containing the statistical information.
-#'
-#' @examples \dontrun{
-#' #Discretize loaded image and then calculate GLCM statistics for all matrices
-#' RIA_image <- discretize(RIA_image, bins_in = c(4, 8), equal_prob = TRUE,
-#' use_orig = TRUE, write_orig = FALSE)
-#' RIA_image <- glcm_all(RIA_image, use_type = "discretized", distance = c(1:2))
-#' RIA_image <- glcm_stat(RIA_image)
-#' 
-#' #Calculate the average of the different GLCM matrices in the different directions
-#' RIA_image <- glcm_stat_all(RIA_image)
-#' }
-#' 
-#' @references Márton KOLOSSVÁRY et al.
-#' Radiomic Features Are Superior to Conventional Quantitative Computed Tomographic
-#' Metrics to Identify Coronary Plaques With Napkin-Ring Sign
-#' Circulation: Cardiovascular Imaging (2017).
-#' DOI: 10.1161/circimaging.117.006843
-#' \url{https://pubmed.ncbi.nlm.nih.gov/29233836/}
-#' 
-#' Márton KOLOSSVÁRY et al.
-#' Cardiac Computed Tomography Radiomics: A Comprehensive Review on Radiomic Techniques.
-#' Journal of Thoracic Imaging (2017).
-#' DOI: 10.1097/RTI.0000000000000268
-#' \url{https://pubmed.ncbi.nlm.nih.gov/28346329/}
-#' @encoding UTF-8
+# #' @title Aggregates GLCM-based statistics based-on supplied function
+# #'
+# #' @description Calculates aggregated statistics of GLCM matrix statistics calculated on
+# #' GCLM matrices evaluated in all different directions.
+# #' 
+# #' @param RIA_data_in \emph{RIA_image}, created by a load function of RIA.
+# #' 
+# #' @param statistic string, defining the statistic to be calculated on the array of GLCM statistics.
+# #' By default, statistic is set to \emph{"mean"}, however any function may be provided. The proper
+# #' syntax is: function(X, attributes). The supplied string must contain a "X", which will be replaced
+# #' with the array of the GLCM statistics value. Further attributes of the function may also be given.
+# #' For example, if you wish to calculate the median of all GLCMs calculated in different directions,
+# #' then it must be supplied as: \emph{median(X, na.rm = TRUE)}.
+# #'
+# #' @param verbose_in logical, indicating whether to print detailed information.
+# #' Most prints can also be suppressed using the \code{\link{suppressMessages}} function.
+# #'
+# #' @return \emph{RIA_image} containing the statistical information.
+# #'
+# #' @examples \dontrun{
+# #' #Discretize loaded image and then calculate GLCM statistics for all matrices
+# #' RIA_image <- discretize(RIA_image, bins_in = c(4, 8), equal_prob = TRUE,
+# #' use_orig = TRUE, write_orig = FALSE)
+# #' RIA_image <- glcm_all(RIA_image, use_type = "discretized", distance = c(1:2))
+# #' RIA_image <- glcm_stat(RIA_image)
+# #' 
+# #' #Calculate the average of the different GLCM matrices in the different directions
+# #' RIA_image <- glcm_stat_all(RIA_image)
+# #' }
+# #' 
+# #' @references Márton KOLOSSVÁRY et al.
+# #' Radiomic Features Are Superior to Conventional Quantitative Computed Tomographic
+# #' Metrics to Identify Coronary Plaques With Napkin-Ring Sign
+# #' Circulation: Cardiovascular Imaging (2017).
+# #' DOI: 10.1161/circimaging.117.006843
+# #' \url{https://pubmed.ncbi.nlm.nih.gov/29233836/}
+# #' 
+# #' Márton KOLOSSVÁRY et al.
+# #' Cardiac Computed Tomography Radiomics: A Comprehensive Review on Radiomic Techniques.
+# #' Journal of Thoracic Imaging (2017).
+# #' DOI: 10.1097/RTI.0000000000000268
+# #' \url{https://pubmed.ncbi.nlm.nih.gov/28346329/}
+# #' @encoding UTF-8
 
 
 
 glcm_stat_all <- function(RIA_data_in, statistic = "mean(X, na.rm = TRUE)", verbose_in = TRUE)
 {
-  if(!any(class(RIA_data_in) == "RIA_image")) {message("PROCESSING OF RIA_image OBJECTS ARE SUPPORTED, OTHER CLASSES MIGHT CAUSE PROBLEMS! PLEASE LOAD DATA USING load_dicom")}
+  if(!any(class(RIA_data_in) == "RIA_image")) {message("PROCESSING OF RIA_image OBJECTS ARE SUPPORTED, OTHER CLASSES MIGHT CAUSE PROBLEMS! PLEASE LOAD DATA USING RIA load_ FUNCTIONS")}
   
   
   #create names to save to

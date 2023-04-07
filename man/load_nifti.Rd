@@ -49,7 +49,7 @@ to select voxels based-on mask values between 0.5 and 0.75 for example if they r
 
 \item{switch_z}{logical, indicating whether to change the orientation of the images in the Z axis. Some
 software reverse the order of the manipulated image in the Z axis, and therefore the images of the mask
-image need to be reveresed.}
+image need to be reversed.}
 
 \item{crop_in}{logical, indicating whether to crop \emph{RIA_image} to smallest bounding box.}
 
@@ -112,8 +112,7 @@ operate on the \emph{RIA_data$modif} image by default.
 Due to memory concerns, there can only be one \emph{RIA_data$orig} and \emph{RIA_data$modif}
 image present at one time in a \emph{RIA_image}. Therefore, if image manipulations are performed,
 then the \emph{RIA_data$modif} will be overwritten. However, functions can save images
-into new slots of \emph{RIA_image}, for example the \code{\link[RIA]{discretize}} function can save
-discretized images to the \emph{discretized} slot of \emph{RIA_image}.
+into new slots of \emph{RIA_image}, for example discretized images can be saved to the \emph{discretized} slot of \emph{RIA_image}.
 \cr
 \emph{load_nifti} not only loads the image based on parameters that can be set for
 \code{\link[oro.nifti]{readNIfTI}}, but also can perform

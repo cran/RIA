@@ -1,6 +1,6 @@
 # Retrieves NIFTI header information from images in directory
 #
-# reuturn Returns a RIA_header object contining the NIFTI header information as a list
+# Returns a RIA_header object containing the NIFTI header information as a list
 # (c): Márton Kolossváry, 2018
 
 

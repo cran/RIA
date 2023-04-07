@@ -78,8 +78,7 @@
 #' Due to memory concerns, there can only be one \emph{RIA_data$orig} and \emph{RIA_data$modif}
 #' image present at one time in a \emph{RIA_image}. Therefore, if image manipulations are performed,
 #' then the \emph{RIA_data$modif} will be overwritten. However, functions can save images
-#' into new slots of \emph{RIA_image}, for example the \code{\link[RIA]{discretize}} function can save
-#' discretized images to the \emph{discretized} slot of \emph{RIA_image}.
+#' into new slots of \emph{RIA_image}, for example discretized images can be saved to the \emph{discretized} slot of \emph{RIA_image}.
 #' \cr
 #' \emph{load_npy} not only loads the image, but also can perform
 #' minimal manipulations on the image itself.

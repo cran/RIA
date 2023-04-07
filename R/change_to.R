@@ -1,5 +1,5 @@
 # Change given value of image to a specified value
-# Change given value of \emph{RIA_image} to a given value keeping the dimentions of the object. Used by \code{\link{load_dicom}} to change smallest values to NA, which are considered to indicate values without a signal.
+# Change given value of \emph{RIA_image} to a given value keeping the dimentions of the object. Used by \code{\link{load_}} to change smallest values to NA, which are considered to indicate values without a signal.
 # return RIA_image object where given values were changed to NA, whith RIA_log updated.
 # (c): Márton Kolossváry, 2018
 
