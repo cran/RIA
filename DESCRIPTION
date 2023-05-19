@@ -1,8 +1,8 @@
 Package: RIA
 Type: Package
 Title: Radiomics Image Analysis Toolbox for Medial Images
-Version: 1.7.0
-Date: 2023-04-07
+Version: 1.7.1
+Date: 2023-05-19
 Authors@R: person("Marton", "Kolossvary", role = c("aut", "cre"), email = "marton.kolossvary@gmail.com")
 Maintainer: Marton Kolossvary <marton.kolossvary@gmail.com>
 Description: Radiomics image analysis toolbox for 2D and 3D radiological images. RIA supports DICOM, NIfTI,
@@ -14,15 +14,14 @@ Description: Radiomics image analysis toolbox for 2D and 3D radiological images.
              et al. Circ: Cardiovascular Imaging. 2017;10(12):e006843 <doi: 10.1161/CIRCIMAGING.117.006843>.
 License: AGPL-3
 Depends: R (>= 3.3.0)
-Imports: oro.dicom (>= 0.5.0), oro.nifti (>= 0.9.1), nat (>= 1.8.11),
-        reticulate(>= 1.20)
+Imports: oro.dicom (>= 0.5.0), oro.nifti (>= 0.9.1)
 LazyData: TRUE
 RoxygenNote: 7.1.2
 NeedsCompilation: no
-Suggests: knitr, rmarkdown
+Suggests: knitr, rmarkdown, nat (>= 1.8.11), reticulate(>= 1.20)
 Encoding: UTF-8
 URL: https://pubmed.ncbi.nlm.nih.gov/29233836/
-Packaged: 2023-04-07 17:32:01 UTC; mjk2
+Packaged: 2023-05-19 14:30:11 UTC; mjk2
 Author: Marton Kolossvary [aut, cre]
 Repository: CRAN
-Date/Publication: 2023-04-07 18:10:10 UTC
+Date/Publication: 2023-05-19 14:50:02 UTC

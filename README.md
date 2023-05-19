@@ -91,7 +91,8 @@ DICOM = load_dicom(filename = "C:/DICOM/")
     function of the *oro.dicom* package. If *load_nifti* is used the
     image loading is done by the *readNIfTI* function of the *oro.nifti*
     package, while the function *read.nrrd* is used from the *nat*
-    package in case *load_nrrd* is used. For images saved in numpy
+    package in case *load_nrrd* is used. The package needs to be
+    installed if not initially available. For images saved in numpy
     arrays, one can use the *load_npy* function. Be aware that,
     reticulate needs to be installed with a working
     [python](https://www.python.org) and [numpy](https://numpy.org)
