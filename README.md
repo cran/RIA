@@ -23,8 +23,6 @@ images. Almost all calculations are vectorized and therefore are
 super-efficient. The package is developed by Márton Kolossváry a medical
 doctor not an engineer, therefore all functionalities of the software
 package are developed in a way that can be learnt by non-professionals.
-`RIA` is constantly updated with new functionalities and wrap-around
-functions to make the calculation of radiomic metrics even simpler.
 
 ## Installation
 
@@ -87,83 +85,81 @@ DICOM = load_dicom(filename = "C:/DICOM/")
 
 *load_dicom* does several things:
 
--   Converts DICOM files to RIA_image class using the *readDICOM*
-    function of the *oro.dicom* package. If *load_nifti* is used the
-    image loading is done by the *readNIfTI* function of the *oro.nifti*
-    package, while the function *read.nrrd* is used from the *nat*
-    package in case *load_nrrd* is used. The package needs to be
-    installed if not initially available. For images saved in numpy
-    arrays, one can use the *load_npy* function. Be aware that,
-    reticulate needs to be installed with a working
-    [python](https://www.python.org) and [numpy](https://numpy.org)
-    distribution. Also, as the numpy array contains no meta-information,
-    pixel spacing and spacing between the slices arguments need to be
-    supplied during the loading of the image.
+- Converts DICOM files to RIA_image class using the *readDICOM* function
+  of the *oro.dicom* package. If *load_nifti* is used the image loading
+  is done by the *readNIfTI* function of the *oro.nifti* package, while
+  the function *read.nrrd* is used from the *nat* package in case
+  *load_nrrd* is used. The package needs to be installed if not
+  initially available. For images saved in numpy arrays, one can use the
+  *load_npy* function. Be aware that, reticulate needs to be installed
+  with a working [python](https://www.python.org) and
+  [numpy](https://numpy.org) distribution. Also, as the numpy array
+  contains no meta-information, pixel spacing and spacing between the
+  slices arguments need to be supplied during the loading of the image.
 
--   If **mask_filename** is provided, then the image is filtered one of
-    two ways. If the **mask_filename** is the same as the **filename**,
-    then the values in **keep_mask_values** indicate which voxels values
-    to keep in the original image. This way the image can be segmented
-    for a specific subset of voxels with given intensities. For example,
-    if you would wish to only analyze low-density non-calcified voxels,
-    you could set the **keep_mask_values** to **-100:30**. If a
-    different folder is given to **mask_filename**, then *RIA* loads the
-    mask image which needs to be the same image type as the original
-    image. **mask_filename** can also be a character vector containing
-    paths to multiple mask files. If multiple are supplied, then those
-    voxels are kept which have one of the values of **keep_mask_values**
-    in any of the supplied masks. Using the **keep_mask_values**, you
-    can select which values you consider to indicate which voxels to
-    keep. By convention, the default is 1. However, multiple values may
-    be given, which is convenient in cases when several regions of
-    interest are provided in the mask image. If a single string is
-    provided, then each element of the mask will be examined against the
-    statement in the string. For example, if **‘\>0.5’** is provided
-    i.e. the mask is probabilities after a DL algorithm, then all voxels
-    with values >0.5 in the mask image will be kept. This can be a
-    complex logical expression. The data on which the expression is
-    executed is called data or data_mask, depending on whether you wish
-    to filter the original image, that is the original image is supplied
-    as a mask, or if you have unique mask files respectively. Therefore,
-    for complex logical expressions you can define for example:
-    **‘\>-100 & data\<30’** to consider data values between -100 and 30,
-    or **‘\>0.5 & data_mask\<0.75’** to select voxels based-on mask
-    values between 0.5 and 0.75 for example if they represent a
-    probability mask. Furthermore, some software after image
-    manipulation reverse the order of the images in the Z axis, and
-    therefore they need to be changed back. In this case **switch_z**
-    needs to be set *TRUE*. Whenever using mask images to identify
-    voxels to be analyzed, please always make sure, that the orientation
-    of the mask image and of the original image is the same!
+- If **mask_filename** is provided, then the image is filtered one of
+  two ways. If the **mask_filename** is the same as the **filename**,
+  then the values in **keep_mask_values** indicate which voxels values
+  to keep in the original image. This way the image can be segmented for
+  a specific subset of voxels with given intensities. For example, if
+  you would wish to only analyze low-density non-calcified voxels, you
+  could set the **keep_mask_values** to **-100:30**. If a different
+  folder is given to **mask_filename**, then *RIA* loads the mask image
+  which needs to be the same image type as the original image.
+  **mask_filename** can also be a character vector containing paths to
+  multiple mask files. If multiple are supplied, then those voxels are
+  kept which have one of the values of **keep_mask_values** in any of
+  the supplied masks. Using the **keep_mask_values**, you can select
+  which values you consider to indicate which voxels to keep. By
+  convention, the default is 1. However, multiple values may be given,
+  which is convenient in cases when several regions of interest are
+  provided in the mask image. If a single string is provided, then each
+  element of the mask will be examined against the statement in the
+  string. For example, if **‘\>0.5’** is provided i.e. the mask is
+  probabilities after a DL algorithm, then all voxels with values \>0.5
+  in the mask image will be kept. This can be a complex logical
+  expression. The data on which the expression is executed is called
+  data or data_mask, depending on whether you wish to filter the
+  original image, that is the original image is supplied as a mask, or
+  if you have unique mask files respectively. Therefore, for complex
+  logical expressions you can define for example: **‘\>-100 &
+  data\<30’** to consider data values between -100 and 30, or **‘\>0.5 &
+  data_mask\<0.75’** to select voxels based-on mask values between 0.5
+  and 0.75 for example if they represent a probability mask.
+  Furthermore, some software after image manipulation reverse the order
+  of the images in the Z axis, and therefore they need to be changed
+  back. In this case **switch_z** needs to be set *TRUE*. Whenever using
+  mask images to identify voxels to be analyzed, please always make
+  sure, that the orientation of the mask image and of the original image
+  is the same!
 
--   The 2D or 3D image is cropped to the smallest bounding box still
-    containing the whole image. It is useful to minimize the size of the
-    image to save memory. The **zero_value** supplied to the
-    *load_dicom*, *load_nifti*, *load_nrrd* or *load_npy* function is
-    used to identify voxels not containing any data. If it is not
-    supplied, then the smallest value present in the dataset is
-    considered as indicating voxels without any data. If for some reason
-    it is important that the RIA_image be the same size (same x,y,z
-    dimensions) as the original supplied image, then this functionality
-    can be turn off by:
+- The 2D or 3D image is cropped to the smallest bounding box still
+  containing the whole image. It is useful to minimize the size of the
+  image to save memory. The **zero_value** supplied to the *load_dicom*,
+  *load_nifti*, *load_nrrd* or *load_npy* function is used to identify
+  voxels not containing any data. If it is not supplied, then the
+  smallest value present in the dataset is considered as indicating
+  voxels without any data. If for some reason it is important that the
+  RIA_image be the same size (same x,y,z dimensions) as the original
+  supplied image, then this functionality can be turn off by:
 
 ``` r
 DICOM = load_dicom(filename = "C:/DICOM/", crop_in = FALSE)
 ```
 
--   Then the smallest values which indicate no data, are changed to *NA*
-    for further calculations. If wished to be turned of, then use:
+- Then the smallest values which indicate no data, are changed to *NA*
+  for further calculations. If wished to be turned of, then use:
 
 ``` r
 DICOM = load_dicom(filename = "C:/DICOM/", replace_in = FALSE)
 ```
 
--   Since some DICOM images do not store negative values, rather store
-    all values as non-negative integers, shifting of the values is
-    needed. The desired smallest value is set by the **min_to** input.
-    If not specified then by default it is set to *-1024*. Please check
-    for all data whether shifting is needed! If shifting of the values
-    is not needed then use:
+- Since some DICOM images do not store negative values, rather store all
+  values as non-negative integers, shifting of the values is needed. The
+  desired smallest value is set by the **min_to** input. If not
+  specified then by default it is set to *-1024*. Please check for all
+  data whether shifting is needed! If shifting of the values is not
+  needed then use:
 
 ``` r
 DICOM = load_dicom(filename = "C:/DICOM/", center_in = FALSE)
@@ -176,9 +172,9 @@ cases, the load images should be inspected to see in the values are
 reasonable, for example if the minimum and maximum values are in the
 range that would be expected!
 
--   Finally, *load_dicom*, *load_nifti*, *load_nrrd* and *load_npy* adds
-    basic information regarding the original image and ran processes
-    into the *header* (if available) and *log* slot of *RIA_image*.
+- Finally, *load_dicom*, *load_nifti*, *load_nrrd* and *load_npy* adds
+  basic information regarding the original image and ran processes into
+  the *header* (if available) and *log* slot of *RIA_image*.
 
 All above mentioned settings can be combined as wished to achieve proper
 conversion of the DICOM image. Furthermore, all parameters of the
@@ -188,17 +184,17 @@ in the *load_dicom*, *load_nifti*, *load_nrrd* and *load_npy* functions.
 
 As a result the *RIA_image* object will have three slots:
 
--   **`RIA_image$data`** which contains the original image as a 2D or 3D
-    numerical array in `RIA_image$data$orig`, and a modified image in
-    `RIA_image$data$modif` that has been created using one of the
-    functions. Only one original and one modified image are stored in
-    the `RIA_image$data` slot. However, several modified images can be
-    saved to new slots as we will see later.
+- **`RIA_image$data`** which contains the original image as a 2D or 3D
+  numerical array in `RIA_image$data$orig`, and a modified image in
+  `RIA_image$data$modif` that has been created using one of the
+  functions. Only one original and one modified image are stored in the
+  `RIA_image$data` slot. However, several modified images can be saved
+  to new slots as we will see later.
 
--   **`RIA_image$header`** which contains basic information regarding
-    the loaded image. These entries are populated from the DICOM header
-    of the image. Elements can be added or removed from the predefined
-    set of DICOM_codes:
+- **`RIA_image$header`** which contains basic information regarding the
+  loaded image. These entries are populated from the DICOM header of the
+  image. Elements can be added or removed from the predefined set of
+  DICOM_codes:
 
 ``` r
 DICOM_codes
@@ -221,52 +217,51 @@ exclude <- as.data.frame(DICOM_codes[3:6,])
 DICOM = load_dicom(filename = "C:/DICOM/", header_exclude = exclude)
 ```
 
--   **`RIA_image$log`** which contains information regarding the
-    original image and ran processes on the *RIA_image*. The log is
-    constantly updated by the functions, and some functions use it for
-    inputs. *load_dicom*, *load_nifti*, *load_nrrd* and *load_npy* adds
-    the following to the log if possible:
+- **`RIA_image$log`** which contains information regarding the original
+  image and ran processes on the *RIA_image*. The log is constantly
+  updated by the functions, and some functions use it for inputs.
+  *load_dicom*, *load_nifti*, *load_nrrd* and *load_npy* adds the
+  following to the log if possible:
 
-    -   `DICOM$log$events` is a vector containing the ran processes.
+- `DICOM$log$events` is a vector containing the ran processes.
 
-    -   `DICOM$log$orig_dim` is a vector containing the original
-        dimensions of the DICOM image.
+- `DICOM$log$orig_dim` is a vector containing the original dimensions of
+  the DICOM image.
 
-    -   `DICOM$log$directory` is a string containing the location of the
-        DICOM images.
+- `DICOM$log$directory` is a string containing the location of the DICOM
+  images.
 
-    -   `DICOM$log$logic_x` is a vector with a length of the original x
-        dimension. Ones indicate slices which contained data and zeros
-        which did not in the x dimension. Same is true for
-        `DICOM$log$logic_y` and `DICOM$log$logic_z`.
+- `DICOM$log$logic_x` is a vector with a length of the original x
+  dimension. Ones indicate slices which contained data and zeros which
+  did not in the x dimension. Same is true for `DICOM$log$logic_y` and
+  `DICOM$log$logic_z`.
 
-    -   `DICOM$log$zero_value` is a number indicating the value that was
-        considered to indicate no data
+- `DICOM$log$zero_value` is a number indicating the value that was
+  considered to indicate no data
 
-    -   `DICOM$log$changed_to` is the value to which voxel considered
-        not to have any data were transferred to.
+- `DICOM$log$changed_to` is the value to which voxel considered not to
+  have any data were transferred to.
 
-    -   `DICOM$log$shift` the value that was added to all voxel values
-        to achieve proper values.
+- `DICOM$log$shift` the value that was added to all voxel values to
+  achieve proper values.
 
-    -   `DICOM$log$orig_vol_mm` the volume of the original image. The
-        volume is calculated by calculating how many voxels contain data
-        and multiplying it by x,y and z length of the voxels.
+- `DICOM$log$orig_vol_mm` the volume of the original image. The volume
+  is calculated by calculating how many voxels contain data and
+  multiplying it by x,y and z length of the voxels.
 
-    -   `DICOM$log$orig_surf_mm` the surface of the original image. The
-        surface is calculated by assessing which sides of the voxels do
-        not have any neighbors and then summing all of these surfaces
-        which are calculated from the lengths of the sides of the
-        voxels.
+- `DICOM$log$orig_surf_mm` the surface of the original image. The
+  surface is calculated by assessing which sides of the voxels do not
+  have any neighbors and then summing all of these surfaces which are
+  calculated from the lengths of the sides of the voxels.
 
-    -   `DICOM$log$surface_volume_r` the value of the surface to volume
-        ratio of the original image.
+- `DICOM$log$surface_volume_r` the value of the surface to volume ratio
+  of the original image.
 
-    -   `DICOM$log$orig_xy_dim` the length of each voxel in the x and
-        the y planes. This is also called the in-plane resolution
+- `DICOM$log$orig_xy_dim` the length of each voxel in the x and the y
+  planes. This is also called the in-plane resolution
 
-    -   `DICOM$log$orig_z_dim` the length of each voxel in the z plane.
-        This is also called the cross-plane resolution.
+- `DICOM$log$orig_z_dim` the length of each voxel in the z plane. This
+  is also called the cross-plane resolution.
 
 As we will see, functions can add new elements to the log and also add
 new slots to the *RIA_image*. If the loading was successful, we will be
@@ -275,10 +270,10 @@ setting the **verbose_in** parameter to *FALSE*.
 
 With the package two preloaded datasets are given:
 
--   **NRS**: the DICOM images of a segmented plaque showing the
-    napkin-ring sign
--   **Non_NRS**: the DICOM images of a segmented plaque without the
-    napkin-ring sign
+- **NRS**: the DICOM images of a segmented plaque showing the
+  napkin-ring sign
+- **Non_NRS**: the DICOM images of a segmented plaque without the
+  napkin-ring sign
 
 We will be using the NRS dataset for all following examples. Load the
 data using:
@@ -305,8 +300,8 @@ slot is updated based on the new combined image, while data in the
 
 ``` r
 # Load multiple images and combine them
-d1 <- load_nifti(ABC_p1.nii.gz, crop_in = FALSE)
-d2 <- load_nifti(ABC_p2.nii.gz, crop_in = FALSE)
+d1 <- load_nifti("ABC_p1.nii.gz", crop_in = FALSE)
+d2 <- load_nifti("ABC_p2.nii.gz", crop_in = FALSE)
 d  <- merge_RIA(list(d1, d2))
 ```
 
@@ -366,38 +361,73 @@ it would not run at maximum efficiency many times while the processes
 are waiting for each sub-tasks to finish. In the following sample code,
 you can appreciate the simpleness of setting up such a parallelization
 to calculate radiomic parameters for a batch of images. In the example
-each patient has a separate folder in which there are nrrd files
+each patient has a separate folder in which there are nifti files
 containing the whole image (these files contain the word: “heart”) and
-mask images (these files contain the word: “plaque”). There are many
-possibilities to parallelize such batches in R. We will use the
-*doParallel* package to set up the multiple core functionality, and the
-*foreach* package to parallelize the for cycle which cycles through the
-patient folders
+mask images (these files contain the word: “plaque”). Radiomic features
+are calculated for the whole plaque and also noncalcified and calcified
+plaque components defined using absolute HU thresholds. There are many
+possibilities to parallelize such batches in R. We will use the *future*
+package to set up the multiple core functionality, and the *foreach* and
+*doFuture* packages to parallelize the for cycle which cycles through
+the patient folders
 
 ``` r
-folder <- "/Images/" #Location of folder containing individual folders per patient which contain nrrd files for the image and mask
+folder <- "/Images/" #Location of folder containing individual folders per patient which contain nifti files for the image and mask
 out <- "/CSV/" #Location of folder where the results will be dumped
 
 patients <- list.dirs(folder, recursive = FALSE, full.names = FALSE) #Name of patient folders
 patients_full <- list.dirs(folder, recursive = FALSE, full.names = TRUE) #Name of patient folders with full file path name
 
-library(foreach); library(doParallel); library(RIA) #Load required packages
-doParallel::registerDoParallel(7) #Define how many threads to use, usually use the number of threads-1
+library(foreach); library(future); library(doFuture); library(RIA) #Load required packages
+options(future.globals.maxSize = +Inf) #Allow infinite memory for separate processes
+future::plan(future::multisession, workers = parallel::detectCores()-1) #Define how many threads to use, usually use the number of threads-1
+
+library(progressr) #Create progress bar
+progressr::handlers(progressr::handler_progress(
+  format   = ":spin [:bar] :percent in :elapsed ETA: :eta",
+  complete = "="
+))
+progressr::handlers(global = TRUE)
 
 #Use parallelized for cycle to cycle through all the patients
-data_out_paral <- foreach (i = 1:length(patients), .combine="rbind", .inorder=FALSE,
-                           .packages=c('RIA'), .errorhandling = c("pass"), .verbose=FALSE) %dopar% {
-                             
-                             files <- list.files(patients_full[i]) #Names of the files in the current patient folder
-                             image <- grep("heart", files, ignore.case = T, value = T) #Full name of the image file
-                             masks <- grep("plaque", files, ignore.case = T, value = T) #Full name of the mask files
-                             
-                             #RUN RIA
-                             IMAGE <- load_nrrd(filename = paste0(patients_full[i], "/", image),
-                                                     mask_filename = paste0(patients_full[i], "/", masks), switch_z = FALSE) #Load image and mask files
-                             IMAGE <- radiomics_all(IMAGE,  equal_prob = "both", bins_in= c(4, 8, 16)) #Calculate radiomic features
-                             save_RIA(IMAGE, save_to = out, save_name = patients[i], group_name = patients[i]) #Export results into csv
-                           }
+calculate_radiomics <- function() {
+  p <- progressr::progressor(steps = length(patients))
+  data_out_paral <- foreach::foreach (i = 1:length(patients), .combine="rbind", .inorder=FALSE,
+                                      .options.future = list(chunk.size = 1.0,
+                                                             globals = structure(TRUE, add = c("patients", "patients_full", "folder", "out"))),
+                                      .errorhandling = c("pass"), .verbose=FALSE) %dofuture% {
+                                        
+                                        files <- list.files(patients_full[i]) #Names of the files in the current patient folder
+                                        image <- grep("heart", files, ignore.case = T, value = T) #Full name of the image file
+                                        masks <- grep("plaque", files, ignore.case = T, value = T) #Full name of the mask files
+                                        
+                                        #Radiomic calculations on the whole plaque
+                                        IMAGE <- load_nifti(filename = paste0(patients_full[i], "/", image),
+                                                            mask_filename = paste0(patients_full[i], "/", masks), switch_z = FALSE, verbose_in = FALSE) #Load image and mask files
+                                        IMAGE <- radiomics_all(IMAGE,  equal_prob = "both", verbose_in = FALSE) #Calculate radiomic features
+                                        save_RIA(IMAGE, save_to = out, save_name = paste0(patients[i], "_ALL"), group_name = patients[i]) #Export results into csv
+                                        
+                                        #Radiomic calculations on the noncalcified plaque component
+                                        IMAGE <- load_nifti(filename = paste0(patients_full[i], "/", image), keep_mask_values = "<=350",
+                                                            mask_filename = paste0(patients_full[i], "/", masks), switch_z = FALSE, verbose_in = FALSE) #Load image and mask files
+                                        if(IMAGE$log$orig_vol_mm != 0){
+                                          IMAGE <- radiomics_all(IMAGE,  equal_prob = "both", verbose_in = FALSE) #Calculate radiomic features
+                                          save_RIA(IMAGE, save_to = out, save_name = paste0(patients[i], "_NCP"), group_name = patients[i]) #Export results into csv
+                                        }
+                                        
+                                       #Radiomic calculations on the calcified plaque component
+                                        IMAGE <- load_nifti(filename = paste0(patients_full[i], "/", image), keep_mask_values = ">350",
+                                                            mask_filename = paste0(patients_full[i], "/", masks), switch_z = FALSE, verbose_in = FALSE) #Load image and mask files
+                                        if(IMAGE$log$orig_vol_mm != 0){
+                                          IMAGE <- radiomics_all(IMAGE,  equal_prob = "both", verbose_in = FALSE) #Calculate radiomic features
+                                          save_RIA(IMAGE, save_to = out, save_name = paste0(patients[i], "_CP"), group_name = patients[i]) #Export results into csv
+                                        }
+                                        
+                                        p(sprintf("i=%g", i)) #Update progress bar
+                                      }
+}
+calculate_radiomics()
+future::plan(future::sequential()) #Reset to sequential processing
 ```
 
 The disadvantage of parallelizing the for cycle rather then the core
@@ -411,9 +441,9 @@ for calculation.
 From v1.7.0 only wrapper functions are exported in the Namespace of
 *RIA* as these allow full functionality without needing to know anything
 about what is happening under the hood. Nevertheless, previous functions
-that were available in *RIA* are still presnet with all thier
+that were available in *RIA* are still present with all their
 functionalities and documentation, but they can only be accessed by
-specificlaly calling them using **RIA:::function()**. From here on,
+specifically calling them using **RIA:::function()**. From here on,
 these functionalities are presented.
 
 ## Discretization of voxel values
@@ -430,8 +460,8 @@ Discretization is done using the *discretize* function. It receives a
 
 Discretization is effected by two variables:
 
--   The number of bins to which the values will be transformed to
--   The length of each bin
+- The number of bins to which the values will be transformed to
+- The length of each bin
 
 ### Specifing the number of bins
 
@@ -575,9 +605,9 @@ RIA:::list_to_df(DICOM$stat_fo$es_2)
 Calculation of first-order statistics can be further specified using the
 following inputs.
 
--   *save_name* can be used to modify the name of the output. If
-    provided, then the automatic name generated is overwritten by the
-    provided string.
+- *save_name* can be used to modify the name of the output. If provided,
+  then the automatic name generated is overwritten by the provided
+  string.
 
 ``` r
 DICOM = RIA:::first_order(RIA_data_in = DICOM, use_orig = FALSE, use_slot = "discretized$es_2", save_name = c("equaly_sized_2bins"))
@@ -608,9 +638,9 @@ statistics is needed.
 
 ``` r
 DICOM = RIA:::first_order(RIA_data_in = DICOM, use_type = "discretized",
-                    save_name = c("Name_1", "Name_2", "Name_3", "Name_4",
-                                  "Name_5", "Name_6", "Name_7", "Name_8",
-                                  "Name_9", "Name_10"))
+                          save_name = c("Name_1", "Name_2", "Name_3", "Name_4",
+                                        "Name_5", "Name_6", "Name_7", "Name_8",
+                                        "Name_9", "Name_10"))
 names(DICOM$stat_fo)
 ```
 
@@ -622,7 +652,7 @@ problems in later analyses.
 
 ``` r
 DICOM = RIA:::first_order(RIA_data_in = DICOM, use_type = "discretized",
-                    save_name = c("Name_1", "Name_2", "Name_3", "Name_4"))
+                          save_name = c("Name_1", "Name_2", "Name_3", "Name_4"))
 ```
 
 ## Gray level co-occurrence matrix (GLCM) calculations and statistics
@@ -640,10 +670,10 @@ GLCM matrices may be calculated, depending on the *direction* and the
 integer parameters specifying where the examined voxel is compared to
 the index voxel.
 
--   **off_right**: how many voxels to look to the right (x coordinate)
--   **off_down**: how many voxels to look downwards (y coordinate)
--   **off_z**: how many voxels to look to in the cross-plane direction
-    (z coordinate). This parameter is only used if the image is 3D
+- **off_right**: how many voxels to look to the right (x coordinate)
+- **off_down**: how many voxels to look downwards (y coordinate)
+- **off_z**: how many voxels to look to in the cross-plane direction (z
+  coordinate). This parameter is only used if the image is 3D
 
 For example: to calculate the GLCM matrix of the last modified image
 stored in `RIA_image$data$modif`, in the direction of right: 1; down: 2;
@@ -666,16 +696,16 @@ the last image manipulation.
 
 Two further parameters may be set to change the output of the function:
 
--   **symmetric**: If TRUE, then the transpose of the initial GLCM
-    matrix will be added to itself, which is the same as calculating the
-    GLCM in the opposite direction. Doing so creates a symmetric GLCM
-    matrix, which holds information regarding not only one direction,
-    but also of the opposite direction as well, since asking how many
-    times a *j* value voxel occurs next to a *i* value voxel in a given
-    direction is the same as asking how many times a *i* value voxel
-    occurs next to a *j* value one in the opposite direction. With this
-    strategy, if you wish to calculate the GLCMs in all directions of
-    space, then you only have to actually calculate half of them.
+- **symmetric**: If TRUE, then the transpose of the initial GLCM matrix
+  will be added to itself, which is the same as calculating the GLCM in
+  the opposite direction. Doing so creates a symmetric GLCM matrix,
+  which holds information regarding not only one direction, but also of
+  the opposite direction as well, since asking how many times a *j*
+  value voxel occurs next to a *i* value voxel in a given direction is
+  the same as asking how many times a *i* value voxel occurs next to a
+  *j* value one in the opposite direction. With this strategy, if you
+  wish to calculate the GLCMs in all directions of space, then you only
+  have to actually calculate half of them.
 
 ``` r
 DICOM = RIA:::glcm(RIA_data_in = DICOM, use_slot = "discretized$ep_2", off_right = 1, off_down = 2, off_z = 2, symmetric = FALSE, normalize = FALSE)
@@ -684,8 +714,8 @@ DICOM = RIA:::glcm(RIA_data_in = DICOM, use_slot = "discretized$ep_2", off_right
 DICOM$glcm$ep_2
 ```
 
--   **normalize**: If TRUE, then instead of the absolute values of the
-    occurrences are reported, but their relative frequencies.
+- **normalize**: If TRUE, then instead of the absolute values of the
+  occurrences are reported, but their relative frequencies.
 
 ``` r
 DICOM = RIA:::glcm(RIA_data_in = DICOM, use_slot = "discretized$ep_2", off_right = 1, off_down = 2, off_z = 2, symmetric = TRUE, normalize = FALSE)
@@ -705,7 +735,7 @@ do is:
 
 ``` r
 DICOM = RIA:::glcm(RIA_data_in = DICOM, use_type = "discretized",
-             off_right = 1, off_down = 2, off_z = 2)
+                   off_right = 1, off_down = 2, off_z = 2)
 names(DICOM$glcm)
 ```
 
@@ -819,15 +849,15 @@ vector in co-ordinate space. There is no distance parameter, since we
 want to calculate how many same value voxels occur next to each other in
 that direction. Therefore the three inputs are logicals not integers.
 
--   **off_right**: positive values indicate to look to the right,
-    negative values indicate to look to the left, while 0 indicates no
-    offset in the X plane
--   **off_down**: positive values indicate to look to the right,
-    negative values indicate to look to the left, while 0 indicates no
-    offset in the Y plane
--   **off_z**: positive values indicate to look to the right, negative
-    values indicate to look to the left, while 0 indicates no offset in
-    the Z plane
+- **off_right**: positive values indicate to look to the right, negative
+  values indicate to look to the left, while 0 indicates no offset in
+  the X plane
+- **off_down**: positive values indicate to look to the right, negative
+  values indicate to look to the left, while 0 indicates no offset in
+  the Y plane
+- **off_z**: positive values indicate to look to the right, negative
+  values indicate to look to the left, while 0 indicates no offset in
+  the Z plane
 
 For example: to calculate the GLRLM matrix of the last modified image
 stored in `RIA_image$data$modif`, in the direction of right: 1; down: 0;
@@ -854,7 +884,7 @@ discretizations all you have to do is:
 
 ``` r
 DICOM = RIA:::glrlm(RIA_data_in = DICOM, use_type = "discretized",
-              off_right = 1, off_down = 0, off_z = 1)
+                    off_right = 1, off_down = 0, off_z = 1)
 names(DICOM$glrlm)
 ```
 
@@ -966,20 +996,18 @@ RIA:::list_to_df(DICOM$stat_geometry$es_2)
 
 Further inputs can be specified:
 
--   **xy_dim**: a numeric value of the length of a voxel in the x or y
-    plane, if it is not provided, then `RIA` uses the values present in
-    the `RIA_image$log$orig_xy_dim`.
--   **z_dim**: a numeric value of the length of a voxel in the z plane,
-    if it is not provided, then `RIA` uses the values present in the
-    `RIA_image$log$orig_z_dim`.
--   **all_vol**: overall volume of the image, if it is not provided,
-    then `RIA` uses the values present in the
-    `RIA_image$log$orig_vol_mm`.
--   **all_surf**: overall volume of the image, if it is not provided,
-    then `RIA` uses the values present in the
-    `RIA_image$log$orig_surf_mm`.
--   **calc_dist**: logical indicating whether to calculate the maximum
-    distance between the voxels. Calculations may take significant time.
+- **xy_dim**: a numeric value of the length of a voxel in the x or y
+  plane, if it is not provided, then `RIA` uses the values present in
+  the `RIA_image$log$orig_xy_dim`.
+- **z_dim**: a numeric value of the length of a voxel in the z plane, if
+  it is not provided, then `RIA` uses the values present in the
+  `RIA_image$log$orig_z_dim`.
+- **all_vol**: overall volume of the image, if it is not provided, then
+  `RIA` uses the values present in the `RIA_image$log$orig_vol_mm`.
+- **all_surf**: overall volume of the image, if it is not provided, then
+  `RIA` uses the values present in the `RIA_image$log$orig_surf_mm`.
+- **calc_dist**: logical indicating whether to calculate the maximum
+  distance between the voxels. Calculations may take significant time.
 
 ### Batch calculation of geometry-based statistics
 
